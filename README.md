@@ -8,6 +8,28 @@ Codex hooks.
 This project is independently maintained and is not affiliated with, endorsed by, or sponsored by
 OpenAI or Anthropic.
 
+## Team rollout: slash commands first
+
+The standard team path is manual and explicit:
+
+1. Use Node.js >= 18.18.
+2. Run `npm install` in this repository.
+3. Register `server.mjs` in Codex MCP config with an absolute path.
+4. Run `claude_setup` from Codex to confirm the effective Claude binary, model, timeout, and auth guidance.
+5. Copy `prompts/*.md` into `~/.codex/prompts/` so teammates can use `/claude-review` and `/claude-adversarial`.
+6. Ask for a manual second opinion only when needed.
+
+First examples:
+
+- `/claude-review` - implementation-risk review for missing tests, state edge cases, cancellation/resume behavior, context limits, and failure modes.
+- `/claude-review base=origin/dev focus="job cancellation"`
+- `/claude-adversarial` - design critique for architecture boundaries, complexity, assumptions, tradeoffs, and simpler alternatives.
+- `/claude-adversarial focus="simpler alternatives" background: true`
+
+MCP tool names remain the reference interface underneath the slash prompts. The prompts call `claude_review` and `claude_adversarial_review`; the tools can still be invoked directly when you need exact arguments.
+
+Claude does not receive the full Codex chat automatically. The explicit context is the prompt text, allowed read-only repo access, read-style git state, selected planning docs, resumed Claude Code session output when used, and user-provided `base` or `focus`.
+
 ## Feature mapping vs codex-plugin-cc
 
 | codex-plugin-cc (CC → Codex) | This plugin (Codex → CC)        | How                                  |
@@ -38,9 +60,9 @@ This project uses Node.js for the MCP server. That matches the surrounding
 Codex/Claude plugin ecosystem, keeps MCP tool definitions simple, and gives team
 members the same `npm install` setup path they already use for Claude Code.
 
-The current server is a small ESM `.mjs` implementation. For team rollout, the
-planned direction is Node + TypeScript for the MCP server body, while keeping
-small hook and setup scripts as `.mjs` where that stays simpler.
+The v1 team rollout uses the current small ESM `.mjs` server directly. A future
+TypeScript migration is deferred until module boundaries and packaging strategy
+are worth the extra build step.
 
 ## Install
 
@@ -63,7 +85,7 @@ env = { CLAUDE_MODEL = "sonnet" }
 Tools then appear namespaced as `claude:claude_review`, `claude:claude_rescue`, etc. Codex can
 call them on its own, or you can ask: *"Use Claude to adversarially review my diff against main."*
 
-## 2) (Optional) Slash-command UX
+## 2) Standard slash-command UX
 
 Copy the prompt files so they show up as `/claude-review`, `/claude-adversarial`, `/claude-rescue`:
 
@@ -71,11 +93,11 @@ Copy the prompt files so they show up as `/claude-review`, `/claude-adversarial`
 cp prompts/*.md ~/.codex/prompts/
 ```
 
-## 3) (Optional) Review gate - auto-review before Codex finishes
+## 3) Advanced opt-in review gate - auto-review before Codex finishes
 
 The review gate is opt-in. Installing the MCP server does not enable automatic
 Claude review. Enable this only when you intentionally want Codex lifecycle
-automation.
+automation. Treat hooks as an advanced path, not the team default.
 
 Add to `~/.codex/config.toml`:
 
@@ -96,8 +118,8 @@ tracked changes with `git diff HEAD` / `git diff --cached`, and read untracked f
 Claude returns `BLOCK: <reason>`, the hook exits 2 and Codex is blocked from stopping, with the
 reason fed back so it can fix the issue. Hooks are experimental and disabled on Windows.
 
-> **Warning:** the review gate can create a long Codex↔Claude loop and drain usage limits fast.
-> Enable it only when actively monitoring the session.
+> **Warning:** the review gate can create a long Codex↔Claude loop, cause blocking at turn
+> completion, and create usage-cost risk. Enable it only when actively monitoring the session.
 
 To turn the gate off, remove this plugin's `hooks.Stop` block or disable the
 individual hook through `/hooks`. To turn all Codex hooks off for a local config,
@@ -106,7 +128,7 @@ set `[features] hooks = false`.
 ## Tools
 
 - `claude_setup` — verify Claude Code is installed/reachable.
-- `claude_review {base?, background?, cwd?}` — read-only review of worktree or branch changes.
+- `claude_review {base?, focus?, background?, cwd?}` — read-only review of worktree or branch changes.
 - `claude_adversarial_review {base?, focus?, background?, cwd?}` — steerable challenge review.
 - `claude_rescue {task, model?, resume?, fresh?, allow_write?, background?, cwd?}` — delegate work;
   `resume:true` continues the latest repo session, or pass a specific session id.
