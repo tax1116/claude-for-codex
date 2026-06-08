@@ -142,6 +142,7 @@ event names and MCP config format against the Codex docs for your installed vers
 - [docs/SETUP.md](docs/SETUP.md) — detailed install, config, tools, and env reference
 - [docs/DESIGN.md](docs/DESIGN.md) — feature mapping vs codex-plugin-cc and how it works
 - [docs/PUBLISHING.md](docs/PUBLISHING.md) — naming and how to push to your own GitHub repo
+- [docs/BRANCHING.md](docs/BRANCHING.md) — branch roles, merge flow, and release promotion policy
 
 ## License
 
