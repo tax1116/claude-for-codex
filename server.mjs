@@ -114,6 +114,38 @@ function newId() {
   return "task-" + randomBytes(5).toString("hex");
 }
 
+function failureGuidance(kind, detail) {
+  const lines = [
+    `Failure category: ${kind}`,
+    detail,
+    "Recovery guide:",
+    "- missing binary: install Claude Code or set CLAUDE_BIN to an absolute path.",
+    "- auth/reachability: run `claude auth status` if available, or run `claude` once interactively.",
+    "- timeout: increase CLAUDE_TIMEOUT_MS and the MCP client tool_timeout_sec together.",
+    "- malformed JSON: Claude did not return JSON; the text fallback above is preserved for debugging.",
+    "- context too large: retry with a narrower base, focus, or background prompt.",
+  ];
+  return lines.filter(Boolean).join("\n");
+}
+
+function maybeFailureGuidance({ code, stderr, stdout, timedOut }) {
+  const output = `${stdout}\n${stderr}`.toLowerCase();
+  if (timedOut) return failureGuidance("timeout", `Claude was killed after ${DEFAULT_TIMEOUT_MS}ms.`);
+  if (output.includes("context") && (output.includes("too large") || output.includes("maximum"))) {
+    return failureGuidance("context too large", "Claude reported that the prompt or repository context was too large.");
+  }
+  if (output.includes("auth") || output.includes("login") || output.includes("api key")) {
+    return failureGuidance("auth/reachability", "Claude appears unavailable because authentication or service reachability failed.");
+  }
+  if (code && code !== 0) return failureGuidance("claude exit", `Claude exited with code ${code}.`);
+  return null;
+}
+
+function appendGuidance(result, guidance) {
+  if (!guidance) return result;
+  return `${result || "(no output)"}\n\n${guidance}`;
+}
+
 // Start a claude run as a tracked job. Returns the job object.
 // If background=false the returned promise resolves when finished (foreground).
 function startJob({ kind, prompt, model, maxTurns, allowWrite, resume, cwd, background }) {
@@ -142,7 +174,11 @@ function startJob({ kind, prompt, model, maxTurns, allowWrite, resume, cwd, back
 
   let stdout = "";
   let stderr = "";
-  const timer = setTimeout(() => child.kill("SIGKILL"), DEFAULT_TIMEOUT_MS);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    child.kill("SIGKILL");
+  }, DEFAULT_TIMEOUT_MS);
 
   const done = new Promise((resolve) => {
     child.stdout.on("data", (d) => (stdout += d.toString()));
@@ -154,9 +190,10 @@ function startJob({ kind, prompt, model, maxTurns, allowWrite, resume, cwd, back
       if (cur.status === "cancelled") return resolve(cur);
       cur.status = "error";
       cur.endedAt = Date.now();
-      cur.result =
-        `Failed to launch "${CLAUDE_BIN}": ${err.message}\n` +
-        `Install Claude Code: npm i -g @anthropic-ai/claude-code`;
+      cur.result = failureGuidance(
+        "missing binary",
+        `Failed to launch "${CLAUDE_BIN}": ${err.message}`,
+      );
       writeJob(dir, cur);
       resolve(cur);
     });
@@ -165,6 +202,7 @@ function startJob({ kind, prompt, model, maxTurns, allowWrite, resume, cwd, back
       live.delete(id);
       const cur = readJob(dir, id) || job;
       if (cur.status === "cancelled") return resolve(cur);
+      if (cur.status !== "running") return resolve(cur);
       cur.exitCode = code;
       cur.endedAt = Date.now();
       try {
@@ -174,9 +212,16 @@ function startJob({ kind, prompt, model, maxTurns, allowWrite, resume, cwd, back
         cur.status = parsed.is_error ? "error" : "done";
         cur.costUsd = parsed.total_cost_usd ?? null;
         cur.numTurns = parsed.num_turns ?? null;
+        if (cur.status === "error") {
+          cur.result = appendGuidance(cur.result, maybeFailureGuidance({ code, stderr, stdout, timedOut }));
+        }
         rememberSession(dir, cur.sessionId);
       } catch {
-        cur.result = stdout || stderr || `(no output, exit ${code})`;
+        cur.result = appendGuidance(
+          stdout || stderr || `(no output, exit ${code})`,
+          failureGuidance("malformed JSON", "Claude output was not valid JSON; using text fallback."),
+        );
+        cur.result = appendGuidance(cur.result, maybeFailureGuidance({ code, stderr, stdout, timedOut }));
         cur.status = code === 0 ? "done" : "error";
       }
       writeJob(dir, cur);
@@ -201,7 +246,10 @@ function fmtJob(j, withResult) {
     .filter(Boolean)
     .join(" | ");
   if (!withResult) return meta;
-  return `${meta}\n\n${j.result ?? "(no result yet)"}` +
+  const readOnlyFooter = ["review", "adversarial-review"].includes(j.kind)
+    ? "\n\nRead-only review mode: Claude was not allowed to edit files, and no files were edited by this tool."
+    : "";
+  return `${meta}\n\n${j.result ?? "(no result yet)"}${readOnlyFooter}` +
     (j.sessionId ? `\n\nResume in Claude: claude --resume ${j.sessionId}` : "");
 }
 
@@ -243,23 +291,51 @@ const reviewRangeInstruction = (ref) => {
 const untrackedInstruction =
   `Also review untracked files shown by \`git status --short\`: read those files directly instead of assuming \`git diff\` includes them.\n`;
 
-const reviewPrompt = (ref) =>
+const planningContextInstruction =
+  `You do not receive the full Codex chat. Reconstruct context from the repository and these planning files when present: ` +
+  `.planning/PROJECT.md, .planning/REQUIREMENTS.md, .planning/ROADMAP.md, ` +
+  `.planning/phases/01-manual-design-risk-review-core/01-CONTEXT.md.\n` +
+  `Start every review by checking \`git status --short --branch\` before reading diffs or untracked files.\n`;
+
+const reviewOutputInstruction =
+  `Use severities exactly as High, Medium, or Low. ` +
+  `For each finding include file:line, issue, impact, and suggested fix. ` +
+  `If there are no high-confidence issues, say exactly: No high-confidence findings. ` +
+  `Do not modify any files.\n`;
+
+const reviewPrompt = (ref, focus) =>
   `You are a meticulous senior engineer giving an independent second opinion.\n` +
+  planningContextInstruction +
   reviewRangeInstruction(ref) +
   untrackedInstruction +
   `Read related files as needed.\n` +
-  `Report prioritized findings as a list: [high/med/low] file:line - issue - suggested fix.\n` +
-  `Be concrete; if nothing serious, say so. Do not modify any files.`;
+  `Pay special attention to missing tests, cancellation behavior, resume behavior, context limits, and failure modes.\n` +
+  (focus ? `Focus especially on: ${focus}.\n` : "") +
+  reviewOutputInstruction;
 
 const adversarialPrompt = (ref, focus) =>
   `You are an adversarial reviewer.\n` +
+  planningContextInstruction +
   reviewRangeInstruction(ref) +
   untrackedInstruction +
   `Pressure-test the change.\n` +
   `Challenge the design and approach, not just code details: assumptions, tradeoffs, ` +
   `failure modes, and whether a simpler/safer alternative exists.\n` +
   (focus ? `Focus especially on: ${focus}.\n` : "") +
-  `List concrete risks with severity and what you'd change. Do not modify any files.`;
+  reviewOutputInstruction;
+
+function setupReport(versionText) {
+  const status = versionText ? `Claude Code is installed: ${versionText}\n` : "";
+  return (
+    status +
+    `CLAUDE_BIN: ${CLAUDE_BIN}\n` +
+    `CLAUDE_MODEL: ${DEFAULT_MODEL}\n` +
+    `CLAUDE_TIMEOUT_MS: ${DEFAULT_TIMEOUT_MS}\n` +
+    `MCP client: set tool_timeout_sec to at least ${Math.ceil(DEFAULT_TIMEOUT_MS / 1000)}.\n` +
+    `Auth/reachability: run \`claude auth status\` if available, or run \`claude\` once interactively.\n` +
+    `This setup check does not run a live review; live review reachability may still fail due to auth, timeout, malformed JSON, or context too large.`
+  );
+}
 
 // ---------- server ----------
 
@@ -279,10 +355,7 @@ server.registerTool(
         content: [
           {
             type: "text",
-            text:
-              `Claude Code is installed: ${r.stdout.trim()}\n` +
-              `Binary: ${CLAUDE_BIN}, default model: ${DEFAULT_MODEL}\n` +
-              `If runs fail with an auth error, run \`claude\` once interactively to log in.`,
+            text: setupReport(r.stdout.trim()),
           },
         ],
       };
@@ -294,7 +367,8 @@ server.registerTool(
           text:
             `Claude Code not found via "${CLAUDE_BIN}".\n` +
             `Install: npm i -g @anthropic-ai/claude-code, then run \`claude\` once to authenticate.\n` +
-            `Or set CLAUDE_BIN to an absolute path in the MCP server env.`,
+            `Or set CLAUDE_BIN to an absolute path in the MCP server env.\n\n` +
+            setupReport(null),
         },
       ],
       isError: true,
@@ -310,14 +384,15 @@ server.registerTool(
       "Read-only second-opinion review of current changes. Set background=true for multi-file diffs.",
     inputSchema: {
       base: z.string().optional().describe("git ref to diff against. If omitted, Claude reviews current worktree changes and tries the branch upstream/base when the worktree is clean."),
+      focus: z.string().optional().describe("Optional risk area to emphasize during review."),
       background: z.boolean().optional(),
       cwd: z.string().optional(),
     },
   },
-  async ({ base, background, cwd }) => {
+  async ({ base, focus, background, cwd }) => {
     const opts = {
       kind: "review",
-      prompt: reviewPrompt(base),
+      prompt: reviewPrompt(base, focus),
       model: DEFAULT_MODEL,
       maxTurns: 25,
       allowWrite: false,

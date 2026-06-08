@@ -31,6 +31,12 @@ pnpm-debug.log*
 .omx/
 .claude-for-codex/
 
+# GSD local/runtime state
+.planning/logs/
+.planning/.gsd-trace.jsonl
+.planning/.lock*
+.planning/active-workstream
+
 # Scratch space
 tmp/
 .tmp/
