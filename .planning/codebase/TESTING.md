@@ -22,6 +22,8 @@ Committed tests:
 
 - `test/runtime-contract.test.mjs` - source-level contract tests for the
   Phase 1 read-only Claude review runtime contract.
+- `test/docs-rollout-contract.test.mjs` - source-level document contract tests
+  for the Phase 1 slash-command team rollout docs and prompt wrappers.
 
 ## CI Verification
 

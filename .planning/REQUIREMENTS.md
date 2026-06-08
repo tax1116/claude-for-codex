@@ -9,8 +9,8 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 ### Setup
 
-- [ ] **SETUP-01**: User can install dependencies with npm on Node.js 18.18 or later.
-- [ ] **SETUP-02**: User can register the MCP server in Codex using an absolute local path.
+- [x] **SETUP-01**: User can install dependencies with npm on Node.js 18.18 or later.
+- [x] **SETUP-02**: User can register the MCP server in Codex using an absolute local path.
 - [x] **SETUP-03**: User can run a setup check that reports whether Claude Code is installed and reachable.
 - [x] **SETUP-04**: User can diagnose a missing Claude binary, unauthenticated Claude CLI, or timeout-prone MCP configuration from setup output and docs.
 
@@ -57,10 +57,10 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 ### Docs
 
-- [ ] **DOC-01**: README and setup docs present slash commands as the standard team rollout path.
-- [ ] **DOC-02**: MCP tool names remain documented as the underlying capability and reference interface.
+- [x] **DOC-01**: README and setup docs present slash commands as the standard team rollout path.
+- [x] **DOC-02**: MCP tool names remain documented as the underlying capability and reference interface.
 - [ ] **DOC-03**: Docs include examples for design review, adversarial review with focus, review against a base ref, background review, status, result, and cancel.
-- [ ] **DOC-04**: Docs preserve unofficial/non-affiliation language for OpenAI and Anthropic.
+- [x] **DOC-04**: Docs preserve unofficial/non-affiliation language for OpenAI and Anthropic.
 - [ ] **DOC-05**: Docs identify time-sensitive claims, such as CLI flags, hook behavior, model aliases, billing, and package setup, for release-date revalidation.
 
 ## v2 Requirements
@@ -112,27 +112,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | Phase 1 | Pending |
-| SETUP-02 | Phase 1 | Pending |
-| SETUP-03 | Phase 1 | Complete (01-01) |
-| SETUP-04 | Phase 1 | Complete (01-01) |
-| REV-01 | Phase 1 | Complete (01-01) |
-| REV-02 | Phase 1 | Complete (01-01) |
-| REV-03 | Phase 1 | Complete (01-01) |
-| REV-04 | Phase 1 | Complete (01-01) |
-| REV-05 | Phase 1 | Complete (01-01) |
-| REV-06 | Phase 1 | Complete (01-01) |
-| CTX-01 | Phase 1 | Complete (01-01) |
-| CTX-02 | Phase 1 | Complete (01-01) |
-| CTX-03 | Phase 1 | Complete (01-01) |
-| CTX-04 | Phase 1 | Complete (01-01) |
+| SETUP-01 | Phase 1 | Complete (01-02) |
+| SETUP-02 | Phase 1 | Complete (01-02) |
+| SETUP-03 | Phase 1 | Complete (01-01, 01-02) |
+| SETUP-04 | Phase 1 | Complete (01-01, 01-02) |
+| REV-01 | Phase 1 | Complete (01-01, 01-02) |
+| REV-02 | Phase 1 | Complete (01-01, 01-02) |
+| REV-03 | Phase 1 | Complete (01-01, 01-02) |
+| REV-04 | Phase 1 | Complete (01-01, 01-02) |
+| REV-05 | Phase 1 | Complete (01-01, 01-02) |
+| REV-06 | Phase 1 | Complete (01-01, 01-02) |
+| CTX-01 | Phase 1 | Complete (01-01, 01-02) |
+| CTX-02 | Phase 1 | Complete (01-01, 01-02) |
+| CTX-03 | Phase 1 | Complete (01-01, 01-02) |
+| CTX-04 | Phase 1 | Complete (01-01, 01-02) |
 | JOB-01 | Phase 2 | Pending |
 | JOB-02 | Phase 2 | Pending |
 | JOB-03 | Phase 2 | Pending |
 | JOB-04 | Phase 2 | Pending |
 | JOB-05 | Phase 2 | Pending |
-| SAFE-01 | Phase 1 | Complete (01-01) |
-| SAFE-02 | Phase 1 | Complete (01-01) |
+| SAFE-01 | Phase 1 | Complete (01-01, 01-02) |
+| SAFE-02 | Phase 1 | Complete (01-01, 01-02) |
 | SAFE-03 | Phase 3 | Pending |
 | SAFE-04 | Phase 3 | Pending |
 | SAFE-05 | Phase 3 | Pending |
@@ -142,10 +142,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QUAL-04 | Phase 2 | Pending |
 | QUAL-05 | Phase 2 | Pending |
 | QUAL-06 | Phase 2 | Pending |
-| DOC-01 | Phase 1 | Pending |
-| DOC-02 | Phase 1 | Pending |
+| DOC-01 | Phase 1 | Complete (01-02) |
+| DOC-02 | Phase 1 | Complete (01-02) |
 | DOC-03 | Phase 2 | Pending |
-| DOC-04 | Phase 1 | Pending |
+| DOC-04 | Phase 1 | Complete (01-02) |
 | DOC-05 | Phase 3 | Pending |
 
 **Coverage:**

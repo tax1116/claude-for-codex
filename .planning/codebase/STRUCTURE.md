@@ -72,6 +72,8 @@ duplicating deep implementation details that belong in MCP tool handlers.
 - `test/runtime-contract.test.mjs` checks the Phase 1 source-level contract for
   read-only Claude review prompts, setup diagnostics, failure guidance, and
   MCP tool schema shape.
+- `test/docs-rollout-contract.test.mjs` checks the Phase 1 team rollout contract
+  across README, setup/design docs, and slash prompt wrappers.
 
 ## Documentation
 
