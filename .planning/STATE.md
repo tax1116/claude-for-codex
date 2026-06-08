@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Phase 1 complete; ready for validation
-last_updated: "2026-06-08T09:06:02.000Z"
-last_activity: 2026-06-08 - Slash-Command Team Rollout completed and Phase 1 closed.
+status: shipping
+stopped_at: Phase 1 verified; PR #2 ready for final ship checks
+last_updated: "2026-06-08T23:25:51.000Z"
+last_activity: 2026-06-09 - Phase 1 verification recorded for PR #2.
 progress:
   total_phases: 3
   completed_phases: 1
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
-**Current focus:** Phase 1 validation
+**Current focus:** Phase 1 shipping
 
 ## Current Position
 
 Phase: 1 of 3 (Manual Design/Risk Review Core)
 Plan: All Phase 1 plans complete
-Status: Ready for validation
-Last activity: 2026-06-08 - Slash-Command Team Rollout completed and Phase 1 closed.
+Status: Shipping through PR #2
+Last activity: 2026-06-09 - Phase 1 verification recorded for PR #2.
 
 Progress: [##########] 100%
 
@@ -75,7 +75,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Validate Phase 1 artifacts before moving to Phase 2.
+- Finish `$gsd-ship 1` checks for PR #2.
 
 ### Blockers/Concerns
 
@@ -95,10 +95,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T09:06:02.000Z
-Stopped at: Phase 1 complete; ready for validation
-Resume file: .planning/phases/01-manual-design-risk-review-core/01-02-SUMMARY.md
+Last session: 2026-06-08T23:25:51.000Z
+Stopped at: Phase 1 verified; PR #2 ready for final ship checks
+Resume file: .planning/phases/01-manual-design-risk-review-core/01-VERIFICATION.md
 
 ## Next Action
 
-Run `$gsd-validate-phase 1` before moving to Phase 2.
+Finish `$gsd-ship 1` by confirming PR #2 checks and removing draft status.
