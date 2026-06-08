@@ -10,6 +10,7 @@ const docs = {
   reviewPrompt: read("prompts/claude-review.md"),
   adversarialPrompt: read("prompts/claude-adversarial.md"),
 };
+const packageJson = JSON.parse(read("package.json"));
 
 test("slash prompts expose the standard team review contracts", () => {
   assertIncludes(docs.reviewPrompt, "/claude-review", "review prompt command");
@@ -68,6 +69,15 @@ test("README teaches slash-command rollout before MCP reference details", () => 
   assert.doesNotMatch(docs.readme, /intended team-ready shape is Node \+ TypeScript/i);
 });
 
+test("README-linked docs are included in the npm package", () => {
+  const linkedDocs = [...docs.readme.matchAll(/\]\((docs\/[^)]+\.md)\)/g)].map((match) => match[1]);
+  assert.ok(linkedDocs.length > 0, "README should link packaged docs");
+
+  for (const linkedDoc of linkedDocs) {
+    assertPackageIncludes(linkedDoc);
+  }
+});
+
 test("setup and design docs explain context, boundaries, and failures", () => {
   for (const expected of [
     "Standard slash-command workflow",
@@ -115,4 +125,11 @@ function assertBefore(text, first, second) {
   assert.notEqual(firstIndex, -1, `Missing ${first}`);
   assert.notEqual(secondIndex, -1, `Missing ${second}`);
   assert.ok(firstIndex < secondIndex, `${first} should appear before ${second}`);
+}
+
+function assertPackageIncludes(relativePath) {
+  assert.ok(
+    packageJson.files.includes(relativePath),
+    `package.json files should include README-linked ${relativePath}`,
+  );
 }

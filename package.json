@@ -12,6 +12,8 @@
     "prompts/",
     "docs/SETUP.md",
     "docs/DESIGN.md",
+    "docs/PUBLISHING.md",
+    "docs/BRANCHING.md",
     "README.md",
     "LICENSE",
     "NOTICE"

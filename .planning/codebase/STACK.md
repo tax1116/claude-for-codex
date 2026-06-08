@@ -68,7 +68,7 @@ Current npm scripts:
 - `npm start`: run `node server.mjs`.
 - `npm run check`: syntax-check `server.mjs` and `hooks/review-gate.mjs`.
 - `npm run lint`: run ESLint across the repo.
-- `npm test`: currently delegates to `npm run check`.
+- `npm test`: run syntax checks and Node's built-in test suite.
 - `npm run pack:check`: verify npm package contents.
 - `npm run ci`: lint, test, and pack-check.
 
