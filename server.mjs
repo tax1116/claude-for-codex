@@ -20,78 +20,37 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { spawn, spawnSync } from "node:child_process";
-import { createHash, randomBytes } from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
-import os from "node:os";
+import { randomBytes } from "node:crypto";
+import { StateStore, resolveStateRoot } from "./src/state-store.mjs";
 
 const CLAUDE_BIN = process.env.CLAUDE_BIN || "claude";
 const DEFAULT_MODEL = process.env.CLAUDE_MODEL || "sonnet";
 const DEFAULT_TIMEOUT_MS = Number(process.env.CLAUDE_TIMEOUT_MS || 600_000);
-const STORE_ROOT =
-  process.env.CLAUDE_FOR_CODEX_STORE ||
-  process.env.CODEX_CC_STORE ||
-  path.join(os.homedir(), ".claude-for-codex", "jobs");
+const STORE_ROOT = resolveStateRoot();
 
 const READ_ONLY_ALLOW =
   "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git status:*),Bash(git show:*)";
 const WRITE_DISALLOW = "Edit,Write,MultiEdit,NotebookEdit";
 
-// ---------- repo + job store helpers ----------
+// ---------- job store helpers ----------
 
-function repoRoot(cwd) {
-  const r = spawnSync("git", ["rev-parse", "--show-toplevel"], { cwd: cwd || process.cwd() });
-  if (r.status === 0) return r.stdout.toString().trim();
-  return path.resolve(cwd || process.cwd());
-}
-function repoKey(cwd) {
-  return createHash("sha1").update(repoRoot(cwd)).digest("hex").slice(0, 12);
-}
-function jobsDir(cwd) {
-  const d = path.join(STORE_ROOT, repoKey(cwd));
-  fs.mkdirSync(d, { recursive: true });
-  return d;
-}
-function jobPath(cwd, id) {
-  return path.join(jobsDir(cwd), `${id}.json`);
+function storeFor(cwd) {
+  return new StateStore({ cwd: cwd || process.cwd(), stateRoot: STORE_ROOT });
 }
 function writeJob(cwd, job) {
-  fs.writeFileSync(jobPath(cwd, job.id), JSON.stringify(job, null, 2));
+  return storeFor(cwd).writeJob(job);
 }
 function readJob(cwd, id) {
-  try {
-    return JSON.parse(fs.readFileSync(jobPath(cwd, id), "utf8"));
-  } catch {
-    return null;
-  }
+  return storeFor(cwd).readJob(id);
 }
 function listJobs(cwd) {
-  const d = jobsDir(cwd);
-  return fs
-    .readdirSync(d)
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => {
-      try {
-        return JSON.parse(fs.readFileSync(path.join(d, f), "utf8"));
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean)
-    .sort((a, b) => (b.startedAt || 0) - (a.startedAt || 0));
-}
-function lastSessionFile(cwd) {
-  return path.join(jobsDir(cwd), "last-session.txt");
+  return storeFor(cwd).listJobs();
 }
 function rememberSession(cwd, sid) {
-  if (sid) fs.writeFileSync(lastSessionFile(cwd), sid);
+  storeFor(cwd).rememberSession(sid);
 }
 function lastSession(cwd) {
-  try {
-    return fs.readFileSync(lastSessionFile(cwd), "utf8").trim() || null;
-  } catch {
-    return null;
-  }
+  return storeFor(cwd).lastSession();
 }
 
 // in-memory handles for cancel within this server's lifetime
