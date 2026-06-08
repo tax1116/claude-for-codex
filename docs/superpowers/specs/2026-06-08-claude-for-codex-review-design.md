@@ -24,6 +24,58 @@ The product core is an MCP server. Slash commands are the team-facing UX wrapper
 - Support deep review only through explicit project allowlists.
 - Support team-level hook automation as opt-in, with reliable enable/disable/status.
 
+## Implementation Tranches
+
+### Tranche 1: Core First
+
+The first implementation tranche is the MCP review core:
+
+- `claude_review`
+- `claude_adversarial_review`
+- `claude_followup`
+- shared repo state root
+- review target selection
+- review job schema and persistence
+- fake-Claude tests
+- slash prompt for `/claude-followup`
+
+This tranche should make the core product promise work end to end:
+
+```text
+/claude-review
+  -> stores a review job
+
+/claude-followup "why is this risky?"
+  -> resolves the prior review
+  -> asks Claude a fresh follow-up question
+  -> stores a follow-up job
+```
+
+### Deferred Until After Core First
+
+The following work is part of the product design but not part of Tranche 1:
+
+- `setup --enable-hook` editing `~/.codex/config.toml`
+- `setup --disable-hook` editing `~/.codex/config.toml`
+- Stop hook behavior changes beyond reading the shared state root
+- deep review command execution
+- npm or GitHub release automation
+
+These pieces should be implemented only after the MCP review core is tested.
+
+## What Already Exists
+
+The repository already has a prototype surface that should be reused, not rebuilt from scratch:
+
+- `server.mjs`: MCP server prototype with review, adversarial review, rescue, status, result, and cancel tools
+- `hooks/review-gate.mjs`: Stop hook prototype that calls Claude read-only and blocks on `BLOCK:`
+- `prompts/claude-review.md`: slash prompt wrapper for `claude_review`
+- `prompts/claude-adversarial.md`: slash prompt wrapper for `claude_adversarial_review`
+- `prompts/claude-rescue.md`: advanced rescue prompt, now outside the standard team rollout path
+- `docs/SETUP.md` and `docs/DESIGN.md`: manual MCP and hook documentation that will need a Core First alignment pass after implementation
+
+Core First should reuse this shape while extracting shared state, target selection, runner, and follow-up behavior into testable modules.
+
 ## Non-Goals
 
 - Do not clone the Claude Code terminal UI inside Codex.
@@ -110,6 +162,17 @@ Each job should include:
 
 Claude session ids may be stored for observability, but review follow-up must not require `claude --resume`.
 
+Tranche 1 must introduce a single `StateStore` boundary instead of scattering job file reads and writes through tool handlers. The state boundary owns:
+
+- repo slug and realpath hash calculation
+- state directory resolution
+- job summary pruning
+- per-job result file reads and writes
+- latest completed review lookup
+- legacy store compatibility
+
+The implementation should keep tool handlers thin. Tool handlers call state and runner helpers; they do not hand-roll file paths.
+
 ### Setup and Hook Layer
 
 Setup/status commands own installation and operational checks.
@@ -144,6 +207,29 @@ Context priority:
 2. User-provided `task_id`
 3. Latest completed `review` or `adversarial-review` job for the same repo
 
+Tool input:
+
+- `question`: required
+- `task_id`: optional
+- `review_text`: optional
+- `background`: optional, defaults to foreground
+- `cwd`: optional
+
+Valid review context jobs:
+
+- `jobClass: "review"`
+- `kind: "review"` or `kind: "adversarial-review"`
+- `status: "completed"`
+- non-empty `result` or `rendered`
+
+The follow-up job itself uses:
+
+- `jobClass: "followup"`
+- `kind: "followup"`
+- `parentJobId`, when a stored review job is used
+- `question`
+- `contextSource`: `review_text`, `task_id`, or `latest_review`
+
 Flow:
 
 1. User runs `/claude-review` or `/claude-adversarial`.
@@ -159,6 +245,16 @@ Rules:
 - Follow-up may inspect current `git status` and `git diff`.
 - Follow-up must not edit files.
 - If no review context exists, fail with a next action.
+
+Core First failure modes:
+
+| Failure | Handling | Required test |
+| --- | --- | --- |
+| No stored review exists | Return the next-action message below | `claude_followup` with empty state |
+| `task_id` points to a non-review job | Reject it and ask for a review task id | `claude_followup` with rescue job id |
+| Latest review job is still running | Tell the user to check status/result first | `claude_followup` with running review job |
+| Review result file is missing or corrupt | Mark the context unusable and ask for a fresh review | corrupt job file fixture |
+| Working tree changed since review | Include current `git status`/diff recheck in the follow-up prompt | fake-Claude argv/prompt assertion |
 
 Failure message:
 
@@ -249,6 +345,15 @@ Override:
 ```text
 CLAUDE_FOR_CODEX_STATE
 ```
+
+Legacy compatibility:
+
+```text
+CLAUDE_FOR_CODEX_STORE
+CODEX_CC_STORE
+```
+
+`CLAUDE_FOR_CODEX_STATE` is the new canonical state root. Existing prototype users may already have jobs under `CLAUDE_FOR_CODEX_STORE` or `~/.claude-for-codex/jobs`. Tranche 1 should read old job locations for `status`, `result`, and `followup` lookup, while writing new jobs to the canonical state root.
 
 Repo state dir:
 
@@ -434,13 +539,34 @@ References:
 
 ## Testing Plan
 
+Tranche 1 should use Node's built-in `node:test` runner unless the implementation introduces a stronger reason to add a test dependency. This keeps the first rollout small and avoids spending an extra dependency decision on basic CLI and state tests.
+
 Unit tests:
 
 - review target selection
 - repo state dir calculation
+- legacy store compatibility
 - job store read/write/list
 - latest review job selection
 - follow-up context priority
+- follow-up job creation
+- deep review config parsing
+- allowed command matching
+- setup enable/disable state mutation
+- hook state lookup
+
+Tranche 1 required unit tests:
+
+- review target selection
+- repo state dir calculation
+- legacy store compatibility
+- job store read/write/list
+- latest review job selection
+- follow-up context priority
+- follow-up job creation
+
+Post-Core tests:
+
 - deep review config parsing
 - allowed command matching
 - setup enable/disable state mutation
@@ -453,6 +579,15 @@ Integration tests use a fake `claude` binary:
 - simulate auth failure
 - simulate non-zero command output
 - simulate `BLOCK:` hook output
+
+Tranche 1 fake-Claude tests:
+
+- `claude_review` records a completed review job
+- `claude_adversarial_review` records a completed adversarial review job
+- `claude_followup` uses explicit `review_text`
+- `claude_followup` uses explicit `task_id`
+- `claude_followup` falls back to the latest completed review job
+- `claude_followup` fails with a next action when no review context exists
 
 MCP smoke tests:
 
@@ -476,6 +611,7 @@ Manual acceptance:
 
 ## Implementation Defaults
 
+- Implement Tranche 1 as Core First before hook/setup automation.
 - Convert the MCP server body to TypeScript before the team rollout work begins.
 - Keep tiny hook scripts in ESM JavaScript unless TypeScript clearly simplifies them.
 - `setup --enable-hook` and `setup --disable-hook` mutate `~/.codex/config.toml` through a plugin-owned managed block and create a backup before edits.
@@ -494,3 +630,4 @@ Manual acceptance:
 - Deep review: explicit allowlist only.
 - Rescue: MCP-only advanced escape hatch for now.
 - Hook: first-class team opt-in, never default.
+- Engineering review scope: Core First before docs/setup/hook automation.

@@ -1,0 +1,52 @@
+{
+  "name": "claude-for-codex",
+  "version": "0.2.0",
+  "description": "Unofficial MCP server that lets OpenAI Codex CLI call Claude Code for review and rescue workflows.",
+  "type": "module",
+  "bin": {
+    "claude-for-codex": "./server.mjs"
+  },
+  "files": [
+    "server.mjs",
+    "hooks/",
+    "prompts/",
+    "docs/SETUP.md",
+    "docs/DESIGN.md",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check hooks/review-gate.mjs",
+    "lint": "eslint .",
+    "test": "npm run check",
+    "pack:check": "npm pack --dry-run --cache ./.npm-cache",
+    "ci": "npm run lint && npm test && npm run pack:check"
+  },
+  "keywords": [
+    "mcp",
+    "codex",
+    "claude-code",
+    "ai",
+    "cli",
+    "code-review"
+  ],
+  "license": "Apache-2.0",
+  "author": "tax1116",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tax1116/claude-for-codex.git"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4"
+  }
+}
