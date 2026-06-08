@@ -27,7 +27,7 @@ The MVP turns the existing local MCP bridge into a reliable manual team workflow
   3. User can narrow a review with a base ref and focus area, and receives prioritized concrete findings that do not claim Claude edited files.
   4. User can see from prompts and docs that Claude receives only explicit prompts, allowed repo reads, read-style git state, selected planning artifacts, resumed Claude output when provided, and user focus.
   5. User-facing docs present slash commands as the standard team rollout path, MCP tool names as the reference interface, and preserve unofficial/non-affiliation language for OpenAI and Anthropic.
-**Plans:** TBD
+**Plans:** `01-01-PLAN.md` complete, `01-02-PLAN.md` pending
 
 ### Phase 2: Async Job Reliability And Testable Packaging
 **Goal:** Users can run long Claude reviews through predictable background jobs, and maintainers can verify the job, runner, and package contract without a live Claude account.
@@ -60,6 +60,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Manual Design/Risk Review Core | 0/TBD | Not started | - |
+| 1. Manual Design/Risk Review Core | 1/2 | In Progress | - |
 | 2. Async Job Reliability And Testable Packaging | 0/TBD | Not started | - |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | Not started | - |

@@ -21,7 +21,8 @@ Date: 2026-06-08
 ├── package.json
 ├── package-lock.json
 ├── prompts/
-└── server.mjs
+├── server.mjs
+└── test/
 ```
 
 Generated or local-only directories such as `node_modules/`, `.npm-cache/`,
@@ -63,6 +64,14 @@ not general MCP server logic.
 
 These are user-interface assets for slash-command workflows. They should avoid
 duplicating deep implementation details that belong in MCP tool handlers.
+
+## Tests
+
+`test/` contains Node built-in test runner files.
+
+- `test/runtime-contract.test.mjs` checks the Phase 1 source-level contract for
+  read-only Claude review prompts, setup diagnostics, failure guidance, and
+  MCP tool schema shape.
 
 ## Documentation
 
@@ -112,7 +121,6 @@ They should not contain real credentials or local absolute paths.
 The current `dev` branch does not have:
 
 - `src/`
-- `test/`
 - `dist/`
 - `tsconfig.json`
 

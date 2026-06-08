@@ -11,24 +11,24 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 - [ ] **SETUP-01**: User can install dependencies with npm on Node.js 18.18 or later.
 - [ ] **SETUP-02**: User can register the MCP server in Codex using an absolute local path.
-- [ ] **SETUP-03**: User can run a setup check that reports whether Claude Code is installed and reachable.
-- [ ] **SETUP-04**: User can diagnose a missing Claude binary, unauthenticated Claude CLI, or timeout-prone MCP configuration from setup output and docs.
+- [x] **SETUP-03**: User can run a setup check that reports whether Claude Code is installed and reachable.
+- [x] **SETUP-04**: User can diagnose a missing Claude binary, unauthenticated Claude CLI, or timeout-prone MCP configuration from setup output and docs.
 
 ### Review
 
-- [ ] **REV-01**: User can ask Claude for a read-only review of current Codex work from inside Codex.
-- [ ] **REV-02**: User can ask Claude for an adversarial design critique focused on architecture boundaries, complexity, assumptions, and simpler alternatives.
-- [ ] **REV-03**: User can ask Claude for implementation-risk detection focused on missing tests, state edge cases, cancellation/resume behavior, context limits, and failure modes.
-- [ ] **REV-04**: User can specify a git base ref so Claude reviews the intended comparison range.
-- [ ] **REV-05**: User can specify a focus area so Claude narrows the review to the user's current concern.
-- [ ] **REV-06**: User receives review output that clearly prioritizes concrete findings and does not claim to have edited files.
+- [x] **REV-01**: User can ask Claude for a read-only review of current Codex work from inside Codex.
+- [x] **REV-02**: User can ask Claude for an adversarial design critique focused on architecture boundaries, complexity, assumptions, and simpler alternatives.
+- [x] **REV-03**: User can ask Claude for implementation-risk detection focused on missing tests, state edge cases, cancellation/resume behavior, context limits, and failure modes.
+- [x] **REV-04**: User can specify a git base ref so Claude reviews the intended comparison range.
+- [x] **REV-05**: User can specify a focus area so Claude narrows the review to the user's current concern.
+- [x] **REV-06**: User receives review output that clearly prioritizes concrete findings and does not claim to have edited files.
 
 ### Context
 
-- [ ] **CTX-01**: User can understand that Claude sees only explicit prompts, repo files it is allowed to read, read-style git state, selected planning artifacts, previous Claude session output when resumed, and user-provided focus.
-- [ ] **CTX-02**: User-facing docs and prompts do not imply that Claude automatically receives the full Codex chat context.
-- [ ] **CTX-03**: Review prompts instruct Claude to inspect untracked files from `git status` when relevant, not only tracked diffs.
-- [ ] **CTX-04**: Planning and setup docs explain when to use design critique versus implementation-risk review.
+- [x] **CTX-01**: User can understand that Claude sees only explicit prompts, repo files it is allowed to read, read-style git state, selected planning artifacts, previous Claude session output when resumed, and user-provided focus.
+- [x] **CTX-02**: User-facing docs and prompts do not imply that Claude automatically receives the full Codex chat context.
+- [x] **CTX-03**: Review prompts instruct Claude to inspect untracked files from `git status` when relevant, not only tracked diffs.
+- [x] **CTX-04**: Planning and setup docs explain when to use design critique versus implementation-risk review.
 
 ### Jobs
 
@@ -40,8 +40,8 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 ### Safety
 
-- [ ] **SAFE-01**: Claude review and adversarial review run read-only by default.
-- [ ] **SAFE-02**: Default Claude tool restrictions allow file reads and read-style git commands while disallowing edit/write tools.
+- [x] **SAFE-01**: Claude review and adversarial review run read-only by default.
+- [x] **SAFE-02**: Default Claude tool restrictions allow file reads and read-style git commands while disallowing edit/write tools.
 - [ ] **SAFE-03**: Write-capable rescue remains outside the standard v1 review path and is clearly warned when documented.
 - [ ] **SAFE-04**: Codex hook review remains opt-in, reversible, and absent from the default team onboarding path.
 - [ ] **SAFE-05**: Docs explain that automatic hook review can loop, block completion, and consume usage unexpectedly.
@@ -114,25 +114,25 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | SETUP-01 | Phase 1 | Pending |
 | SETUP-02 | Phase 1 | Pending |
-| SETUP-03 | Phase 1 | Pending |
-| SETUP-04 | Phase 1 | Pending |
-| REV-01 | Phase 1 | Pending |
-| REV-02 | Phase 1 | Pending |
-| REV-03 | Phase 1 | Pending |
-| REV-04 | Phase 1 | Pending |
-| REV-05 | Phase 1 | Pending |
-| REV-06 | Phase 1 | Pending |
-| CTX-01 | Phase 1 | Pending |
-| CTX-02 | Phase 1 | Pending |
-| CTX-03 | Phase 1 | Pending |
-| CTX-04 | Phase 1 | Pending |
+| SETUP-03 | Phase 1 | Complete (01-01) |
+| SETUP-04 | Phase 1 | Complete (01-01) |
+| REV-01 | Phase 1 | Complete (01-01) |
+| REV-02 | Phase 1 | Complete (01-01) |
+| REV-03 | Phase 1 | Complete (01-01) |
+| REV-04 | Phase 1 | Complete (01-01) |
+| REV-05 | Phase 1 | Complete (01-01) |
+| REV-06 | Phase 1 | Complete (01-01) |
+| CTX-01 | Phase 1 | Complete (01-01) |
+| CTX-02 | Phase 1 | Complete (01-01) |
+| CTX-03 | Phase 1 | Complete (01-01) |
+| CTX-04 | Phase 1 | Complete (01-01) |
 | JOB-01 | Phase 2 | Pending |
 | JOB-02 | Phase 2 | Pending |
 | JOB-03 | Phase 2 | Pending |
 | JOB-04 | Phase 2 | Pending |
 | JOB-05 | Phase 2 | Pending |
-| SAFE-01 | Phase 1 | Pending |
-| SAFE-02 | Phase 1 | Pending |
+| SAFE-01 | Phase 1 | Complete (01-01) |
+| SAFE-02 | Phase 1 | Complete (01-01) |
 | SAFE-03 | Phase 3 | Pending |
 | SAFE-04 | Phase 3 | Pending |
 | SAFE-05 | Phase 3 | Pending |
@@ -155,4 +155,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-08*
-*Last updated: 2026-06-08 after roadmap creation*
+*Last updated: 2026-06-08 after 01-01 execution*

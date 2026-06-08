@@ -4,12 +4,12 @@ Date: 2026-06-08
 
 ## Current Test Surface
 
-The current `dev` branch has a lightweight test surface.
+The current branch has a lightweight test surface.
 
 `npm test` runs:
 
 ```bash
-npm run check
+npm run check && node --test
 ```
 
 `npm run check` runs syntax validation:
@@ -18,7 +18,10 @@ npm run check
 node --check server.mjs && node --check hooks/review-gate.mjs
 ```
 
-There are no committed unit test files on the current `dev` branch.
+Committed tests:
+
+- `test/runtime-contract.test.mjs` - source-level contract tests for the
+  Phase 1 read-only Claude review runtime contract.
 
 ## CI Verification
 
@@ -115,7 +118,7 @@ Current gaps:
 - No automated tests for foreground/background execution.
 - No automated tests for cancellation after process restart.
 - No automated tests for resume-session behavior.
-- No contract tests around MCP tool schemas.
+- No behavioral tests around MCP tool execution with a fake Claude binary.
 - No tests for hook exit-code behavior.
 - No coverage reporting.
 
