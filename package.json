@@ -13,6 +13,8 @@
     "prompts/",
     "docs/SETUP.md",
     "docs/DESIGN.md",
+    "docs/PUBLISHING.md",
+    "docs/BRANCHING.md",
     "README.md",
     "LICENSE",
     "NOTICE"
@@ -21,7 +23,7 @@
     "start": "node server.mjs",
     "check": "node --check server.mjs && node --check hooks/review-gate.mjs && node --check src/state-store.mjs",
     "lint": "eslint .",
-    "test": "node --test test/*.test.mjs && npm run check",
+    "test": "npm run check && node --test",
     "pack:check": "npm pack --dry-run --cache ./.npm-cache",
     "ci": "npm run lint && npm test && npm run pack:check"
   },

@@ -23,8 +23,8 @@ chosen runtime because MCP server wiring, JSON tool schemas, and team setup are
 all simpler in the Codex/Claude ecosystem.
 
 The current implementation is ESM JavaScript (`server.mjs`). The intended team
-rollout shape is Node + TypeScript for the MCP server, with small `.mjs` scripts
-kept for hooks and setup helpers.
+rollout shape is the current Node `.mjs` MCP server. A TypeScript migration is
+deferred until module boundaries and package strategy justify a build step.
 
 ## 1. Install the server
 
@@ -49,7 +49,7 @@ Restart Codex. Tools appear namespaced as `claude:claude_review`,
 `claude:claude_rescue`, etc. Codex may call them on its own, or you can ask
 directly, e.g. *"Use Claude to adversarially review my diff against main."*
 
-## 3. (Optional) Slash-command UX
+## 3. Standard slash-command workflow
 
 Copy the prompt files so they show as `/claude-review`, `/claude-adversarial`,
 `/claude-rescue`:
@@ -58,7 +58,29 @@ Copy the prompt files so they show as `/claude-review`, `/claude-adversarial`,
 cp prompts/*.md ~/.codex/prompts/
 ```
 
-## 4. (Optional) Review gate - auto-review before Codex finishes a turn
+The standard workflow is:
+
+1. Run `claude_setup` once after MCP registration.
+2. Use `/claude-review` for implementation-risk review. It emphasizes missing
+   tests, state edge cases, cancellation/resume behavior, context limits, and
+   failure modes.
+3. Use `/claude-adversarial` for design critique. It emphasizes architecture
+   boundaries, complexity, assumptions, tradeoffs, and simpler alternatives.
+4. Leave arguments empty for a normal current-work review, or provide optional
+   `base` and `focus` text to narrow the scope.
+5. Use `background: true` only for broad diffs, then fetch with
+   `claude_status` and `claude_result`.
+
+Review output should be grouped by `High`, `Medium`, and `Low`. If Claude finds
+no high-confidence issue, summarize it as `No high-confidence findings`. Review
+results are read-only and should state that no files were edited.
+
+Claude does not receive the full Codex chat automatically. The explicit context
+is the prompt text, allowed read-only repo access, read-style git state,
+selected planning docs, resumed Claude Code session output when used, and
+user-provided `base` or `focus`.
+
+## 4. Advanced opt-in review gate - auto-review before Codex finishes a turn
 
 This is not part of the default install. Use it only when you explicitly want a
 Claude review to run during the Codex `Stop` lifecycle event.
@@ -83,9 +105,10 @@ untracked files directly. If Claude returns `BLOCK: <reason>`, the hook exits 2
 and Codex is blocked from stopping, with the reason fed back so it can fix the
 issue.
 
-> **Warning:** the review gate can create a long Codex<->Claude loop and drain
-> usage limits fast. Enable it only while actively monitoring the session.
-> Hooks are experimental in Codex and disabled on Windows.
+> **Warning:** the review gate can create a long Codex<->Claude loop, cause
+> blocking at turn completion, and create usage-cost risk. Enable it only while
+> actively monitoring the session. Hooks are experimental in Codex and disabled
+> on Windows.
 
 To disable only this review gate, remove this plugin's `hooks.Stop` block or use
 Codex's `/hooks` UI to disable the individual hook. To disable all Codex hooks in
@@ -98,18 +121,40 @@ hooks = false
 
 ## Tools reference
 
+MCP tool names are the reference interface under the slash-command workflow.
+
 | Tool | Args | Purpose |
 | --- | --- | --- |
 | `claude_setup` | – | Verify Claude Code is installed/reachable |
-| `claude_review` | `base?, background?, cwd?` | Read-only review of worktree or branch changes |
+| `claude_review` | `base?, focus?, background?, cwd?` | Read-only review of worktree or branch changes |
 | `claude_adversarial_review` | `base?, focus?, background?, cwd?` | Steerable challenge review |
 | `claude_rescue` | `task, model?, resume?, fresh?, allow_write?, background?, cwd?` | Delegate work to Claude |
 | `claude_status` | `task_id?, cwd?` | Running + recent jobs for this repo |
 | `claude_result` | `task_id?, cwd?` | Final output (+ `claude --resume <id>` hint) |
 | `claude_cancel` | `task_id?, cwd?` | Cancel a background job |
 
-`resume: true` continues the latest Claude session in the repo; pass a specific
-session id to target one.
+`resume: true` continues the latest Claude Code session in the repo; pass a
+specific session id to target one. `resume` is Claude Code session continuity
+only; it does not transfer the full Codex chat.
+
+## Setup diagnostics and failure categories
+
+`claude_setup` reports the configured `CLAUDE_BIN`, `CLAUDE_MODEL`,
+`CLAUDE_TIMEOUT_MS`, and `tool_timeout_sec` alignment guidance. It checks basic
+CLI availability, but it does not prove that a live review will fit the selected
+timeout or context.
+
+Common categories:
+
+- `missing binary`: install Claude Code or set `CLAUDE_BIN` to an absolute path.
+- `auth/reachability`: run `claude auth status` if available, or run `claude`
+  once interactively.
+- `timeout`: increase `CLAUDE_TIMEOUT_MS` and MCP `tool_timeout_sec` together,
+  or retry with `background: true`.
+- `malformed JSON`: Claude did not return parseable JSON; use the text fallback
+  for debugging.
+- `context`: retry with a narrower `base`, `focus`, or file scope when the
+  review may be too large.
 
 ## Environment variables
 
@@ -124,5 +169,6 @@ session id to target one.
 ## Safety
 
 - Read-only by default: Claude may read files and run `git diff/log/status/show` only.
-- `allow_write: true` passes `--dangerously-skip-permissions` — use only in trusted repos.
+- `allow_write: true` on `claude_rescue` is outside the default review path and
+  passes `--dangerously-skip-permissions` - use only in trusted repos.
 - Jobs are tracked while the MCP server process is alive; killing the server ends its jobs.

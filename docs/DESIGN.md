@@ -26,8 +26,9 @@ those provide is covered by the tools above.
 
 - **Runtime.** The MCP server is Node.js. This keeps the plugin close to
   `codex-plugin-cc`, matches the MCP SDK ecosystem, and gives teammates a simple
-  `npm install` path. The current prototype is ESM JavaScript (`server.mjs`);
-  the intended team-ready shape is Node + TypeScript for the MCP server body.
+  `npm install` path. The v1 runtime is the current ESM JavaScript server
+  (`server.mjs`); a TypeScript migration is deferred until module boundaries
+  and package strategy justify a build step.
 - **MCP transport.** The server speaks stdio JSON-RPC and is launched by Codex via
   `[mcp_servers.claude]` in `config.toml`. Each tool ultimately shells out to
   `claude -p ... --output-format json` and parses the structured result.
@@ -43,6 +44,61 @@ those provide is covered by the tools above.
   The hook asks Claude to inspect status, tracked diffs, and untracked files so first-commit
   or newly generated files are not silently skipped. The review gate is optional and disabled
   by default.
+
+## Explicit context contract
+
+Claude does not receive the full Codex chat automatically. The explicit context
+contract for `/claude-review`, `/claude-adversarial`, `claude_review`, and
+`claude_adversarial_review` is:
+
+- Prompt text from the slash command or MCP tool call.
+- Read-only repository access through `Read`, `Grep`, and `Glob`.
+- Read-style git state, starting with `git status --short --branch`, plus
+  tracked diffs and relevant untracked files.
+- Selected planning docs when present: `.planning/PROJECT.md`,
+  `.planning/REQUIREMENTS.md`, `.planning/ROADMAP.md`, and the current phase
+  `CONTEXT.md`.
+- Optional `base` and `focus` values supplied by the user.
+- Resumed Claude output only when a Claude session is explicitly resumed.
+
+`resume` means Claude Code session continuity only. It does not mean Codex chat
+history, hidden state, or every `.planning/**` file is sent to Claude.
+
+## Review mode boundaries
+
+The standard team path is manual slash commands first:
+
+- `/claude-review` calls `claude_review` for implementation-risk review:
+  missing tests, state edge cases, cancellation/resume behavior, context limits,
+  and failure modes.
+- `/claude-adversarial` calls `claude_adversarial_review` for adversarial design
+  critique: architecture boundaries, complexity, assumptions, tradeoffs, and
+  simpler alternatives.
+
+Both review modes are read-only. They should return concrete `High`, `Medium`,
+and `Low` findings, or `No high-confidence findings` when clean, and should
+state that no files were edited.
+
+`claude_rescue` and `allow_write` are outside the default review path. They cross
+the read-only boundary and should stay clearly warned wherever they are
+documented.
+
+The `Stop` hook is also outside default onboarding. It is advanced opt-in
+automation because it can loop, block Codex completion, and create usage-cost
+risk.
+
+## Failure categories
+
+Runtime and setup output should make these categories actionable:
+
+- `missing binary`: `CLAUDE_BIN` does not launch Claude Code.
+- `auth/reachability`: Claude is not authenticated or cannot be reached.
+- `timeout`: `CLAUDE_TIMEOUT_MS` or MCP `tool_timeout_sec` is too low for the
+  review.
+- `malformed JSON` / text fallback: Claude output was not parseable JSON, so the
+  raw text is preserved.
+- `context too large`: retry with a narrower `base`, `focus`, file scope, or
+  background flow.
 
 ## Caveats
 
