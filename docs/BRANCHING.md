@@ -29,30 +29,36 @@ feature merge.
 
 ## Release Promotion Flow
 
-Promote verified `dev` to `master` locally with a fast-forward merge:
+Promote verified `dev` to `master` with a pull request:
 
-```bash
-git fetch origin
-git checkout master
-git pull --ff-only origin master
-git merge --ff-only origin/dev
-git push origin master
-git checkout dev
+```text
+dev -> master
 ```
 
-This advances only `master` to the already-verified `dev` commit. It does not
-delete or rewrite `dev`.
+1. Confirm `dev` is green and contains only work intended for release.
+2. Open a pull request from `dev` into `master`.
+3. Wait for required CI and review gates on `master`.
+4. Merge the promotion PR.
+5. Keep `dev`; do not delete the branch after the promotion PR merges.
 
-If `master` cannot fast-forward to `origin/dev`, stop and inspect the divergence
-before merging. Do not force-push `master` or `dev`.
+This keeps a GitHub audit trail for release promotion while preserving `dev` as
+the long-lived integration branch.
+
+Do not push directly to `master` for normal release promotion. If GitHub shows a
+branch-rule bypass warning, stop and use a `dev` -> `master` pull request
+instead.
+
+If `master` and `dev` diverge, stop and inspect both histories before opening
+the promotion PR. Do not force-push `master` or `dev`.
 
 ## GitHub Settings
 
 Protect both long-lived branches:
 
-- `master`: require CI and restrict direct changes to intentional release
-  promotion.
-- `dev`: require CI for feature/topic branch pull requests.
+- `master`: require pull requests, CI, review, linear history, conversation
+  resolution, and no force-pushes or deletions.
+- `dev`: require pull requests and CI for feature/topic branch merges, and no
+  force-pushes or deletions.
 
 If GitHub shows a `Delete branch` button after a pull request merge, delete only
 short-lived work branches. Do not delete `dev`.
