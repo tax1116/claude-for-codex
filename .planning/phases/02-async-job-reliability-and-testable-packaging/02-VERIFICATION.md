@@ -19,6 +19,40 @@ Phase 2 now has deterministic fake-Claude lifecycle tests, a testable runner
 module, process-lifetime cancellation semantics, background workflow docs, and
 package checks that include every runtime helper needed by npm users.
 
+## 한국어 요약
+
+Phase 2에서는 긴 Claude 리뷰를 로컬 MCP 서버 안에서 더 예측 가능하게 다루도록
+정리했습니다. 핵심은 실제 Claude 계정이나 네트워크에 의존하지 않고도
+background job 흐름을 fake-Claude 테스트로 검증할 수 있게 만든 것입니다.
+
+작업 내용:
+
+- `server.mjs`에 섞여 있던 Claude 실행과 job lifecycle 로직을
+  `src/claude-runner.mjs`로 분리했습니다.
+- fake-Claude 테스트로 JSON 결과 파싱, session id 저장, 비용/turn 메타데이터,
+  malformed JSON fallback, non-zero exit, missing binary, timeout, background
+  status/result, cancel 흐름을 검증했습니다.
+- cancel은 현재 MCP 서버 프로세스가 실제 child process를 소유하고 있을 때만
+  가능한 best-effort 동작으로 제한했습니다.
+- README, setup, design 문서에 `background: true`, `claude_status`,
+  `claude_result`, `claude_cancel` 예시와 durable queue가 아니라는 경계를
+  추가했습니다.
+- npm package dry-run이 `src/claude-runner.mjs`와 `src/state-store.mjs`를
+  포함하는지 테스트로 고정했습니다.
+
+검증:
+
+- `npm run ci` 통과
+- `node --test test/job-lifecycle.test.mjs` 통과
+- `node --test test/docs-rollout-contract.test.mjs` 통과
+- npm pack dry-run에서 runtime 파일 포함 확인
+
+주의:
+
+- Live Claude 인증/네트워크 호출은 의도적으로 자동 검증하지 않았습니다. Phase
+  2의 목적은 로컬 lifecycle과 package contract를 deterministic하게 검증하는
+  것입니다.
+
 ## Observable Truths
 
 | Truth | Status | Evidence |
