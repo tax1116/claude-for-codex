@@ -40,7 +40,7 @@ The MVP turns the existing local MCP bridge into a reliable manual team workflow
   3. Maintainer can run deterministic fake-Claude tests for job-store behavior, runner JSON parsing, text fallback, error status, timeout or launch failures, session id persistence, and status/result/cancel flows.
   4. CI runs lint, tests, syntax checks, and npm package dry-run checks across the supported package contract.
   5. Maintainer can confirm npm package dry-run output includes every runtime file required by the package, and docs include examples for design review, adversarial review with focus, base-ref review, background review, status, result, and cancel.
-**Plans:** TBD
+**Plans:** `02-01-PLAN.md` planned, `02-02-PLAN.md` planned
 
 ### Phase 3: Opt-In Automation Boundaries And Release Revalidation
 **Goal:** Users can trust that advanced automation and write-capable rescue stay explicit, reversible, and outside the default v1 review path.
@@ -61,5 +61,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Manual Design/Risk Review Core | 2/2 | Complete | 2026-06-08 |
-| 2. Async Job Reliability And Testable Packaging | 0/TBD | Not started | - |
+| 2. Async Job Reliability And Testable Packaging | 0/2 | Planned | - |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | Not started | - |
