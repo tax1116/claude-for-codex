@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 2 planned; ready for execution
-last_updated: "2026-06-09T01:19:32.000Z"
-last_activity: 2026-06-09 - Phase 2 async job reliability plans created.
+status: implementation-complete
+stopped_at: Phase 2 implemented and verified locally; stacked PR creation pending
+last_updated: "2026-06-09T01:38:57.000Z"
+last_activity: 2026-06-09 - Phase 2 async job reliability implementation completed with fake-Claude tests and package docs.
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 2
-  percent: 50
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -21,45 +21,45 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
-**Current focus:** Phase 2 execution
+**Current focus:** Phase 2 PR review and merge sequencing
 
 ## Current Position
 
 Phase: 2 of 3 (Async Job Reliability And Testable Packaging)
-Plan: 02-01 and 02-02 planned
-Status: Ready for execution
-Last activity: 2026-06-09 - Phase 2 async job reliability plans created.
+Plan: 02-01 and 02-02 complete
+Status: Implemented and verified locally
+Last activity: 2026-06-09 - Phase 2 fake-Claude lifecycle, package docs, and verification completed.
 
-Progress: [#####-----] 50%
+Progress: [#######---] 67%
 
 ## Phase Progress
 
 | Phase | Status | Requirements | Plans |
 |-------|--------|--------------|-------|
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
-| 2. Async Job Reliability And Testable Packaging | Planned | 12 | 0/2 |
+| 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | Not started | 4 | TBD |
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: 4.5 min
-- Total execution time: 0.2 hours
+- Total plans completed: 4
+- Average duration: 8.0 min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Manual Design/Risk Review Core | 2/2 | 0.2h | 4.5 min |
-| 2. Async Job Reliability And Testable Packaging | 0/2 | 0.0h | N/A |
+| 2. Async Job Reliability And Testable Packaging | 2/2 | 0.4h | 11.5 min |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | 0.0h | N/A |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01 Runtime Review Contract (5 min), 01-02 Slash-Command Team Rollout (4 min)
-- Trend: Phase 2 planned
+- Last 5 plans: 01-01 Runtime Review Contract (5 min), 01-02 Slash-Command Team Rollout (4 min), 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min)
+- Trend: Phase 2 complete; PR review pending
 
 ## Accumulated Context
 
@@ -71,12 +71,13 @@ Recent decisions affecting current work:
 - Phase 1 centers the MVP on manual slash-command-first design critique and implementation-risk review.
 - Hooks remain opt-in, reversible, and outside the default launch path.
 - Write-enabled rescue remains outside the v1 default review path.
-- Deterministic fake-Claude tests are required before trusting background job and runner behavior.
+- Deterministic fake-Claude tests now cover background job and runner behavior without live Claude usage.
 
 ### Pending Todos
 
-- Execute Phase 2 plan 02-01: Fake-Claude Job Lifecycle Contracts.
-- Execute Phase 2 plan 02-02: Package And Background Workflow Documentation.
+- Commit and push the Phase 2 implementation branch.
+- Open a stacked PR for Phase 2 execution on top of `codex/phase-2-async-jobs-plan`.
+- After PR #4 and PR #5 are merged in order, retarget or rebase the Phase 2 execution PR onto `dev`.
 
 ### Blockers/Concerns
 
@@ -96,10 +97,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-09T01:19:32.000Z
-Stopped at: Phase 2 planned; ready for execution
-Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-01-PLAN.md
+Last session: 2026-06-09T01:38:57.000Z
+Stopped at: Phase 2 implemented and verified locally; stacked PR creation pending
+Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-VERIFICATION.md
 
 ## Next Action
 
-Run `$gsd-execute-phase 2` from a feature branch targeting `dev`.
+Commit, push, and create a stacked PR for `codex/phase-2-job-lifecycle` targeting `codex/phase-2-async-jobs-plan`.

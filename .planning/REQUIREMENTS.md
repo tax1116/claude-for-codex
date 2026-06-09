@@ -126,25 +126,25 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CTX-02 | Phase 1 | Complete (01-01, 01-02) |
 | CTX-03 | Phase 1 | Complete (01-01, 01-02) |
 | CTX-04 | Phase 1 | Complete (01-01, 01-02) |
-| JOB-01 | Phase 2 | Pending |
-| JOB-02 | Phase 2 | Pending |
-| JOB-03 | Phase 2 | Pending |
-| JOB-04 | Phase 2 | Pending |
-| JOB-05 | Phase 2 | Pending |
+| JOB-01 | Phase 2 | Complete (02-01, 02-02) |
+| JOB-02 | Phase 2 | Complete (02-01, 02-02) |
+| JOB-03 | Phase 2 | Complete (02-01, 02-02) |
+| JOB-04 | Phase 2 | Complete (02-01, 02-02) |
+| JOB-05 | Phase 2 | Complete (02-01, 02-02) |
 | SAFE-01 | Phase 1 | Complete (01-01, 01-02) |
 | SAFE-02 | Phase 1 | Complete (01-01, 01-02) |
 | SAFE-03 | Phase 3 | Pending |
 | SAFE-04 | Phase 3 | Pending |
 | SAFE-05 | Phase 3 | Pending |
-| QUAL-01 | Phase 2 | Pending |
-| QUAL-02 | Phase 2 | Pending |
-| QUAL-03 | Phase 2 | Pending |
-| QUAL-04 | Phase 2 | Pending |
-| QUAL-05 | Phase 2 | Pending |
-| QUAL-06 | Phase 2 | Pending |
+| QUAL-01 | Phase 2 | Complete (02-01) |
+| QUAL-02 | Phase 2 | Complete (02-01) |
+| QUAL-03 | Phase 2 | Complete (02-01) |
+| QUAL-04 | Phase 2 | Complete (02-01) |
+| QUAL-05 | Phase 2 | Complete (02-02) |
+| QUAL-06 | Phase 2 | Complete (02-02) |
 | DOC-01 | Phase 1 | Complete (01-02) |
 | DOC-02 | Phase 1 | Complete (01-02) |
-| DOC-03 | Phase 2 | Pending |
+| DOC-03 | Phase 2 | Complete (02-02) |
 | DOC-04 | Phase 1 | Complete (01-02) |
 | DOC-05 | Phase 3 | Pending |
 

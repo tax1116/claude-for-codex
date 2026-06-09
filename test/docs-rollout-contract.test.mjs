@@ -111,6 +111,38 @@ test("setup and design docs explain context, boundaries, and failures", () => {
   }
 });
 
+test("docs teach base, focus, background, and cancellation boundaries", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
+
+  for (const expected of [
+    "/claude-review base=origin/dev",
+    "/claude-adversarial focus=",
+    "background: true",
+    "claude_status",
+    "claude_result",
+    "claude_cancel",
+    "best effort",
+    "process-lifetime",
+    "not a hosted durable queue",
+  ]) {
+    assertIncludes(combinedDocs, expected, `docs: ${expected}`);
+  }
+});
+
+test("server runtime imports stay covered by npm package files", () => {
+  const serverSource = read("server.mjs");
+  const runtimeImports = [...serverSource.matchAll(/from "\.\/(src\/[^"]+)"/g)].map((match) => match[1]);
+
+  assert.ok(runtimeImports.length > 0, "server should import runtime helpers from src");
+  for (const runtimeImport of runtimeImports) {
+    assertPackageCovers(runtimeImport);
+  }
+
+  for (const expected of ["server.mjs", "src/", "hooks/", "prompts/", "README.md", "LICENSE", "NOTICE"]) {
+    assertPackageIncludes(expected);
+  }
+});
+
 function read(relativePath) {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
@@ -131,5 +163,12 @@ function assertPackageIncludes(relativePath) {
   assert.ok(
     packageJson.files.includes(relativePath),
     `package.json files should include README-linked ${relativePath}`,
+  );
+}
+
+function assertPackageCovers(relativePath) {
+  assert.ok(
+    packageJson.files.some((entry) => entry === relativePath || (entry.endsWith("/") && relativePath.startsWith(entry))),
+    `package.json files should cover runtime helper ${relativePath}`,
   );
 }

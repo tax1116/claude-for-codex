@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check hooks/review-gate.mjs && node --check src/state-store.mjs",
+    "check": "node --check server.mjs && node --check hooks/review-gate.mjs && node --check src/state-store.mjs && node --check src/claude-runner.mjs",
     "lint": "eslint .",
     "test": "npm run check && node --test",
     "pack:check": "npm pack --dry-run --cache ./.npm-cache",

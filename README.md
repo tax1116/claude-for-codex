@@ -28,6 +28,18 @@ First examples:
 
 MCP tool names remain the reference interface underneath the slash prompts. The prompts call `claude_review` and `claude_adversarial_review`; the tools can still be invoked directly when you need exact arguments.
 
+Background lifecycle example:
+
+```text
+/claude-review base=origin/dev background: true
+claude_status "task-..."
+claude_result "task-..."
+claude_cancel "task-..."
+```
+
+Cancellation is best effort and process-lifetime only while the current MCP
+server owns the Claude child process. It is not a hosted durable queue.
+
 Claude does not receive the full Codex chat automatically. The explicit context is the prompt text, allowed read-only repo access, read-style git state, selected planning docs, resumed Claude Code session output when used, and user-provided `base` or `focus`.
 
 ## Feature mapping vs codex-plugin-cc
@@ -143,14 +155,16 @@ set `[features] hooks = false`.
 | `CLAUDE_BIN`        | `claude`                             | Claude Code binary path          |
 | `CLAUDE_MODEL`      | `sonnet`                             | Default model alias/id           |
 | `CLAUDE_TIMEOUT_MS` | `600000`                             | Per-call timeout (≤ `tool_timeout_sec*1000`) |
-| `CLAUDE_FOR_CODEX_STORE` | `~/.claude-for-codex/jobs`       | Job store directory              |
-| `CODEX_CC_STORE`    | –                                    | Legacy alias for the job store   |
+| `CLAUDE_FOR_CODEX_STATE` | `~/.claude-for-codex/state`      | Canonical repo-scoped state root |
+| `CLAUDE_FOR_CODEX_STORE` | `~/.claude-for-codex/jobs`       | Legacy job store read path       |
+| `CODEX_CC_STORE`    | –                                    | Legacy alias for old job reads   |
 
 ## Safety
 
 - Read-only by default: Claude may read files and run `git diff/log/status/show` only.
 - `allow_write: true` passes `--dangerously-skip-permissions` — use only in trusted repos.
-- Jobs are tracked while the MCP server process is alive; killing the server ends its jobs.
+- Jobs are tracked in repo-scoped state, but cancellation is best effort only
+  while the MCP server process owns the child process.
 - Billing: as of mid-2026, `claude -p` / Agent SDK usage on subscription plans draws from a
   separate monthly Agent SDK credit. Check current Claude Code docs.
 
