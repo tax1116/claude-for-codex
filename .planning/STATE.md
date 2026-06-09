@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: implementation-complete
-stopped_at: Phase 2 implemented and verified locally; stacked PR creation pending
-last_updated: "2026-06-09T01:38:57.000Z"
-last_activity: 2026-06-09 - Phase 2 async job reliability implementation completed with fake-Claude tests and package docs.
+status: planning
+stopped_at: Phase 3 planned; ready for execution
+last_updated: "2026-06-09T01:58:33.000Z"
+last_activity: 2026-06-09 - Phase 3 opt-in automation and release revalidation plans created.
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 4
+  total_plans: 6
   completed_plans: 4
   percent: 67
 ---
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
-**Current focus:** Phase 2 PR review and merge sequencing
+**Current focus:** Phase 3 execution planning
 
 ## Current Position
 
-Phase: 2 of 3 (Async Job Reliability And Testable Packaging)
-Plan: 02-01 and 02-02 complete
-Status: Implemented and verified locally
-Last activity: 2026-06-09 - Phase 2 fake-Claude lifecycle, package docs, and verification completed.
+Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
+Plan: 03-01 and 03-02 planned
+Status: Ready for execution
+Last activity: 2026-06-09 - Phase 3 opt-in automation and release revalidation plans created.
 
 Progress: [#######---] 67%
 
@@ -38,7 +38,7 @@ Progress: [#######---] 67%
 |-------|--------|--------------|-------|
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
 | 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
-| 3. Opt-In Automation Boundaries And Release Revalidation | Not started | 4 | TBD |
+| 3. Opt-In Automation Boundaries And Release Revalidation | Planned | 4 | 0/2 |
 
 ## Performance Metrics
 
@@ -75,9 +75,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Commit and push the Phase 2 implementation branch.
-- Open a stacked PR for Phase 2 execution on top of `codex/phase-2-async-jobs-plan`.
-- After PR #4 and PR #5 are merged in order, retarget or rebase the Phase 2 execution PR onto `dev`.
+- Execute Phase 3 plan 03-01: Hook And Rescue Safety Boundaries.
+- Execute Phase 3 plan 03-02: Release Revalidation Markers.
+- Preserve merge order for the existing stack: PR #4 -> PR #5 -> PR #6 -> Phase 3 planning PR.
 
 ### Blockers/Concerns
 
@@ -97,10 +97,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-09T01:38:57.000Z
-Stopped at: Phase 2 implemented and verified locally; stacked PR creation pending
-Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-VERIFICATION.md
+Last session: 2026-06-09T01:58:33.000Z
+Stopped at: Phase 3 planned; ready for execution
+Resume file: .planning/phases/03-opt-in-automation-boundaries-and-release-revalidation/03-01-PLAN.md
 
 ## Next Action
 
-Commit, push, and create a stacked PR for `codex/phase-2-job-lifecycle` targeting `codex/phase-2-async-jobs-plan`.
+Run `$gsd-execute-phase 3` from a feature branch targeting the Phase 3 planning branch, or merge the current PR stack before retargeting to `dev`.

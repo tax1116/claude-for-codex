@@ -51,7 +51,7 @@ The MVP turns the existing local MCP bridge into a reliable manual team workflow
   1. User can complete default team onboarding without enabling Codex hook review, and hook documentation clearly explains opt-in setup, reversibility, loop risk, blocking risk, and usage-cost risk.
   2. User can identify write-capable rescue as outside the standard v1 review path, with clear warnings before any documentation or workflow crosses the read-only boundary.
   3. Release reviewer can find time-sensitive claims marked for release-date revalidation, including CLI flags, hook behavior, model aliases, billing, and package setup.
-**Plans:** TBD
+**Plans:** `03-01-PLAN.md` planned, `03-02-PLAN.md` planned
 
 ## Progress
 
@@ -62,4 +62,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Manual Design/Risk Review Core | 2/2 | Complete | 2026-06-08 |
 | 2. Async Job Reliability And Testable Packaging | 2/2 | Complete | 2026-06-09 |
-| 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | Not started | - |
+| 3. Opt-In Automation Boundaries And Release Revalidation | 0/2 | Planned | - |
