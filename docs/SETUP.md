@@ -78,6 +78,23 @@ The standard workflow is:
 This workflow is intentionally manual. It is meant to replace tool-switching for
 Codex-first users, not to make Claude Code review every Codex turn.
 
+Concrete examples:
+
+```text
+/claude-review
+/claude-review base=origin/dev
+/claude-review base=origin/dev focus="job cancellation"
+/claude-adversarial focus="simpler alternatives"
+/claude-review background: true
+claude_status "task-..."
+claude_result "task-..."
+claude_cancel "task-..."
+```
+
+`claude_cancel` is best effort and process-lifetime only. It can cancel a job
+while the current MCP server still owns the Claude child process; it is not a
+hosted durable queue cancellation.
+
 Review output should be grouped by `High`, `Medium`, and `Low`. If Claude finds
 no high-confidence issue, summarize it as `No high-confidence findings`. Review
 results are read-only and should state that no files were edited.
@@ -170,12 +187,14 @@ Common categories:
 | `CLAUDE_BIN` | `claude` | Claude Code binary path |
 | `CLAUDE_MODEL` | `sonnet` | Default model alias/id |
 | `CLAUDE_TIMEOUT_MS` | `600000` | Per-call timeout (<= `tool_timeout_sec * 1000`) |
-| `CLAUDE_FOR_CODEX_STORE` | `~/.claude-for-codex/jobs` | Job store directory |
-| `CODEX_CC_STORE` | – | Legacy alias for the job store |
+| `CLAUDE_FOR_CODEX_STATE` | `~/.claude-for-codex/state` | Canonical repo-scoped state root |
+| `CLAUDE_FOR_CODEX_STORE` | `~/.claude-for-codex/jobs` | Legacy job store read path |
+| `CODEX_CC_STORE` | – | Legacy alias for old job reads |
 
 ## Safety
 
 - Read-only by default: Claude may read files and run `git diff/log/status/show` only.
 - `allow_write: true` on `claude_rescue` is outside the default review path and
   passes `--dangerously-skip-permissions` - use only in trusted repos.
-- Jobs are tracked while the MCP server process is alive; killing the server ends its jobs.
+- Jobs are persisted in repo-scoped state, but cancellation is best effort only
+  while the current MCP server process owns the child process.

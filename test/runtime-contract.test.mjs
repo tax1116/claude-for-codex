@@ -4,6 +4,8 @@ import { test } from "node:test";
 import { URL } from "node:url";
 
 const serverSource = readFileSync(new URL("../server.mjs", import.meta.url), "utf8");
+const runnerSource = readFileSync(new URL("../src/claude-runner.mjs", import.meta.url), "utf8");
+const runtimeSource = `${serverSource}\n${runnerSource}`;
 
 function sectionBetween(start, end) {
   const startIndex = serverSource.indexOf(start);
@@ -41,7 +43,7 @@ test("review prompts include explicit Codex context and output contract", () => 
     "context limits",
     "failure modes",
   ]) {
-    assert.match(serverSource, new RegExp(escapeRegExp(expected)), expected);
+    assert.match(runtimeSource, new RegExp(escapeRegExp(expected)), expected);
   }
 });
 
@@ -55,7 +57,7 @@ test("read-only review results and failures have a predictable shape", () => {
     "text fallback",
     "context too large",
   ]) {
-    assert.match(serverSource, new RegExp(escapeRegExp(expected)), expected);
+    assert.match(runtimeSource, new RegExp(escapeRegExp(expected)), expected);
   }
 });
 

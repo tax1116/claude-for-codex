@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Product positioning clarified; Phase 2 still ready for execution
-last_updated: "2026-06-09T05:57:27.227Z"
-last_activity: 2026-06-09 - Completed quick task 260609-krv: Reposition product docs around Codex-first replacement workflow for codex-plugin-cc.
+status: review-blocked
+stopped_at: Phase 2 validation complete; cross-AI review blocked by Claude login/data-export approval
+last_updated: "2026-06-10T03:36:31Z"
+last_activity: 2026-06-10 - Pulled latest dev into Phase 2 branch; Codex-first positioning merged; Claude review remains blocked by login/data-export approval.
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 2
-  percent: 50
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -21,45 +21,45 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Phase 2 execution
+**Current focus:** Phase 2 cross-AI review blocker and PR merge readiness
 
 ## Current Position
 
 Phase: 2 of 3 (Async Job Reliability And Testable Packaging)
-Plan: 02-01 and 02-02 planned
-Status: Ready for execution
-Last activity: 2026-06-09 - Completed quick task 260609-krv: Reposition product docs around Codex-first replacement workflow for codex-plugin-cc.
+Plan: 02-01 and 02-02 complete
+Status: Implemented and validated; cross-AI review blocked
+Last activity: 2026-06-10 - Latest dev merged into Phase 2 branch; product positioning and Phase 2 validation state are both present; Claude review remains blocked by local login/data-export approval.
 
-Progress: [#####-----] 50%
+Progress: [#######---] 67%
 
 ## Phase Progress
 
 | Phase | Status | Requirements | Plans |
 |-------|--------|--------------|-------|
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
-| 2. Async Job Reliability And Testable Packaging | Planned | 12 | 0/2 |
+| 2. Async Job Reliability And Testable Packaging | Review Blocked | 12 | 2/2 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | Not started | 4 | TBD |
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: 4.5 min
-- Total execution time: 0.2 hours
+- Total plans completed: 4
+- Average duration: 8.0 min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Manual Design/Risk Review Core | 2/2 | 0.2h | 4.5 min |
-| 2. Async Job Reliability And Testable Packaging | 0/2 | 0.0h | N/A |
+| 2. Async Job Reliability And Testable Packaging | 2/2 | 0.4h | 11.5 min |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | 0.0h | N/A |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01 Runtime Review Contract (5 min), 01-02 Slash-Command Team Rollout (4 min)
-- Trend: Phase 2 planned
+- Last 5 plans: 01-01 Runtime Review Contract (5 min), 01-02 Slash-Command Team Rollout (4 min), 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min)
+- Trend: Phase 2 implementation and validation complete; cross-AI review needs explicit approval/login before ship.
 
 ## Accumulated Context
 
@@ -71,12 +71,13 @@ Recent decisions affecting current work:
 - Phase 1 centers the MVP on manual slash-command-first design critique and implementation-risk review.
 - Hooks remain opt-in, reversible, and outside the default launch path.
 - Write-enabled rescue remains outside the v1 default review path.
-- Deterministic fake-Claude tests are required before trusting background job and runner behavior.
+- Deterministic fake-Claude tests now cover background job and runner behavior without live Claude usage.
 
 ### Pending Todos
 
-- Execute Phase 2 plan 02-01: Fake-Claude Job Lifecycle Contracts.
-- Execute Phase 2 plan 02-02: Package And Background Workflow Documentation.
+- Complete `$gsd-review 2` cross-AI review after Claude CLI login and explicit external data-export approval.
+- Push Phase 2 validation/merge-readiness commits and refresh CI.
+- Update stacked PRs after Phase 2 validation/review commits land.
 
 ### Blockers/Concerns
 
@@ -102,10 +103,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-09T05:57:27.227Z
-Stopped at: Product positioning clarified; Phase 2 still ready for execution
-Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-01-PLAN.md
+Last session: 2026-06-10T03:36:31Z
+Stopped at: Phase 2 validation complete; cross-AI review blocked
+Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-VERIFICATION.md
 
 ## Next Action
 
-Run `$gsd-execute-phase 2` from a feature branch targeting `dev`.
+Re-run `$gsd-review 2 --claude` after Claude CLI login and explicit approval to send Phase 2 planning content to Claude, then ship the Phase 2 PR stack.
