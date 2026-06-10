@@ -1,8 +1,29 @@
-# Design & feature mapping
+# Design & product boundary
 
-`claude-for-codex` is the mirror image of
-[`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc): that plugin lets
-Claude Code call Codex; this one lets **Codex call Claude Code**. It is unofficial.
+`claude-for-codex` is the Codex-first counterpart to
+[`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc).
+`codex-plugin-cc` makes sense when Claude Code is the primary workspace and
+Codex is the outside reviewer. This project makes sense when Codex is the
+primary workspace and Claude Code is the outside reviewer.
+
+The product is a local model bridge, not another review framework. It exists so
+Codex users can keep working in Codex while deliberately calling Claude Code for
+manual review, adversarial critique, rescue, and long-running job follow-up.
+It is unofficial.
+
+## Product boundary
+
+This plugin should replace a Codex-first team's need to use `codex-plugin-cc`
+just to get Claude Code's second opinion. It should not replace:
+
+- GSD/gstack planning, validation, review, or shipping workflows.
+- GitHub PR review bots such as CodeRabbit.
+- Codex's own planning and implementation judgment.
+- Manual human review for consequential changes.
+- The user's responsibility to choose what context Claude sees.
+
+Hooks remain optional because automatic lifecycle review is a different product
+shape. The standard workflow is manual slash command or MCP tool invocation.
 
 ## How each codex-plugin-cc feature maps
 
@@ -19,8 +40,8 @@ Claude Code call Codex; this one lets **Codex call Claude Code**. It is unoffici
 | Review gate (`Stop` hook) | `hooks/review-gate.mjs` | Codex `Stop` hook (exit 2 = block) |
 | `/codex:*` slash commands | `prompts/claude-*.md` | Codex custom prompts |
 
-Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The behavior
-those provide is covered by the tools above.
+Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The
+Codex-first workflow behavior is covered by the tools above.
 
 ## Mechanics
 
@@ -86,6 +107,11 @@ documented.
 The `Stop` hook is also outside default onboarding. It is advanced opt-in
 automation because it can loop, block Codex completion, and create usage-cost
 risk.
+
+GSD/gstack review workflows may call this bridge as an outside-model check, but
+the bridge itself should stay workflow-agnostic. Its job is to expose Claude Code
+cleanly to Codex; it should not own phase state, PR policy, milestone promotion,
+or team process.
 
 ## Failure categories
 

@@ -1,7 +1,7 @@
 # Requirements: claude-for-codex
 
 **Defined:** 2026-06-08
-**Core Value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
+**Core Value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
 
 ## v1 Requirements
 
@@ -102,7 +102,9 @@ Explicitly excluded. Documented to prevent scope creep.
 | Full Codex chat-context transfer | Claude only receives explicit artifacts and repo access; implying hidden context transfer creates false confidence. |
 | Hosted queue or cloud service | The v1 product is local-first and depends on local Claude Code authentication. |
 | Write-enabled rescue as a normal workflow | It crosses the read-only safety boundary and can edit files with broad permissions. |
+| Replacing GSD/gstack workflows | GSD owns planning, validation, review, and shipping process; this plugin owns the Codex-to-Claude bridge. |
 | Replacing Codex planning/review | Claude is a second-opinion reviewer, not the primary orchestrator. |
+| GitHub PR review bot | Hosted PR automation is a separate product shape with different auth, tenancy, and review-posting concerns. |
 | Public marketplace polish before team validation | Internal reliability and docs come before broad distribution. |
 | TypeScript migration in v1 | Current ESM/no-build packaging is simpler; TypeScript can follow after module boundaries and package strategy stabilize. |
 
@@ -155,4 +157,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-08*
-*Last updated: 2026-06-08 after 01-01 execution*
+*Last updated: 2026-06-09 after Codex-first positioning clarification*
