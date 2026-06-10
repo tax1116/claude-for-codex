@@ -18,11 +18,20 @@ Codex-first users can keep Codex as the task owner while calling Claude Code as 
 local second-opinion bridge for design critique, implementation-risk review, and
 recovery.
 
+## Current Milestone: v2.0 Explicit Claude Follow-Up
+
+**Goal:** Users can explicitly ask follow-up questions about prior Claude review
+results while choosing whether to continue a Claude session or start fresh.
+
+**Target features:**
+- A manual follow-up workflow that references a previous Claude result.
+- Explicit session choice: latest session, specific session, or fresh review.
+- Documentation that separates Claude session continuity from Codex chat-context
+  transfer.
+
 ## Requirements
 
 ### Validated
-
-<!-- Existing behavior inferred from the current codebase map. -->
 
 - [existing] Codex can launch a local Node.js MCP server over stdio.
 - [existing] The MCP server can invoke the local Claude Code CLI with
@@ -41,30 +50,33 @@ recovery.
   part of the default install path.
 - [existing] CI runs lint, syntax checks, and npm package dry-run checks across
   Node 18, 20, and 22.
+- [v1.0] The product is positioned as a Codex-first replacement workflow for the
+  `codex-plugin-cc` idea.
+- [v1.0] Users can use both MCP tools and slash commands, with slash commands
+  documented as the standard team rollout path.
+- [v1.0] Read-only review prompts center on design critique and
+  implementation-risk detection.
+- [v1.0] Review input is grounded in repo state, diff, planning docs, and an
+  optional user focus rather than implied full Codex chat transfer.
+- [v1.0] The job, runner, status, result, cancel, and package contracts are
+  covered by deterministic local checks.
+- [v1.0] Hooks remain opt-in and reversible, and write-capable rescue remains
+  outside the default review path.
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Make "Codex-first replacement workflow for codex-plugin-cc" the primary
-  v1 team positioning.
-- [ ] Keep the product usable through both MCP tools and slash commands, while
-  documenting slash commands as the standard team rollout path.
-- [ ] Shape the v1 review prompt around two lenses: design critique and
-  implementation-risk detection.
-- [ ] Ensure review input is grounded in repo state, diff, planning docs, and an
-  optional user focus instead of pretending Claude sees the full Codex chat
-  context.
-- [ ] Extract the job/state core from the monolithic `server.mjs` so status,
-  result, cancel, and resume semantics are testable.
-- [ ] Add deterministic tests for job-store behavior without requiring a live
-  Claude account.
-- [ ] Clarify follow-up/session behavior so users know when they are continuing
-  a Claude session versus starting a fresh review.
-- [ ] Improve failure handling for token/context exhaustion, stale running jobs,
-  and Claude CLI launch/auth failures.
-- [ ] Keep hooks opt-in and clearly reversible.
-- [ ] Keep `allow_write` explicitly guarded and outside the default review path.
+- [ ] Add an explicit Claude follow-up workflow that can ask about a previous
+  Claude review result.
+- [ ] Let users choose whether the follow-up continues the latest Claude session,
+  continues a specific Claude session, or starts fresh.
+- [ ] Preserve read-only defaults for follow-up review unless the user explicitly
+  chooses an existing write-capable rescue path.
+- [ ] Document the practical difference between Claude session continuity and
+  Codex chat-context transfer.
+- [ ] Add deterministic tests for follow-up prompt construction, session
+  selection, and missing-session diagnostics.
 
 ### Out of Scope
 
@@ -88,6 +100,8 @@ recovery.
   Codex-user growth goal.
 - Write-enabled rescue as a normal workflow - write access remains exceptional
   because it bypasses the default read-only safety boundary.
+- Automatic follow-up after every review - follow-up remains manual so users
+  control context, latency, and usage.
 
 ## Context
 
@@ -102,7 +116,13 @@ or multi-agent review loops. The rollout should therefore make the manual path
 feel obvious: ask for a design review when the plan feels consequential, risky,
 or too self-confirming.
 
-The product promise for v1 centers on two review lenses:
+The v1.0 MVP shipped a usable manual review bridge, async job controls, docs,
+tests, and opt-in automation boundaries. A team can use the plugin from v1.0
+for deliberate read-only Claude review; v2.0 improves the follow-up experience
+rather than making first use possible. Historical v1 planning artifacts are
+archived under `.planning/milestones/`.
+
+The product promise still centers on two review lenses:
 
 - Design critique: challenge architecture boundaries, complexity, assumptions,
   and simpler alternatives.
@@ -110,9 +130,10 @@ The product promise for v1 centers on two review lenses:
   cancellation/resume edge cases, context-limit issues, and failure modes before
   implementation or merge.
 
-The current implementation already proves the rough MCP shape. It still needs a
-cleaner core boundary, stronger tests, clearer session/follow-up semantics, and
-failure handling before it becomes a reliable team plugin.
+The v2.0 milestone narrows the next improvement to explicit follow-up. The
+plugin should let Codex ask Claude a second question about prior Claude output
+without pretending that Claude can see the full Codex chat. Session continuity is
+useful, but it must be a visible operator choice.
 
 ## Constraints
 
@@ -141,16 +162,18 @@ failure handling before it becomes a reliable team plugin.
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use Node.js for the MCP server | MCP SDK wiring and npm install are the simplest team path. | - Pending |
-| Support both MCP tools and slash commands | MCP gives capability; slash commands give learnable team UX. | - Pending |
-| Document slash commands as the team standard path | Team rollout should start from an easy manual command, not hidden tool invocation. | - Pending |
-| Position as a Codex-first replacement workflow for codex-plugin-cc | Otherwise the project reads like a duplicate review skill instead of a clear workspace choice. | - Pending |
-| Keep GSD/gstack as an adjacent workflow layer | GSD owns process state; this plugin owns the Codex-to-Claude bridge. | - Pending |
-| Keep hooks opt-in | Automatic review can loop and consume usage unexpectedly. | - Pending |
-| Center v1 on design critique and implementation-risk detection | This is the distinct "other model perspective" value the team asked for. | - Pending |
-| Pass explicit artifacts rather than pretending to share full Codex context | Claude Code sees what we provide through repo state, diff, docs, and prompt focus. | - Pending |
-| Extract core state before broad feature growth | The current monolithic server makes status/result/cancel behavior hard to test. | - Pending |
-| Track stable GSD planning docs but ignore runtime state | Codebase maps should be reviewable; logs, locks, and active runtime markers should stay local. | - Pending |
+| Use Node.js for the MCP server | MCP SDK wiring and npm install are the simplest team path. | Delivered in v1.0 |
+| Support both MCP tools and slash commands | MCP gives capability; slash commands give learnable team UX. | Delivered in v1.0 |
+| Document slash commands as the team standard path | Team rollout should start from an easy manual command, not hidden tool invocation. | Delivered in v1.0 |
+| Position as a Codex-first replacement workflow for codex-plugin-cc | Otherwise the project reads like a duplicate review skill instead of a clear workspace choice. | Delivered in v1.0 |
+| Keep GSD/gstack as an adjacent workflow layer | GSD owns process state; this plugin owns the Codex-to-Claude bridge. | Delivered in v1.0 |
+| Keep hooks opt-in | Automatic review can loop and consume usage unexpectedly. | Delivered in v1.0 |
+| Center v1 on design critique and implementation-risk detection | This is the distinct "other model perspective" value the team asked for. | Delivered in v1.0 |
+| Pass explicit artifacts rather than pretending to share full Codex context | Claude Code sees what we provide through repo state, diff, docs, and prompt focus. | Delivered in v1.0 |
+| Extract core state before broad feature growth | The monolithic server needed testable state/result/cancel behavior first. | Delivered in v1.0 |
+| Track stable GSD planning docs but ignore runtime state | Codebase maps should be reviewable; logs, locks, and active runtime markers should stay local. | Delivered in v1.0 |
+| Make follow-up an explicit operator action | Session continuation can be useful but should not hide context, usage, or review intent. | Active in v2.0 |
+| Keep session choice visible | Users need to know whether Claude is continuing latest, continuing a specific session, or starting fresh. | Active in v2.0 |
 
 ## Evolution
 
@@ -170,4 +193,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state.
 
 ---
-*Last updated: 2026-06-09 after Codex-first positioning clarification*
+*Last updated: 2026-06-10 after v1.0 archive and v2.0 follow-up milestone start*

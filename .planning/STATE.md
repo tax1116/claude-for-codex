@@ -1,54 +1,50 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: verified
-stopped_at: PR #15 merged release docs to master; master squash history is being synchronized back to dev
-last_updated: "2026-06-10T13:19:30Z"
-last_activity: 2026-06-10 - PR #15 merged the release documentation refresh into `master`; because it was squash-merged, `master` must be synchronized back into `dev` with a merge commit before the next promotion cycle.
+milestone: v2.0
+milestone_name: Explicit Claude Follow-Up
+status: planning
+last_updated: "2026-06-10T13:40:12.056Z"
+last_activity: 2026-06-10
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
-  percent: 100
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-08)
+See: .planning/PROJECT.md (updated 2026-06-10)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Synchronize `master` promotion history back into `dev`
+**Current focus:** v2.0 explicit Claude follow-up workflow
 
 ## Current Position
 
-Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
-Plan: 03-01 and 03-02 complete
-Status: Planned v1 work complete; release docs are on `master`
-Last activity: 2026-06-10 - PR #15 merged the release documentation refresh into `master`; follow-up work is synchronizing that squash promotion history back into `dev` and documenting the merge-commit promotion rule.
-
-Progress: [##########] 100%
+Phase: 1 - Explicit Claude Follow-Up Workflow
+Plan: —
+Status: Ready to plan
+Last activity: 2026-06-10 — Milestone v2.0 created with Phase 1 follow-up scope
 
 ## Phase Progress
 
 | Phase | Status | Requirements | Plans |
 |-------|--------|--------------|-------|
-| 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
-| 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
-| 3. Opt-In Automation Boundaries And Release Revalidation | Complete | 4 | 2/2 |
+| 1. Explicit Claude Follow-Up Workflow | Planned | 16 | 0/0 |
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
-- Average duration: 8.0 min
-- Total execution time: 0.5 hours
+- v1.0 total plans completed: 6
+- v1.0 average duration: 8.0 min
+- v1.0 total execution time: 0.5 hours
+- v2.0 plans completed: 0
 
-**By Phase:**
+**v1.0 Archive:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -73,10 +69,12 @@ Recent decisions affecting current work:
 - Write-enabled rescue remains outside the v1 default review path.
 - Deterministic fake-Claude tests now cover background job and runner behavior without live Claude usage.
 - Phase 3 preserves Codex-first positioning while keeping automation and write access explicitly guarded.
+- v2.0 starts with explicit follow-up before broader diagnostics, hook tooling, or release polish.
+- Follow-up must expose the session mode instead of implying hidden Codex chat-context transfer.
 
 ### Pending Todos
 
-- Merge the `master` history sync branch into `dev` with a merge commit.
+- Plan v2.0 Phase 1: explicit Claude follow-up workflow.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -93,6 +91,7 @@ Recent decisions affecting current work:
 | 260610-ukb | Refresh release-facing setup and hook documentation after master promotion | 2026-06-10 | same commit | [260610-ukb-refresh-release-facing-setup-and-hook-do](./quick/260610-ukb-refresh-release-facing-setup-and-hook-do/) |
 | 260610-ur4 | Update planning state after PR #13 merge | 2026-06-10 | same commit | [260610-ur4-update-planning-state-after-pr-13-merge](./quick/260610-ur4-update-planning-state-after-pr-13-merge/) |
 | 260610-uzt | Sync master squash promotion back into dev and document merge method | 2026-06-10 | same commit | [260610-uzt-sync-master-squash-promotion-back-into-d](./quick/260610-uzt-sync-master-squash-promotion-back-into-d/) |
+| 260610-va2 | Update planning state after PR #18 merge | 2026-06-10 | same commit | [260610-va2-update-planning-state-after-pr-18-merge](./quick/260610-va2-update-planning-state-after-pr-18-merge/) |
 
 ## Deferred Items
 
@@ -107,10 +106,14 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-10T13:19:30Z
-Stopped at: PR #15 merged to `master`; sync `master` back into `dev`
+Last session: 2026-06-10T13:40:12Z
+Stopped at: v1.0 archived; v2.0 milestone created with Phase 1 follow-up scope
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Open and merge a `master` to `dev` sync PR with a merge commit, then use merge commits for future `dev` to `master` promotion PRs.
+Run `$gsd-plan-phase 1` for v2.0 explicit Claude follow-up workflow.
+
+## Operator Next Steps
+
+- Plan the first v2 phase with /gsd-plan-phase 1
