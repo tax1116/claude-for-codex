@@ -1,12 +1,27 @@
 # claude-for-codex
 
-Unofficially call **Claude Code** from **OpenAI Codex CLI** for review and rescue workflows.
-This is a conceptual counterpart to [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc),
-which goes the other way (Claude Code → Codex). Built on a Node.js MCP server plus optional
-Codex hooks.
+Use **Claude Code** from inside **OpenAI Codex CLI** without changing your
+primary workspace.
+
+`claude-for-codex` is a Codex-first replacement workflow for teams that like the
+idea behind [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc)
+but work primarily in Codex. `codex-plugin-cc` lets Claude Code call Codex; this
+plugin lets Codex call Claude Code for manual review, adversarial critique,
+rescue, background status, results, and cancellation.
+
+Built on a local Node.js MCP server plus optional Codex hooks.
 
 This project is independently maintained and is not affiliated with, endorsed by, or sponsored by
 OpenAI or Anthropic.
+
+## Product promise
+
+Keep Codex as the main working surface, and call Claude Code only when a second
+model perspective is worth the context switch.
+
+This is not a GSD/gstack replacement, a PR review bot, or an always-on automatic
+reviewer. It is a local model bridge: Codex stays in charge of the task, while
+Claude Code can be invoked deliberately for critique, risk review, or recovery.
 
 ## Team rollout: slash commands first
 
@@ -17,7 +32,8 @@ The standard team path is manual and explicit:
 3. Register `server.mjs` in Codex MCP config with an absolute path.
 4. Run `claude_setup` from Codex to confirm the effective Claude binary, model, timeout, and auth guidance.
 5. Copy `prompts/*.md` into `~/.codex/prompts/` so teammates can use `/claude-review` and `/claude-adversarial`.
-6. Ask for a manual second opinion only when needed.
+6. Ask Claude Code for a manual second opinion only when needed, without leaving
+   Codex.
 
 First examples:
 
@@ -42,7 +58,15 @@ server owns the Claude child process. It is not a hosted durable queue.
 
 Claude does not receive the full Codex chat automatically. The explicit context is the prompt text, allowed read-only repo access, read-style git state, selected planning docs, resumed Claude Code session output when used, and user-provided `base` or `focus`.
 
-## Feature mapping vs codex-plugin-cc
+## Replacement boundary vs codex-plugin-cc
+
+Use `codex-plugin-cc` when Claude Code is your main workspace and Codex is the
+outside reviewer. Use `claude-for-codex` when Codex is your main workspace and
+Claude Code is the outside reviewer.
+
+The goal is not API-level symmetry for every Claude Code UI surface. The goal is
+to cover the workflow primitives a Codex-first team needs to stop switching
+between tools for second opinions.
 
 | codex-plugin-cc (CC → Codex) | This plugin (Codex → CC)        | How                                  |
 | ---------------------------- | ------------------------------- | ------------------------------------ |
@@ -57,8 +81,8 @@ Claude does not receive the full Codex chat automatically. The explicit context 
 | Review gate (`Stop` hook)    | `hooks/review-gate.mjs`         | **Codex Stop hook** (exit 2 = block) |
 | `/codex:*` slash commands    | `prompts/claude-*.md`           | Codex custom prompts (`/claude-review`, …) |
 
-Not 1:1: Claude-Code-only UI surfaces (e.g. the `/agents` subagent list). The behavior is
-covered by the tools above.
+Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The
+Codex-first workflow is covered by the tools above.
 
 ## Prerequisites
 
@@ -176,7 +200,7 @@ event names and MCP config format against the Codex docs for your installed vers
 ## Documentation
 
 - [docs/SETUP.md](docs/SETUP.md) — detailed install, config, tools, and env reference
-- [docs/DESIGN.md](docs/DESIGN.md) — feature mapping vs codex-plugin-cc and how it works
+- [docs/DESIGN.md](docs/DESIGN.md) — product boundary, codex-plugin-cc mapping, and mechanics
 - [docs/PUBLISHING.md](docs/PUBLISHING.md) — naming and how to push to your own GitHub repo
 - [docs/BRANCHING.md](docs/BRANCHING.md) — branch roles, merge flow, and release promotion policy
 

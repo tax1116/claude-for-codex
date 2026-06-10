@@ -1,7 +1,7 @@
 # Requirements: claude-for-codex
 
 **Defined:** 2026-06-08
-**Core Value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
+**Core Value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
 
 ## v1 Requirements
 
@@ -32,11 +32,11 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 ### Jobs
 
-- [ ] **JOB-01**: User can start long Claude reviews in the background and receive a task id immediately.
-- [ ] **JOB-02**: User can list running and recent Claude jobs for the current repository.
-- [ ] **JOB-03**: User can fetch the final output of a completed Claude job.
-- [ ] **JOB-04**: User can cancel a running Claude job while the MCP server process still owns the child process.
-- [ ] **JOB-05**: User-facing output states the process-lifetime limit of cancellation and avoids promising durable queue semantics.
+- [x] **JOB-01**: User can start long Claude reviews in the background and receive a task id immediately.
+- [x] **JOB-02**: User can list running and recent Claude jobs for the current repository.
+- [x] **JOB-03**: User can fetch the final output of a completed Claude job.
+- [x] **JOB-04**: User can cancel a running Claude job while the MCP server process still owns the child process.
+- [x] **JOB-05**: User-facing output states the process-lifetime limit of cancellation and avoids promising durable queue semantics.
 
 ### Safety
 
@@ -48,18 +48,18 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 ### Quality
 
-- [ ] **QUAL-01**: Job-store behavior is covered by deterministic tests that do not require a live Claude account.
-- [ ] **QUAL-02**: Claude runner behavior is testable with a fake Claude executable or equivalent fixture.
-- [ ] **QUAL-03**: Tests cover JSON result parsing, text fallback, error status, timeout/launch failure handling, and session id persistence.
-- [ ] **QUAL-04**: Tests or checks cover background status/result/cancel behavior.
-- [ ] **QUAL-05**: CI runs lint, tests, syntax checks, and npm package dry-run checks.
-- [ ] **QUAL-06**: Package dry-run output includes every runtime file required by the npm package.
+- [x] **QUAL-01**: Job-store behavior is covered by deterministic tests that do not require a live Claude account.
+- [x] **QUAL-02**: Claude runner behavior is testable with a fake Claude executable or equivalent fixture.
+- [x] **QUAL-03**: Tests cover JSON result parsing, text fallback, error status, timeout/launch failure handling, and session id persistence.
+- [x] **QUAL-04**: Tests or checks cover background status/result/cancel behavior.
+- [x] **QUAL-05**: CI runs lint, tests, syntax checks, and npm package dry-run checks.
+- [x] **QUAL-06**: Package dry-run output includes every runtime file required by the npm package.
 
 ### Docs
 
 - [x] **DOC-01**: README and setup docs present slash commands as the standard team rollout path.
 - [x] **DOC-02**: MCP tool names remain documented as the underlying capability and reference interface.
-- [ ] **DOC-03**: Docs include examples for design review, adversarial review with focus, review against a base ref, background review, status, result, and cancel.
+- [x] **DOC-03**: Docs include examples for design review, adversarial review with focus, review against a base ref, background review, status, result, and cancel.
 - [x] **DOC-04**: Docs preserve unofficial/non-affiliation language for OpenAI and Anthropic.
 - [ ] **DOC-05**: Docs identify time-sensitive claims, such as CLI flags, hook behavior, model aliases, billing, and package setup, for release-date revalidation.
 
@@ -102,7 +102,9 @@ Explicitly excluded. Documented to prevent scope creep.
 | Full Codex chat-context transfer | Claude only receives explicit artifacts and repo access; implying hidden context transfer creates false confidence. |
 | Hosted queue or cloud service | The v1 product is local-first and depends on local Claude Code authentication. |
 | Write-enabled rescue as a normal workflow | It crosses the read-only safety boundary and can edit files with broad permissions. |
+| Replacing GSD/gstack workflows | GSD owns planning, validation, review, and shipping process; this plugin owns the Codex-to-Claude bridge. |
 | Replacing Codex planning/review | Claude is a second-opinion reviewer, not the primary orchestrator. |
+| GitHub PR review bot | Hosted PR automation is a separate product shape with different auth, tenancy, and review-posting concerns. |
 | Public marketplace polish before team validation | Internal reliability and docs come before broad distribution. |
 | TypeScript migration in v1 | Current ESM/no-build packaging is simpler; TypeScript can follow after module boundaries and package strategy stabilize. |
 
@@ -155,4 +157,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-08*
-*Last updated: 2026-06-08 after 01-01 execution*
+*Last updated: 2026-06-09 after Codex-first positioning clarification*

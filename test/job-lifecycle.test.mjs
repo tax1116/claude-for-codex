@@ -176,6 +176,11 @@ test("reports background status, running result, and final result", async () => 
   assert.equal(finalResult.isError, false);
   assert.match(finalResult.text, /fake review result/);
   assert.match(finalResult.text, /claude session: session-fake-123/);
+
+  const recentStatus = runner.statusText({ cwd });
+  assert.equal(recentStatus.isError, false);
+  assert.match(recentStatus.text, new RegExp(`id: ${started.job.id}`));
+  assert.match(recentStatus.text, /status: completed/);
 });
 
 test("cancels only process-lifetime jobs owned by this MCP server", async () => {

@@ -49,6 +49,35 @@ completed: 2026-06-09
 
 **Background job behavior is now testable without a live Claude account.**
 
+## 한국어 작업 요약
+
+Phase 2-1에서는 Claude Code 실행과 job lifecycle 로직을 MCP 서버
+엔트리포인트에서 분리해 테스트 가능한 runtime helper로 정리했습니다. 핵심은
+실제 Claude 계정, 네트워크, 사용량 크레딧 없이도 긴 리뷰 작업의 성공, 실패,
+timeout, background 실행, status/result 조회, cancel 동작을 로컬 테스트로
+검증할 수 있게 만든 것입니다.
+
+주요 작업:
+
+- `server.mjs`에 섞여 있던 Claude runner와 job formatting 로직을
+  `src/claude-runner.mjs`로 옮겼습니다.
+- `server.mjs`는 MCP tool 등록과 prompt 구성 책임을 유지하고, 실행 lifecycle은
+  `createClaudeRunner()`에 위임하도록 정리했습니다.
+- fake-Claude 테스트로 JSON 결과 파싱, session id 저장, 비용/turn 메타데이터,
+  malformed JSON fallback, non-zero exit, missing binary, timeout, background
+  status/result, cancel 흐름을 검증했습니다.
+- cancel은 현재 MCP 서버 프로세스가 실제 Claude child process를 소유하고 있을
+  때만 가능한 best-effort 동작으로 제한했습니다.
+- runtime 출력에도 `process-lifetime` 범위와 durable queue가 아니라는 점을
+  명확히 남겼습니다.
+
+검증 결과:
+
+- `node --test test/job-lifecycle.test.mjs` 통과
+- `npm test` 통과
+- `npm run lint` 통과
+- `npm run ci` 통과
+
 ## Accomplishments
 
 - Extracted the runner/job lifecycle code from `server.mjs` into `src/claude-runner.mjs`.
