@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: verified
 stopped_at: Phase 3 implemented and locally verified; ready for PR review
-last_updated: "2026-06-10T05:12:48Z"
-last_activity: 2026-06-10 - Implemented and verified Phase 3 hook/rescue safety boundaries and release-date revalidation markers on a feature branch.
+last_updated: "2026-06-10T05:34:39Z"
+last_activity: 2026-06-10 - Cleared the Phase 2 external Claude review blocker after explicit user approval and added no-taskId result coverage.
 progress:
   total_phases: 3
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Phase 3 PR review
+**Current focus:** PR #10 review and dev-to-master promotion
 
 ## Current Position
 
 Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
 Plan: 03-01 and 03-02 complete
 Status: Ready for PR review
-Last activity: 2026-06-10 - Phase 3 safety docs, source comments, release-date revalidation docs, and docs/runtime contract tests were updated and `npm run ci` passed.
+Last activity: 2026-06-10 - External Claude read-only review cleared the Phase 2 blocker; `claude_result` without task id coverage was added.
 
 Progress: [##########] 100%
 
@@ -59,7 +59,7 @@ Progress: [##########] 100%
 **Recent Trend:**
 
 - Last 5 plans: 01-02 Slash-Command Team Rollout (4 min), 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min), 03-01 Hook And Rescue Safety Boundaries (12 min), 03-02 Release Revalidation Markers (10 min)
-- Trend: All planned v1 phases are implemented locally; next work is validation, PR review, and release promotion policy follow-through.
+- Trend: All planned v1 phases are implemented and the prior Phase 2 external-review blocker is cleared; next work is PR review and release promotion policy follow-through.
 
 ## Accumulated Context
 
@@ -76,13 +76,12 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Open a Phase 3 implementation PR into `dev`.
-- Keep the Phase 2 external Claude review blocker recorded until Claude CLI login and explicit external data-export approval are available.
-- After Phase 3 merges to `dev`, continue normal dev-to-master promotion through PR #4.
+- Merge PR #10 into `dev` after review.
+- After PR #10 merges to `dev`, continue normal dev-to-master promotion through PR #4.
+- Before release/team rollout, perform release-date revalidation against official Codex and Claude docs.
 
 ### Blockers/Concerns
 
-- Phase 2 cross-AI review remains blocked until Claude CLI login and explicit external data-export approval are available; this is recorded in Phase 2 review artifacts.
 - Release owner must revalidate time-sensitive CLI, hook, model, billing, and package setup claims before release-facing documentation is treated as current.
 
 ### Quick Tasks Completed
@@ -90,6 +89,7 @@ Recent decisions affecting current work:
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260609-krv | Reposition product docs around Codex-first replacement workflow for codex-plugin-cc | 2026-06-09 | same commit | [260609-krv-reposition-product-docs-around-codex-fir](./quick/260609-krv-reposition-product-docs-around-codex-fir/) |
+| 260610-k82 | Resolve Phase 2 external Claude review blocker | 2026-06-10 | same commit | [260610-k82-resolve-phase-2-external-claude-review-b](./quick/260610-k82-resolve-phase-2-external-claude-review-b/) |
 
 ## Deferred Items
 
@@ -104,10 +104,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-10T05:11:12Z
-Stopped at: Phase 3 implemented and locally verified; ready for PR review
-Resume file: .planning/phases/03-opt-in-automation-boundaries-and-release-revalidation/03-VERIFICATION.md
+Last session: 2026-06-10T05:34:39Z
+Stopped at: Phase 2 external review blocker cleared; Phase 3 PR ready for review
+Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-REVIEWS.md
 
 ## Next Action
 
-Push the feature branch and open a PR into `dev`.
+Push the blocker-resolution commit to PR #10, then merge PR #10 into `dev` after review.

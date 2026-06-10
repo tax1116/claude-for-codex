@@ -64,8 +64,9 @@ and Claude Code docs at release time. This implementation adds the checklist and
 guards against stale claims; it does not claim that external docs were checked
 for the current date.
 
-The Phase 2 external Claude review blocker also remains recorded until Claude
-CLI login and explicit external data-export approval are available.
+The earlier Phase 2 external Claude review blocker has since been cleared by an
+authorized read-only Claude review recorded in
+`.planning/phases/02-async-job-reliability-and-testable-packaging/02-REVIEWS.md`.
 
 ## Verification Metadata
 

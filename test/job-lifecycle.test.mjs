@@ -183,6 +183,25 @@ test("reports background status, running result, and final result", async () => 
   assert.match(recentStatus.text, /status: completed/);
 });
 
+test("returns latest completed result when no task id is provided", async () => {
+  const { cwd, runner } = makeRunner({ delayMs: 150 });
+
+  const completed = runner.startBackground(reviewOpts(cwd, { background: true }));
+  await completed.done;
+
+  await new Promise((resolve) => setTimeout(resolve, 5));
+  const running = runner.startBackground(reviewOpts(cwd, { background: true }));
+
+  const defaultResult = runner.resultText({ cwd });
+  assert.equal(defaultResult.isError, false);
+  assert.match(defaultResult.text, new RegExp(`id: ${completed.job.id}`));
+  assert.doesNotMatch(defaultResult.text, new RegExp(`Job ${running.job.id} is still running`));
+  assert.match(defaultResult.text, /fake review result/);
+
+  runner.cancelJob({ taskId: running.job.id, cwd });
+  await running.done;
+});
+
 test("cancels only process-lifetime jobs owned by this MCP server", async () => {
   const run = makeRunner({ delayMs: 1_000 });
   const started = run.runner.startBackground(reviewOpts(run.cwd, { background: true }));
