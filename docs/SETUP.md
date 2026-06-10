@@ -9,15 +9,13 @@ as `codex-plugin-cc`.
 ## Prerequisites
 
 - Node.js >= 18.18
-- **Codex CLI** installed and logged in
+- **Codex CLI** installed and signed in. Follow the official Codex install docs
+  for your platform; npm and Homebrew are documented alternatives.
+- **Claude Code** installed and authenticated. Follow the official Claude Code
+  install docs, then verify the local binary and auth state:
   ```bash
-  npm i -g @openai/codex
-  codex login
-  ```
-- **Claude Code** installed and logged in (run `claude` once interactively to auth)
-  ```bash
-  npm i -g @anthropic-ai/claude-code
-  claude
+  claude --version
+  claude auth status
   ```
 
 ## Runtime
@@ -110,14 +108,12 @@ This is not part of the default install. Use it only when you explicitly want a
 Claude review to run during the Codex `Stop` lifecycle event. This is an
 advanced opt-in path, not the team onboarding default.
 
-Add to `~/.codex/config.toml`:
+Add to `~/.codex/config.toml`. Hooks are enabled by default in current Codex
+CLI releases; only add `[features] hooks = true` if your config layer has
+previously disabled them.
 
 ```toml
-[features]
-hooks = true
-
 [[hooks.Stop]]
-matcher = ".*"
 [[hooks.Stop.hooks]]
 type = "command"
 command = 'node "/ABS/PATH/claude-for-codex/hooks/review-gate.mjs"'
@@ -132,8 +128,8 @@ issue.
 
 > **Warning:** the review gate can create a long Codex<->Claude loop, cause
 > blocking at turn completion, and create usage-cost risk. Enable it only while
-> actively monitoring the session. Hooks are experimental in Codex and disabled
-> on Windows.
+> actively monitoring the session. For Windows-specific hook commands, use
+> Codex's `commandWindows` override.
 
 Disable checklist:
 
@@ -174,8 +170,9 @@ timeout or context.
 Common categories:
 
 - `missing binary`: install Claude Code or set `CLAUDE_BIN` to an absolute path.
-- `auth/reachability`: run `claude auth status` if available, or run `claude`
-  once interactively.
+- `auth/reachability`: run `claude auth status`; use `claude auth login` or an
+  interactive `claude` session if the status check reports that you are not
+  logged in.
 - `timeout`: increase `CLAUDE_TIMEOUT_MS` and MCP `tool_timeout_sec` together,
   or retry with `background: true`.
 - `malformed JSON`: Claude did not return parseable JSON; use the text fallback
@@ -205,15 +202,16 @@ Common categories:
 
 ## Release-date revalidation
 
-These setup notes include external-tool behavior that can drift. Before a team
-rollout, npm publish, or release tag, re-check the following against official
-docs for the release date:
+These setup notes include external-tool behavior that can drift. They were
+revalidated on 2026-06-10 against official Codex and Claude Code docs plus
+local CLI smoke checks. Before a later team rollout, npm publish, or release
+tag, re-check the following again:
 
 | Claim area | What to re-check |
 | --- | --- |
 | Codex CLI/MCP config | MCP server config keys, absolute-path requirements, and `tool_timeout_sec` behavior |
-| hook behavior | Stop hook event name, `/hooks` UI, disable behavior, and Windows support |
-| Claude Code CLI behavior | install command, auth command/status, `claude -p`, JSON output, and resume behavior |
+| hook behavior | Stop hook event name, default enablement, `/hooks` UI, disable behavior, and Windows command override support |
+| Claude Code CLI behavior | official install path, auth command/status, `claude -p`, JSON output, and resume behavior |
 | model aliases | whether aliases such as `sonnet` remain accepted for the selected Claude Code version |
 | billing/Agent SDK usage | usage accounting, plan limits, and Agent SDK billing language |
 | npm package setup | `npm ci`, `npm run ci`, package files, and `npm pack --dry-run --cache ./.npm-cache` |

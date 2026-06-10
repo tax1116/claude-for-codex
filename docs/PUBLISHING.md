@@ -86,5 +86,6 @@ date:
 | billing/Agent SDK usage | current billing and Agent SDK usage language |
 | npm package setup | `npm ci`, `npm run ci`, package contents, and dry-run tarball output |
 
-Do not claim those external behaviors are current unless the official docs and
-local smoke checks were reviewed during the release work.
+The current docs were revalidated on 2026-06-10. Do not claim those external
+behaviors are still current for a later release unless the official docs and
+local smoke checks are reviewed again during that release work.

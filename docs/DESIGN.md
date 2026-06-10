@@ -67,8 +67,9 @@ Codex-first workflow behavior is covered by the tools above.
 - **Review gate contract.** The `Stop` hook reads the event JSON on stdin, runs a quick
   read-only Claude review, and exits `2` with a reason on stderr to block, or `0` to allow.
   The hook asks Claude to inspect status, tracked diffs, and untracked files so first-commit
-  or newly generated files are not silently skipped. The review gate is optional and disabled
-  by default. It is an advanced opt-in path, not part of the default install.
+  or newly generated files are not silently skipped. The review gate itself is optional and
+  not part of the default install, even though current Codex releases enable the hook
+  framework by default. It is an advanced opt-in path.
 
 ## Explicit context contract
 
@@ -145,12 +146,12 @@ Runtime and setup output should make these categories actionable:
 
 ## Caveats
 
-- Codex hooks and the `codex mcp` config format are marked experimental and have changed
-  between releases. Verify event names (`Stop`, etc.) and config keys against the Codex
-  docs for your installed version.
+- Codex hooks and MCP config behavior can change between releases. Verify event
+  names (`Stop`, etc.), default hook enablement, and config keys against the
+  Codex docs for your installed version.
 - Read-only mode restricts Claude's tools; if Claude attempts a disallowed tool it can
   stall, which is why per-call timeouts and `tool_timeout_sec` are set.
-- Release-date revalidation is required before release-facing docs claim current
-  external behavior. Re-check Codex CLI/MCP config, hook behavior, Claude Code
-  CLI behavior, model aliases, billing/Agent SDK usage, and npm package setup
-  against official docs and local smoke checks for the release date.
+- Release-date revalidation was performed on 2026-06-10. Re-check Codex
+  CLI/MCP config, hook behavior, Claude Code CLI behavior, model aliases,
+  billing/Agent SDK usage, and npm package setup against official docs and
+  local smoke checks before a later release date.
