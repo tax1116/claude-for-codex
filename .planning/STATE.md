@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verified
-stopped_at: Master promotion completed; release-facing setup and hook docs revalidated on 2026-06-10
-last_updated: "2026-06-10T13:03:57Z"
-last_activity: 2026-06-10 - PR #4 merged `dev` into `master`; release-facing Codex/Claude setup and hook documentation was refreshed against official docs and local CLI checks.
+stopped_at: PR #13 merged release documentation refresh into dev; dev is ready for the next master promotion PR
+last_updated: "2026-06-10T13:08:40Z"
+last_activity: 2026-06-10 - PR #13 merged the release-facing Codex/Claude setup and hook documentation refresh into `dev` with CI passing on Node 18.x, 20.x, and 22.x.
 progress:
   total_phases: 3
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Release documentation refresh PR back to `dev`
+**Current focus:** Promote refreshed `dev` to `master`
 
 ## Current Position
 
 Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
 Plan: 03-01 and 03-02 complete
-Status: Planned v1 work complete; release-facing documentation revalidated
-Last activity: 2026-06-10 - PR #4 merged `dev` into `master`; release-facing setup, hook, and publishing docs were refreshed against current official Codex/Claude docs and local CLI smoke checks.
+Status: Planned v1 work complete; `dev` contains the release documentation refresh
+Last activity: 2026-06-10 - PR #13 merged release-facing setup, hook, and publishing docs into `dev` after current official Codex/Claude docs and local CLI smoke checks were reviewed.
 
 Progress: [##########] 100%
 
@@ -76,7 +76,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Open and merge the release-doc refresh branch back to `dev` after CI passes.
+- Open a `dev` to `master` promotion PR if the release documentation refresh should ship on `master`.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -91,6 +91,7 @@ Recent decisions affecting current work:
 | 260610-k82 | Resolve Phase 2 external Claude review blocker | 2026-06-10 | same commit | [260610-k82-resolve-phase-2-external-claude-review-b](./quick/260610-k82-resolve-phase-2-external-claude-review-b/) |
 | 260610-kmg | Update planning state after PR #11 merge and PR #4 promotion readiness | 2026-06-10 | same commit | [260610-kmg-update-planning-state-after-pr-11-merge-](./quick/260610-kmg-update-planning-state-after-pr-11-merge-/) |
 | 260610-ukb | Refresh release-facing setup and hook documentation after master promotion | 2026-06-10 | same commit | [260610-ukb-refresh-release-facing-setup-and-hook-do](./quick/260610-ukb-refresh-release-facing-setup-and-hook-do/) |
+| 260610-ur4 | Update planning state after PR #13 merge | 2026-06-10 | same commit | [260610-ur4-update-planning-state-after-pr-13-merge](./quick/260610-ur4-update-planning-state-after-pr-13-merge/) |
 
 ## Deferred Items
 
@@ -105,10 +106,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-10T13:03:57Z
-Stopped at: release docs refreshed and ready for PR back to `dev`
+Last session: 2026-06-10T13:08:40Z
+Stopped at: PR #13 merged to `dev`; next promotion target is `master`
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Open the release-doc refresh PR into `dev`, wait for CI, then merge it through the normal feature integration path.
+Open a `dev` to `master` promotion PR, wait for CI and required checks, then merge through the protected release promotion path.
