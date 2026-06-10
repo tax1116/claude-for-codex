@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verified
-stopped_at: PR #13 merged release documentation refresh into dev; dev is ready for the next master promotion PR
-last_updated: "2026-06-10T13:08:40Z"
-last_activity: 2026-06-10 - PR #13 merged the release-facing Codex/Claude setup and hook documentation refresh into `dev` with CI passing on Node 18.x, 20.x, and 22.x.
+stopped_at: PR #15 merged release docs to master; master squash history is being synchronized back to dev
+last_updated: "2026-06-10T13:19:30Z"
+last_activity: 2026-06-10 - PR #15 merged the release documentation refresh into `master`; because it was squash-merged, `master` must be synchronized back into `dev` with a merge commit before the next promotion cycle.
 progress:
   total_phases: 3
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Promote refreshed `dev` to `master`
+**Current focus:** Synchronize `master` promotion history back into `dev`
 
 ## Current Position
 
 Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
 Plan: 03-01 and 03-02 complete
-Status: Planned v1 work complete; `dev` contains the release documentation refresh
-Last activity: 2026-06-10 - PR #13 merged release-facing setup, hook, and publishing docs into `dev` after current official Codex/Claude docs and local CLI smoke checks were reviewed.
+Status: Planned v1 work complete; release docs are on `master`
+Last activity: 2026-06-10 - PR #15 merged the release documentation refresh into `master`; follow-up work is synchronizing that squash promotion history back into `dev` and documenting the merge-commit promotion rule.
 
 Progress: [##########] 100%
 
@@ -76,7 +76,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Open a `dev` to `master` promotion PR if the release documentation refresh should ship on `master`.
+- Merge the `master` history sync branch into `dev` with a merge commit.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -92,6 +92,7 @@ Recent decisions affecting current work:
 | 260610-kmg | Update planning state after PR #11 merge and PR #4 promotion readiness | 2026-06-10 | same commit | [260610-kmg-update-planning-state-after-pr-11-merge-](./quick/260610-kmg-update-planning-state-after-pr-11-merge-/) |
 | 260610-ukb | Refresh release-facing setup and hook documentation after master promotion | 2026-06-10 | same commit | [260610-ukb-refresh-release-facing-setup-and-hook-do](./quick/260610-ukb-refresh-release-facing-setup-and-hook-do/) |
 | 260610-ur4 | Update planning state after PR #13 merge | 2026-06-10 | same commit | [260610-ur4-update-planning-state-after-pr-13-merge](./quick/260610-ur4-update-planning-state-after-pr-13-merge/) |
+| 260610-uzt | Sync master squash promotion back into dev and document merge method | 2026-06-10 | same commit | [260610-uzt-sync-master-squash-promotion-back-into-d](./quick/260610-uzt-sync-master-squash-promotion-back-into-d/) |
 
 ## Deferred Items
 
@@ -106,10 +107,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-10T13:08:40Z
-Stopped at: PR #13 merged to `dev`; next promotion target is `master`
+Last session: 2026-06-10T13:19:30Z
+Stopped at: PR #15 merged to `master`; sync `master` back into `dev`
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Open a `dev` to `master` promotion PR, wait for CI and required checks, then merge through the protected release promotion path.
+Open and merge a `master` to `dev` sync PR with a merge commit, then use merge commits for future `dev` to `master` promotion PRs.
