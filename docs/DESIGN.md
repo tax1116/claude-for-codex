@@ -68,7 +68,7 @@ Codex-first workflow behavior is covered by the tools above.
   read-only Claude review, and exits `2` with a reason on stderr to block, or `0` to allow.
   The hook asks Claude to inspect status, tracked diffs, and untracked files so first-commit
   or newly generated files are not silently skipped. The review gate is optional and disabled
-  by default.
+  by default. It is an advanced opt-in path, not part of the default install.
 
 ## Explicit context contract
 
@@ -104,9 +104,11 @@ Both review modes are read-only. They should return concrete `High`, `Medium`,
 and `Low` findings, or `No high-confidence findings` when clean, and should
 state that no files were edited.
 
-`claude_rescue` and `allow_write` are outside the default review path. They cross
-the read-only boundary and should stay clearly warned wherever they are
-documented.
+`claude_rescue` and `allow_write` are outside the standard v1 review path. They
+cross the read-only boundary, and `allow_write: true` passes
+`--dangerously-skip-permissions`, which grants broad write permissions. They
+should stay clearly warned wherever they are documented and should be used only
+in trusted repos.
 
 Background review should use the same manual path with `background: true`, then
 `claude_status`, `claude_result`, and optionally `claude_cancel`. Cancellation
@@ -115,6 +117,13 @@ wording should always include the process-lifetime limit.
 The `Stop` hook is also outside default onboarding. It is advanced opt-in
 automation because it can loop, block Codex completion, and create usage-cost
 risk.
+
+Hook disable checklist:
+
+1. Remove this plugin's `hooks.Stop` block from the active Codex config.
+2. Or disable the individual hook through `/hooks`.
+3. Set `[features] hooks = false` only when the whole local Codex config should
+   disable hooks.
 
 GSD/gstack review workflows may call this bridge as an outside-model check, but
 the bridge itself should stay workflow-agnostic. Its job is to expose Claude Code
@@ -141,5 +150,7 @@ Runtime and setup output should make these categories actionable:
   docs for your installed version.
 - Read-only mode restricts Claude's tools; if Claude attempts a disallowed tool it can
   stall, which is why per-call timeouts and `tool_timeout_sec` are set.
-- Billing: as of mid-2026, `claude -p` / Agent SDK usage on subscription plans draws from a
-  separate monthly Agent SDK credit. Check current Claude Code docs.
+- Release-date revalidation is required before release-facing docs claim current
+  external behavior. Re-check Codex CLI/MCP config, hook behavior, Claude Code
+  CLI behavior, model aliases, billing/Agent SDK usage, and npm package setup
+  against official docs and local smoke checks for the release date.

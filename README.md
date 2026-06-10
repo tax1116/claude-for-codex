@@ -25,7 +25,7 @@ Claude Code can be invoked deliberately for critique, risk review, or recovery.
 
 ## Team rollout: slash commands first
 
-The standard team path is manual and explicit:
+The standard team path is a manual slash-command workflow:
 
 1. Use Node.js >= 18.18.
 2. Run `npm install` in this repository.
@@ -157,9 +157,11 @@ reason fed back so it can fix the issue. Hooks are experimental and disabled on 
 > **Warning:** the review gate can create a long Codex↔Claude loop, cause blocking at turn
 > completion, and create usage-cost risk. Enable it only when actively monitoring the session.
 
-To turn the gate off, remove this plugin's `hooks.Stop` block or disable the
-individual hook through `/hooks`. To turn all Codex hooks off for a local config,
-set `[features] hooks = false`.
+Disable checklist:
+
+1. Remove this plugin's `hooks.Stop` block from the active Codex config.
+2. Or disable the individual hook through `/hooks`.
+3. To turn all Codex hooks off for a local config, set `[features] hooks = false`.
 
 ## Tools
 
@@ -186,11 +188,26 @@ set `[features] hooks = false`.
 ## Safety
 
 - Read-only by default: Claude may read files and run `git diff/log/status/show` only.
-- `allow_write: true` passes `--dangerously-skip-permissions` — use only in trusted repos.
+- `allow_write: true` on `claude_rescue` is outside the standard v1 review path
+  and passes `--dangerously-skip-permissions`, which grants broad write
+  permissions. Use it only in trusted repos.
 - Jobs are tracked in repo-scoped state, but cancellation is best effort only
   while the MCP server process owns the child process.
-- Billing: as of mid-2026, `claude -p` / Agent SDK usage on subscription plans draws from a
-  separate monthly Agent SDK credit. Check current Claude Code docs.
+
+## Release-date revalidation
+
+Before a team rollout, npm publish, or release tag, re-check time-sensitive
+claims against official docs for the release date. Do not treat the notes below
+as current external behavior until that release check is done.
+
+| Claim area | Revalidate against |
+| --- | --- |
+| Codex CLI/MCP config | Official Codex CLI MCP config docs and installed-version behavior |
+| hook behavior | Official Codex hook docs, event names, and local `/hooks` behavior |
+| Claude Code CLI behavior | Official Claude Code CLI install, auth, and `claude -p` behavior |
+| model aliases | Official Claude Code model alias docs or CLI help for the release date |
+| billing/Agent SDK usage | Official Claude Code billing and Agent SDK usage docs |
+| npm package setup | `npm ci`, `npm run ci`, and `npm pack --dry-run --cache ./.npm-cache` |
 
 ## Status
 

@@ -42,9 +42,9 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 - [x] **SAFE-01**: Claude review and adversarial review run read-only by default.
 - [x] **SAFE-02**: Default Claude tool restrictions allow file reads and read-style git commands while disallowing edit/write tools.
-- [ ] **SAFE-03**: Write-capable rescue remains outside the standard v1 review path and is clearly warned when documented.
-- [ ] **SAFE-04**: Codex hook review remains opt-in, reversible, and absent from the default team onboarding path.
-- [ ] **SAFE-05**: Docs explain that automatic hook review can loop, block completion, and consume usage unexpectedly.
+- [x] **SAFE-03**: Write-capable rescue remains outside the standard v1 review path and is clearly warned when documented.
+- [x] **SAFE-04**: Codex hook review remains opt-in, reversible, and absent from the default team onboarding path.
+- [x] **SAFE-05**: Docs explain that automatic hook review can loop, block completion, and consume usage unexpectedly.
 
 ### Quality
 
@@ -61,7 +61,7 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 - [x] **DOC-02**: MCP tool names remain documented as the underlying capability and reference interface.
 - [x] **DOC-03**: Docs include examples for design review, adversarial review with focus, review against a base ref, background review, status, result, and cancel.
 - [x] **DOC-04**: Docs preserve unofficial/non-affiliation language for OpenAI and Anthropic.
-- [ ] **DOC-05**: Docs identify time-sensitive claims, such as CLI flags, hook behavior, model aliases, billing, and package setup, for release-date revalidation.
+- [x] **DOC-05**: Docs identify time-sensitive claims, such as CLI flags, hook behavior, model aliases, billing, and package setup, for release-date revalidation.
 
 ## v2 Requirements
 
@@ -135,9 +135,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | JOB-05 | Phase 2 | Complete (02-01, 02-02) |
 | SAFE-01 | Phase 1 | Complete (01-01, 01-02) |
 | SAFE-02 | Phase 1 | Complete (01-01, 01-02) |
-| SAFE-03 | Phase 3 | Pending |
-| SAFE-04 | Phase 3 | Pending |
-| SAFE-05 | Phase 3 | Pending |
+| SAFE-03 | Phase 3 | Complete (03-01) |
+| SAFE-04 | Phase 3 | Complete (03-01) |
+| SAFE-05 | Phase 3 | Complete (03-01) |
 | QUAL-01 | Phase 2 | Complete (02-01) |
 | QUAL-02 | Phase 2 | Complete (02-01) |
 | QUAL-03 | Phase 2 | Complete (02-01) |
@@ -148,7 +148,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOC-02 | Phase 1 | Complete (01-02) |
 | DOC-03 | Phase 2 | Complete (02-02) |
 | DOC-04 | Phase 1 | Complete (01-02) |
-| DOC-05 | Phase 3 | Pending |
+| DOC-05 | Phase 3 | Complete (03-02) |
 
 **Coverage:**
 - v1 requirements: 35 total
@@ -157,4 +157,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-08*
-*Last updated: 2026-06-09 after Codex-first positioning clarification*
+*Last updated: 2026-06-10 after Phase 3 safety and release revalidation execution*
