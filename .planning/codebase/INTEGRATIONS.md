@@ -81,16 +81,16 @@ survives process restart, but the process handle does not.
 Config shape:
 
 ```toml
-[features]
-hooks = true
-
 [[hooks.Stop]]
-matcher = ".*"
 [[hooks.Stop.hooks]]
 type = "command"
 command = 'node "/ABS/PATH/claude-for-codex/hooks/review-gate.mjs"'
 timeout = 300
 ```
+
+Current Codex releases enable the hook framework by default. Add
+`[features] hooks = true` only if a config layer previously disabled hooks.
+The `Stop` event does not use `matcher`.
 
 Behavior:
 

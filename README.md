@@ -87,8 +87,10 @@ Codex-first workflow is covered by the tools above.
 ## Prerequisites
 
 - Node.js >= 18.18
-- Codex CLI installed + logged in (`npm i -g @openai/codex`, `codex login`)
-- Claude Code installed + logged in (`npm i -g @anthropic-ai/claude-code`, run `claude` once)
+- Codex CLI installed and signed in. Use the official Codex install docs for
+  your platform; npm and Homebrew remain documented alternatives.
+- Claude Code installed and authenticated. Use the official Claude Code install
+  docs, then verify with `claude --version` and `claude auth status`.
 
 ## Runtime choice
 
@@ -135,14 +137,12 @@ The review gate is opt-in. Installing the MCP server does not enable automatic
 Claude review. Enable this only when you intentionally want Codex lifecycle
 automation. Treat hooks as an advanced path, not the team default.
 
-Add to `~/.codex/config.toml`:
+Add to `~/.codex/config.toml`. Hooks are enabled by default in current Codex
+CLI releases; only add `[features] hooks = true` if your config layer has
+previously disabled them.
 
 ```toml
-[features]
-hooks = true
-
 [[hooks.Stop]]
-matcher = ".*"
 [[hooks.Stop.hooks]]
 type = "command"
 command = 'node "/ABS/PATH/claude-for-codex/hooks/review-gate.mjs"'
@@ -152,7 +152,8 @@ timeout = 300
 When Codex tries to finish a turn, the hook asks Claude to inspect `git status --short`, review
 tracked changes with `git diff HEAD` / `git diff --cached`, and read untracked files directly. If
 Claude returns `BLOCK: <reason>`, the hook exits 2 and Codex is blocked from stopping, with the
-reason fed back so it can fix the issue. Hooks are experimental and disabled on Windows.
+reason fed back so it can fix the issue. For Windows-specific hook commands,
+use Codex's `commandWindows` override.
 
 > **Warning:** the review gate can create a long Codex↔Claude loop, cause blocking at turn
 > completion, and create usage-cost risk. Enable it only when actively monitoring the session.
@@ -196,23 +197,27 @@ Disable checklist:
 
 ## Release-date revalidation
 
-Before a team rollout, npm publish, or release tag, re-check time-sensitive
-claims against official docs for the release date. Do not treat the notes below
-as current external behavior until that release check is done.
+Release-facing external-tool claims were revalidated on 2026-06-10 against the
+official Codex and Claude Code docs plus local CLI smoke checks.
 
-| Claim area | Revalidate against |
+| Claim area | 2026-06-10 source of truth |
 | --- | --- |
-| Codex CLI/MCP config | Official Codex CLI MCP config docs and installed-version behavior |
-| hook behavior | Official Codex hook docs, event names, and local `/hooks` behavior |
-| Claude Code CLI behavior | Official Claude Code CLI install, auth, and `claude -p` behavior |
-| model aliases | Official Claude Code model alias docs or CLI help for the release date |
-| billing/Agent SDK usage | Official Claude Code billing and Agent SDK usage docs |
+| Codex CLI/MCP config | Official Codex MCP docs and local `codex mcp --help` |
+| hook behavior | Official Codex hook docs: hooks are enabled by default, `Stop` matcher is unused, `/hooks` controls review/disable |
+| Claude Code CLI behavior | Official Claude Code CLI reference and local `claude --help` / `claude auth status` / `claude -p` smoke |
+| model aliases | Official Claude Code CLI reference and local `claude --help` showed `sonnet` remains accepted |
+| billing/Agent SDK usage | Official Claude Code cost docs; automated/team use can increase token usage |
 | npm package setup | `npm ci`, `npm run ci`, and `npm pack --dry-run --cache ./.npm-cache` |
+
+Before the next team rollout, npm publish, or release tag, repeat this
+release-date revalidation instead of assuming external CLI, hook, model, or
+billing behavior is still current.
 
 ## Status
 
-This is a starting point, not an official OpenAI/Anthropic plugin. Verify current Codex hook
-event names and MCP config format against the Codex docs for your installed version.
+This is a starting point, not an official OpenAI/Anthropic plugin. Re-check
+current Codex hook event names and MCP config format against the Codex docs for
+your installed version before each release.
 
 ## Documentation
 

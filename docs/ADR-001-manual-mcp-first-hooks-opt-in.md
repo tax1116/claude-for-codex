@@ -129,8 +129,8 @@ Manual MCP tools and slash prompts are the default product:
 - `claude_cancel`
 - `claude_setup`
 
-Hooks are supported, documented, and testable, but disabled by default. The hook
-experience should be explicitly opt-in:
+Hooks are supported, documented, and testable, but this plugin's hook is not
+configured by default. The hook experience should be explicitly opt-in:
 
 - `setup --enable-hook`
 - `setup --disable-hook`
@@ -139,7 +139,8 @@ experience should be explicitly opt-in:
 The runtime decision is Node MCP:
 
 - Keep the MCP server in Node.js.
-- Move the server body from prototype `.mjs` to TypeScript before team rollout.
+- Keep the v1 server as the current `.mjs` runtime until module boundaries and
+  package strategy justify a build step.
 - Keep small hook/setup scripts in `.mjs` when that remains the simplest form.
 - Revisit Go only if installer/status distribution becomes the bottleneck.
 - Revisit Rust only if a security-sensitive single-binary product becomes the
@@ -158,7 +159,9 @@ Default install:
 Optional hook install:
 
 - Adds a `Stop` hook that runs `hooks/review-gate.mjs`.
-- Uses `[features] hooks = true`, not the deprecated `codex_hooks` alias.
+- Adds only this plugin's `hooks.Stop` block; current Codex releases enable the
+  hook framework by default, and `[features] hooks = true` is only needed if a
+  config layer previously disabled hooks.
 - Explains that hooks can also be inspected and disabled through `/hooks`.
 - Provides a disable path that removes or comments out only this plugin's hook
   block.
@@ -187,9 +190,11 @@ Public packaging can come later once the team-local install path is stable.
 ## Next Steps
 
 1. Update `README.md` and `docs/SETUP.md` so manual MCP setup is the default path.
-2. Replace `codex_hooks = true` examples with `hooks = true`.
+2. Replace deprecated `codex_hooks` examples with the current `hooks` feature
+   key only where a global hook enable/disable setting is necessary.
 3. Add setup/status language for hook enable, hook disable, and hook inspection.
-4. Convert the MCP server body to Node + TypeScript before team rollout.
+4. Keep the MCP server body as Node ESM for v1; revisit TypeScript only after
+   module boundaries and package strategy justify a build step.
 5. Add a small installer or helper script only after the manual docs are correct.
 6. Verify with a fresh local Codex config parse and a `claude_setup` tool call.
 
