@@ -8,7 +8,9 @@ Mode: Builder
 ## Problem Statement
 
 The team wants Codex users to be able to call Claude Code for review and rescue
-work, mirroring `openai/codex-plugin-cc` in the opposite direction.
+work without moving their primary workspace out of Codex. The product should
+serve as the Codex-first counterpart to `openai/codex-plugin-cc`: Claude Code is
+the outside reviewer, not the main working surface.
 
 The near-term audience is not all Codex users. The first audience is teammates
 who use Codex, including some who also use Claude Code and some who do not. The
@@ -17,20 +19,22 @@ opinion at all.
 
 ## What Makes This Useful
 
-The useful wedge is not a fully automated review system. The useful wedge is a
-low-friction manual escape hatch inside Codex:
+The useful wedge is not a fully automated review system or another planning
+framework. The useful wedge is a low-friction manual escape hatch inside Codex:
 
 - Ask Claude to review a Codex diff.
 - Ask Claude to pressure-test a risky change.
 - Ask Claude to investigate or rescue a stuck task.
 
-This gives Codex users a second model when they want one, without forcing every
-turn through an automated gate.
+This gives Codex-first users a second model when they want one, without forcing
+every turn through an automated gate or requiring a Claude-first workflow.
 
 ## Constraints
 
 - The first version should serve team-local adoption before public plugin scale.
 - The default path must be explicit and predictable for teammates.
+- The product boundary is a Codex-to-Claude model bridge, not a GSD/gstack
+  replacement, PR review bot, or full team process framework.
 - Read-only review should be the default safety posture.
 - Any write-capable Claude delegation must be opt-in.
 - Lifecycle hooks are powerful but surprising; they must not be enabled by

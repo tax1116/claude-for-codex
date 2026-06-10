@@ -1,7 +1,7 @@
 {
   "name": "claude-for-codex",
   "version": "0.2.0",
-  "description": "Unofficial MCP server that lets OpenAI Codex CLI call Claude Code for review and rescue workflows.",
+  "description": "Unofficial Codex-first MCP bridge that lets OpenAI Codex CLI call Claude Code for review, critique, and rescue workflows.",
   "type": "module",
   "bin": {
     "claude-for-codex": "./server.mjs"

@@ -2,6 +2,10 @@
 
 Step-by-step guide to wiring `claude-for-codex` into OpenAI Codex CLI.
 
+Use this when Codex is your main workspace and you want Claude Code available as
+a manual second-opinion bridge, without switching to a Claude-first workflow such
+as `codex-plugin-cc`.
+
 ## Prerequisites
 
 - Node.js >= 18.18
@@ -70,6 +74,9 @@ The standard workflow is:
    `base` and `focus` text to narrow the scope.
 5. Use `background: true` only for broad diffs, then fetch with
    `claude_status` and `claude_result`.
+
+This workflow is intentionally manual. It is meant to replace tool-switching for
+Codex-first users, not to make Claude Code review every Codex turn.
 
 Concrete examples:
 

@@ -2,7 +2,12 @@
 
 ## Overview
 
-The MVP turns the existing local MCP bridge into a reliable manual team workflow: Codex users can invoke Claude Code deliberately for read-only design critique and implementation-risk review, with clear context boundaries, async job controls, deterministic fake-Claude coverage, and documented safety limits. Hooks and write-capable rescue remain outside the default launch path.
+The MVP turns the existing local MCP bridge into a reliable Codex-first
+replacement workflow for the `codex-plugin-cc` idea: Codex users keep Codex as
+the main working surface and invoke Claude Code deliberately for read-only design
+critique, implementation-risk review, rescue, async job controls, and documented
+safety limits. Hooks and write-capable rescue remain outside the default launch
+path.
 
 ## Phases
 

@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: review-blocked
 stopped_at: Phase 2 validation complete; cross-AI review blocked by Claude login/data-export approval
-last_updated: "2026-06-09T03:00:00.000Z"
-last_activity: 2026-06-09 - Phase 2 validation completed; Claude review attempt blocked before external data export.
+last_updated: "2026-06-10T03:36:31Z"
+last_activity: 2026-06-10 - Pulled latest dev into Phase 2 branch; Codex-first positioning merged; Claude review remains blocked by login/data-export approval.
 progress:
   total_phases: 3
   completed_phases: 2
@@ -20,7 +20,7 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-06-08)
 
-**Core value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
+**Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
 **Current focus:** Phase 2 cross-AI review blocker and PR merge readiness
 
 ## Current Position
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-08)
 Phase: 2 of 3 (Async Job Reliability And Testable Packaging)
 Plan: 02-01 and 02-02 complete
 Status: Implemented and validated; cross-AI review blocked
-Last activity: 2026-06-09 - Phase 2 fake-Claude lifecycle, package docs, verification, validation, and PR conflict resolution completed; Claude review blocked by local login/data-export approval.
+Last activity: 2026-06-10 - Latest dev merged into Phase 2 branch; product positioning and Phase 2 validation state are both present; Claude review remains blocked by local login/data-export approval.
 
 Progress: [#######---] 67%
 
@@ -84,6 +84,12 @@ Recent decisions affecting current work:
 - None active.
 - Phase 3 must revalidate time-sensitive CLI, hook, model, billing, and package setup claims before release-facing documentation is treated as current.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260609-krv | Reposition product docs around Codex-first replacement workflow for codex-plugin-cc | 2026-06-09 | same commit | [260609-krv-reposition-product-docs-around-codex-fir](./quick/260609-krv-reposition-product-docs-around-codex-fir/) |
+
 ## Deferred Items
 
 Items acknowledged and carried forward from previous milestone close:
@@ -97,7 +103,7 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-09T03:00:00.000Z
+Last session: 2026-06-10T03:36:31Z
 Stopped at: Phase 2 validation complete; cross-AI review blocked
 Resume file: .planning/phases/02-async-job-reliability-and-testable-packaging/02-VERIFICATION.md
 
