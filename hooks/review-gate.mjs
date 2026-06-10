@@ -6,13 +6,11 @@
  * reason back to the agent). Otherwise exit 0. That can cause blocking at turn
  * completion, so use it only when intentionally monitoring automation.
  *
- * Wire it up in ~/.codex/config.toml (requires the hooks feature flag):
- *
- *   [features]
- *   hooks = true
+ * Wire it up in ~/.codex/config.toml. Hooks are enabled by default in current
+ * Codex CLI releases; only add [features] hooks = true if another config layer
+ * disabled hooks.
  *
  *   [[hooks.Stop]]
- *   matcher = ".*"
  *   [[hooks.Stop.hooks]]
  *   type = "command"
  *   command = 'node "/ABS/PATH/claude-for-codex/hooks/review-gate.mjs"'

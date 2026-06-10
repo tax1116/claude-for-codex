@@ -137,6 +137,9 @@ test("docs keep hooks advanced, opt-in, reversible, and risky", () => {
     "manual slash-command workflow",
     "not part of the default install",
     "advanced opt-in",
+    "Hooks are enabled by default",
+    "Stop` matcher is unused",
+    "commandWindows",
     "Disable checklist",
     "Remove this plugin's `hooks.Stop` block",
     "[features] hooks = false",
@@ -168,6 +171,7 @@ test("release-facing docs mark time-sensitive claims for release-date revalidati
 
   for (const expected of [
     "Release-date revalidation",
+    "2026-06-10",
     "Codex CLI/MCP config",
     "hook behavior",
     "Claude Code CLI behavior",
