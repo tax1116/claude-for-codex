@@ -38,7 +38,9 @@ dev -> master
 1. Confirm `dev` is green and contains only work intended for release.
 2. Open a pull request from `dev` into `master`.
 3. Wait for required CI and review gates on `master`.
-4. Merge the promotion PR.
+4. Merge the promotion PR with a merge commit. Do not squash or rebase a
+   `dev` -> `master` promotion PR, because `master` must keep `dev` in its
+   ancestry for the next promotion comparison.
 5. Keep `dev`; do not delete the branch after the promotion PR merges.
 
 This keeps a GitHub audit trail for release promotion while preserving `dev` as
@@ -50,6 +52,11 @@ instead.
 
 If `master` and `dev` diverge, stop and inspect both histories before opening
 the promotion PR. Do not force-push `master` or `dev`.
+
+If a promotion PR is accidentally squash-merged, immediately merge `master`
+back into `dev` through a normal PR using a merge commit. Resolve any duplicate
+tree conflicts in favor of the newer `dev` content, then continue feature work
+from the synchronized `dev`.
 
 ## GitHub Settings
 

@@ -50,7 +50,9 @@ directly to `master`.
 1. Confirm `dev` is green and contains only release-intended work.
 2. Open or update a pull request from `dev` to `master`.
 3. Wait for CI, branch protection, review, and conversation-resolution checks.
-4. Merge the promotion PR into `master`.
+4. Merge the promotion PR into `master` with a merge commit. Do not squash or
+   rebase release-promotion PRs, because future `dev` to `master` comparisons
+   depend on `master` retaining `dev` ancestry.
 5. After merge, do not delete `dev`; delete only short-lived feature/topic
    branches when they are no longer needed.
 
