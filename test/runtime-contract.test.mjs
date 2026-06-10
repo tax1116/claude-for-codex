@@ -5,7 +5,8 @@ import { URL } from "node:url";
 
 const serverSource = readFileSync(new URL("../server.mjs", import.meta.url), "utf8");
 const runnerSource = readFileSync(new URL("../src/claude-runner.mjs", import.meta.url), "utf8");
-const runtimeSource = `${serverSource}\n${runnerSource}`;
+const hookSource = readFileSync(new URL("../hooks/review-gate.mjs", import.meta.url), "utf8");
+const runtimeSource = `${serverSource}\n${runnerSource}\n${hookSource}`;
 
 function sectionBetween(start, end) {
   const startIndex = serverSource.indexOf(start);
@@ -71,6 +72,39 @@ test("setup diagnostics name Claude configuration and live-review gaps", () => {
     "live review reachability may still fail",
   ]) {
     assert.match(serverSource, new RegExp(escapeRegExp(expected)), expected);
+  }
+});
+
+test("write-capable rescue remains an explicit escape hatch", () => {
+  const rescueTool = sectionBetween(
+    'server.registerTool(\n  "claude_rescue"',
+    'server.registerTool(\n  "claude_status"',
+  );
+
+  for (const expected of [
+    "outside the standard v1 review path",
+    "allow_write=true",
+    "--dangerously-skip-permissions",
+    "broad write permissions",
+    "trusted repos",
+  ]) {
+    assert.match(rescueTool, new RegExp(escapeRegExp(expected)), expected);
+  }
+
+  assert.match(runnerSource, /if \(allowWrite\) args\.push\("--dangerously-skip-permissions"\)/);
+  assert.match(runnerSource, /else\s*\{\s*args\.push\("--allowedTools"/);
+});
+
+test("hook source says the Stop gate is advanced, opt-in, reversible, and blocking", () => {
+  for (const expected of [
+    "advanced opt-in",
+    "not part of the default install",
+    "Disable checklist",
+    "hooks = false",
+    "blocking at turn completion",
+    "usage-cost risk",
+  ]) {
+    assert.match(hookSource, new RegExp(escapeRegExp(expected)), expected);
   }
 });
 

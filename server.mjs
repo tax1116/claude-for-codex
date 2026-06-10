@@ -191,7 +191,8 @@ server.registerTool(
     description:
       "Hand a task to Claude Code: investigate, fix, or continue work. " +
       "resume=true continues the latest Claude session in this repo; pass a session id to target one. " +
-      "allow_write=true lets Claude edit files (uses --dangerously-skip-permissions).",
+      "allow_write=true is outside the standard v1 review path and lets Claude edit files. " +
+      "It uses --dangerously-skip-permissions, grants broad write permissions, and should be used only in trusted repos.",
     inputSchema: {
       task: z.string().describe("What you want Claude to do."),
       model: z.string().optional(),

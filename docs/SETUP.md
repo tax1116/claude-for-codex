@@ -62,7 +62,7 @@ Copy the prompt files so they show as `/claude-review`, `/claude-adversarial`,
 cp prompts/*.md ~/.codex/prompts/
 ```
 
-The standard workflow is:
+The standard workflow is a manual slash-command workflow:
 
 1. Run `claude_setup` once after MCP registration.
 2. Use `/claude-review` for implementation-risk review. It emphasizes missing
@@ -107,7 +107,8 @@ user-provided `base` or `focus`.
 ## 4. Advanced opt-in review gate - auto-review before Codex finishes a turn
 
 This is not part of the default install. Use it only when you explicitly want a
-Claude review to run during the Codex `Stop` lifecycle event.
+Claude review to run during the Codex `Stop` lifecycle event. This is an
+advanced opt-in path, not the team onboarding default.
 
 Add to `~/.codex/config.toml`:
 
@@ -134,9 +135,11 @@ issue.
 > actively monitoring the session. Hooks are experimental in Codex and disabled
 > on Windows.
 
-To disable only this review gate, remove this plugin's `hooks.Stop` block or use
-Codex's `/hooks` UI to disable the individual hook. To disable all Codex hooks in
-that config layer, set:
+Disable checklist:
+
+1. Remove this plugin's `hooks.Stop` block from the active Codex config.
+2. Or use Codex's `/hooks` UI to disable the individual hook.
+3. To disable all Codex hooks in that config layer, set:
 
 ```toml
 [features]
@@ -194,7 +197,26 @@ Common categories:
 ## Safety
 
 - Read-only by default: Claude may read files and run `git diff/log/status/show` only.
-- `allow_write: true` on `claude_rescue` is outside the default review path and
-  passes `--dangerously-skip-permissions` - use only in trusted repos.
+- `allow_write: true` on `claude_rescue` is outside the standard v1 review path
+  and passes `--dangerously-skip-permissions`, which grants broad write
+  permissions. Use it only in trusted repos.
 - Jobs are persisted in repo-scoped state, but cancellation is best effort only
   while the current MCP server process owns the child process.
+
+## Release-date revalidation
+
+These setup notes include external-tool behavior that can drift. Before a team
+rollout, npm publish, or release tag, re-check the following against official
+docs for the release date:
+
+| Claim area | What to re-check |
+| --- | --- |
+| Codex CLI/MCP config | MCP server config keys, absolute-path requirements, and `tool_timeout_sec` behavior |
+| hook behavior | Stop hook event name, `/hooks` UI, disable behavior, and Windows support |
+| Claude Code CLI behavior | install command, auth command/status, `claude -p`, JSON output, and resume behavior |
+| model aliases | whether aliases such as `sonnet` remain accepted for the selected Claude Code version |
+| billing/Agent SDK usage | usage accounting, plan limits, and Agent SDK billing language |
+| npm package setup | `npm ci`, `npm run ci`, package files, and `npm pack --dry-run --cache ./.npm-cache` |
+
+Do not publish release-facing docs as current external behavior until those
+official docs and local smoke checks have been reviewed for the release date.
