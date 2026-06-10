@@ -7,6 +7,7 @@ const docs = {
   readme: read("README.md"),
   setup: read("docs/SETUP.md"),
   design: read("docs/DESIGN.md"),
+  publishing: read("docs/PUBLISHING.md"),
   reviewPrompt: read("prompts/claude-review.md"),
   adversarialPrompt: read("prompts/claude-adversarial.md"),
 };
@@ -111,6 +112,100 @@ test("setup and design docs explain context, boundaries, and failures", () => {
   }
 });
 
+test("docs teach base, focus, background, and cancellation boundaries", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
+
+  for (const expected of [
+    "/claude-review base=origin/dev",
+    "/claude-adversarial focus=",
+    "background: true",
+    "claude_status",
+    "claude_result",
+    "claude_cancel",
+    "best effort",
+    "process-lifetime",
+    "not a hosted durable queue",
+  ]) {
+    assertIncludes(combinedDocs, expected, `docs: ${expected}`);
+  }
+});
+
+test("docs keep hooks advanced, opt-in, reversible, and risky", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
+
+  for (const expected of [
+    "manual slash-command workflow",
+    "not part of the default install",
+    "advanced opt-in",
+    "Disable checklist",
+    "Remove this plugin's `hooks.Stop` block",
+    "[features] hooks = false",
+    "loop",
+    "blocking at turn completion",
+    "usage-cost risk",
+  ]) {
+    assertIncludes(combinedDocs, expected, `hook docs: ${expected}`);
+  }
+});
+
+test("docs keep write-capable rescue outside standard v1 review", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
+
+  for (const expected of [
+    "claude_rescue",
+    "allow_write: true",
+    "outside the standard v1 review path",
+    "--dangerously-skip-permissions",
+    "broad write permissions",
+    "trusted repos",
+  ]) {
+    assertIncludes(combinedDocs, expected, `rescue docs: ${expected}`);
+  }
+});
+
+test("release-facing docs mark time-sensitive claims for release-date revalidation", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}\n${docs.publishing}`;
+
+  for (const expected of [
+    "Release-date revalidation",
+    "Codex CLI/MCP config",
+    "hook behavior",
+    "Claude Code CLI behavior",
+    "model aliases",
+    "billing/Agent SDK usage",
+    "npm package setup",
+    "official docs",
+  ]) {
+    assertIncludes(combinedDocs, expected, `release revalidation: ${expected}`);
+  }
+});
+
+test("publishing docs use dev to master PR promotion policy", () => {
+  for (const expected of [
+    "`dev` to `master`",
+    "PR promotion",
+    "CI",
+    "branch protection",
+    "do not delete `dev`",
+  ]) {
+    assertIncludes(docs.publishing, expected, `publishing: ${expected}`);
+  }
+});
+
+test("server runtime imports stay covered by npm package files", () => {
+  const serverSource = read("server.mjs");
+  const runtimeImports = [...serverSource.matchAll(/from "\.\/(src\/[^"]+)"/g)].map((match) => match[1]);
+
+  assert.ok(runtimeImports.length > 0, "server should import runtime helpers from src");
+  for (const runtimeImport of runtimeImports) {
+    assertPackageCovers(runtimeImport);
+  }
+
+  for (const expected of ["server.mjs", "src/", "hooks/", "prompts/", "README.md", "LICENSE", "NOTICE"]) {
+    assertPackageIncludes(expected);
+  }
+});
+
 function read(relativePath) {
   return readFileSync(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
@@ -131,5 +226,12 @@ function assertPackageIncludes(relativePath) {
   assert.ok(
     packageJson.files.includes(relativePath),
     `package.json files should include README-linked ${relativePath}`,
+  );
+}
+
+function assertPackageCovers(relativePath) {
+  assert.ok(
+    packageJson.files.some((entry) => entry === relativePath || (entry.endsWith("/") && relativePath.startsWith(entry))),
+    `package.json files should cover runtime helper ${relativePath}`,
   );
 }

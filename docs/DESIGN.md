@@ -1,8 +1,29 @@
-# Design & feature mapping
+# Design & product boundary
 
-`claude-for-codex` is the mirror image of
-[`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc): that plugin lets
-Claude Code call Codex; this one lets **Codex call Claude Code**. It is unofficial.
+`claude-for-codex` is the Codex-first counterpart to
+[`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc).
+`codex-plugin-cc` makes sense when Claude Code is the primary workspace and
+Codex is the outside reviewer. This project makes sense when Codex is the
+primary workspace and Claude Code is the outside reviewer.
+
+The product is a local model bridge, not another review framework. It exists so
+Codex users can keep working in Codex while deliberately calling Claude Code for
+manual review, adversarial critique, rescue, and long-running job follow-up.
+It is unofficial.
+
+## Product boundary
+
+This plugin should replace a Codex-first team's need to use `codex-plugin-cc`
+just to get Claude Code's second opinion. It should not replace:
+
+- GSD/gstack planning, validation, review, or shipping workflows.
+- GitHub PR review bots such as CodeRabbit.
+- Codex's own planning and implementation judgment.
+- Manual human review for consequential changes.
+- The user's responsibility to choose what context Claude sees.
+
+Hooks remain optional because automatic lifecycle review is a different product
+shape. The standard workflow is manual slash command or MCP tool invocation.
 
 ## How each codex-plugin-cc feature maps
 
@@ -19,8 +40,8 @@ Claude Code call Codex; this one lets **Codex call Claude Code**. It is unoffici
 | Review gate (`Stop` hook) | `hooks/review-gate.mjs` | Codex `Stop` hook (exit 2 = block) |
 | `/codex:*` slash commands | `prompts/claude-*.md` | Codex custom prompts |
 
-Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The behavior
-those provide is covered by the tools above.
+Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The
+Codex-first workflow behavior is covered by the tools above.
 
 ## Mechanics
 
@@ -32,18 +53,22 @@ those provide is covered by the tools above.
 - **MCP transport.** The server speaks stdio JSON-RPC and is launched by Codex via
   `[mcp_servers.claude]` in `config.toml`. Each tool ultimately shells out to
   `claude -p ... --output-format json` and parses the structured result.
-- **Job store.** Background jobs are persisted as JSON under `CLAUDE_FOR_CODEX_STORE`
-  or `~/.claude-for-codex/jobs`, keyed by a short hash of the repo's git top-level so
-  `status`/`result`/`cancel` are scoped per repo. `CODEX_CC_STORE` remains as a
-  legacy alias. The latest Claude `session_id` is remembered to support `resume: true`.
+- **Job store.** Background jobs are persisted as JSON under the canonical
+  `CLAUDE_FOR_CODEX_STATE` root, keyed by repo slug plus realpath hash so
+  `status`/`result` are scoped per repo. `CLAUDE_FOR_CODEX_STORE`,
+  `CODEX_CC_STORE`, and the old default jobs directory remain legacy read paths.
+  The latest Claude `session_id` is remembered to support `resume: true`.
 - **Background execution.** A background tool spawns the child, writes a `running` record,
   returns a task id immediately, then updates the record (result, session id, cost, exit
   code) when the child closes. Jobs live for the MCP server process lifetime.
+- **Cancellation.** `claude_cancel` is best effort and process-lifetime only:
+  it can cancel a running job while the current MCP server owns the Claude child
+  process. It must not promise hosted durable queue semantics.
 - **Review gate contract.** The `Stop` hook reads the event JSON on stdin, runs a quick
   read-only Claude review, and exits `2` with a reason on stderr to block, or `0` to allow.
   The hook asks Claude to inspect status, tracked diffs, and untracked files so first-commit
   or newly generated files are not silently skipped. The review gate is optional and disabled
-  by default.
+  by default. It is an advanced opt-in path, not part of the default install.
 
 ## Explicit context contract
 
@@ -79,13 +104,31 @@ Both review modes are read-only. They should return concrete `High`, `Medium`,
 and `Low` findings, or `No high-confidence findings` when clean, and should
 state that no files were edited.
 
-`claude_rescue` and `allow_write` are outside the default review path. They cross
-the read-only boundary and should stay clearly warned wherever they are
-documented.
+`claude_rescue` and `allow_write` are outside the standard v1 review path. They
+cross the read-only boundary, and `allow_write: true` passes
+`--dangerously-skip-permissions`, which grants broad write permissions. They
+should stay clearly warned wherever they are documented and should be used only
+in trusted repos.
+
+Background review should use the same manual path with `background: true`, then
+`claude_status`, `claude_result`, and optionally `claude_cancel`. Cancellation
+wording should always include the process-lifetime limit.
 
 The `Stop` hook is also outside default onboarding. It is advanced opt-in
 automation because it can loop, block Codex completion, and create usage-cost
 risk.
+
+Hook disable checklist:
+
+1. Remove this plugin's `hooks.Stop` block from the active Codex config.
+2. Or disable the individual hook through `/hooks`.
+3. Set `[features] hooks = false` only when the whole local Codex config should
+   disable hooks.
+
+GSD/gstack review workflows may call this bridge as an outside-model check, but
+the bridge itself should stay workflow-agnostic. Its job is to expose Claude Code
+cleanly to Codex; it should not own phase state, PR policy, milestone promotion,
+or team process.
 
 ## Failure categories
 
@@ -107,5 +150,7 @@ Runtime and setup output should make these categories actionable:
   docs for your installed version.
 - Read-only mode restricts Claude's tools; if Claude attempts a disallowed tool it can
   stall, which is why per-call timeouts and `tool_timeout_sec` are set.
-- Billing: as of mid-2026, `claude -p` / Agent SDK usage on subscription plans draws from a
-  separate monthly Agent SDK credit. Check current Claude Code docs.
+- Release-date revalidation is required before release-facing docs claim current
+  external behavior. Re-check Codex CLI/MCP config, hook behavior, Claude Code
+  CLI behavior, model aliases, billing/Agent SDK usage, and npm package setup
+  against official docs and local smoke checks for the release date.

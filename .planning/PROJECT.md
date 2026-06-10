@@ -2,11 +2,11 @@
 
 ## What This Is
 
-`claude-for-codex` is a local MCP plugin that lets Codex ask Claude Code for an
-independent second opinion during review, design, and rescue workflows. It is
-the conceptual reverse of `codex-plugin-cc`: instead of Claude Code calling
-Codex, Codex can call Claude Code when another model perspective would improve
-the work.
+`claude-for-codex` is a local MCP plugin for Codex-first teams that want the
+`codex-plugin-cc` workflow in the opposite primary workspace. Instead of moving
+from Codex into Claude Code to get a second opinion, users keep Codex as the
+main working surface and call Claude Code deliberately for review, adversarial
+critique, rescue, background status, results, and cancellation.
 
 The first team rollout is not automatic review. The standard path is manual:
 use a slash command or MCP tool when Codex's current context may be too narrow
@@ -14,8 +14,9 @@ and a separate design/risk review would help.
 
 ## Core Value
 
-Codex users can deliberately ask Claude Code for independent design critique and
-implementation-risk review before committing to a plan or change.
+Codex-first users can keep Codex as the task owner while calling Claude Code as a
+local second-opinion bridge for design critique, implementation-risk review, and
+recovery.
 
 ## Requirements
 
@@ -45,8 +46,8 @@ implementation-risk review before committing to a plan or change.
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Make "design review from another model perspective" the primary v1 team
-  workflow.
+- [ ] Make "Codex-first replacement workflow for codex-plugin-cc" the primary
+  v1 team positioning.
 - [ ] Keep the product usable through both MCP tools and slash commands, while
   documenting slash commands as the standard team rollout path.
 - [ ] Shape the v1 review prompt around two lenses: design critique and
@@ -75,8 +76,12 @@ implementation-risk review before committing to a plan or change.
   safer first learning path.
 - Cloud service or hosted queue - the project is local-first and depends on the
   user's local Claude Code authentication.
+- Replacing GSD/gstack planning, validation, review, or shipping workflows - this
+  project is a model bridge, not a process framework.
 - Replacing Codex's own planning or review - Claude is a second opinion, not the
   primary orchestrator.
+- Building a GitHub PR review bot - that is a different hosted/automation
+  product shape.
 - Claiming full Codex chat-context transfer - v1 should pass explicit artifacts
   and focus, not imply invisible context sharing.
 - Broad public plugin-marketplace polish - team usability comes before a wider
@@ -86,10 +91,10 @@ implementation-risk review before committing to a plan or change.
 
 ## Context
 
-This project started from the idea of reversing `codex-plugin-cc`. The useful
-mirror is not just "call another CLI"; it is giving Codex users a deliberate
-way to ask Claude Code for the kind of perspective the current Codex context may
-miss.
+This project started from the idea of replacing the need for `codex-plugin-cc`
+in a Codex-first workflow. The useful mirror is not just "call another CLI"; it
+is letting Codex users keep one primary workspace while asking Claude Code for
+the kind of perspective the current Codex context may miss.
 
 The team's first need is not an always-on auto-reviewer. Team members use Codex
 in different ways, and not everyone will have the same comfort level with hooks
@@ -139,6 +144,8 @@ failure handling before it becomes a reliable team plugin.
 | Use Node.js for the MCP server | MCP SDK wiring and npm install are the simplest team path. | - Pending |
 | Support both MCP tools and slash commands | MCP gives capability; slash commands give learnable team UX. | - Pending |
 | Document slash commands as the team standard path | Team rollout should start from an easy manual command, not hidden tool invocation. | - Pending |
+| Position as a Codex-first replacement workflow for codex-plugin-cc | Otherwise the project reads like a duplicate review skill instead of a clear workspace choice. | - Pending |
+| Keep GSD/gstack as an adjacent workflow layer | GSD owns process state; this plugin owns the Codex-to-Claude bridge. | - Pending |
 | Keep hooks opt-in | Automatic review can loop and consume usage unexpectedly. | - Pending |
 | Center v1 on design critique and implementation-risk detection | This is the distinct "other model perspective" value the team asked for. | - Pending |
 | Pass explicit artifacts rather than pretending to share full Codex context | Claude Code sees what we provide through repo state, diff, docs, and prompt focus. | - Pending |
@@ -163,4 +170,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state.
 
 ---
-*Last updated: 2026-06-08 after initialization*
+*Last updated: 2026-06-09 after Codex-first positioning clarification*

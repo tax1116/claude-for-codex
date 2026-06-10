@@ -2,7 +2,12 @@
 
 ## Overview
 
-The MVP turns the existing local MCP bridge into a reliable manual team workflow: Codex users can invoke Claude Code deliberately for read-only design critique and implementation-risk review, with clear context boundaries, async job controls, deterministic fake-Claude coverage, and documented safety limits. Hooks and write-capable rescue remain outside the default launch path.
+The MVP turns the existing local MCP bridge into a reliable Codex-first
+replacement workflow for the `codex-plugin-cc` idea: Codex users keep Codex as
+the main working surface and invoke Claude Code deliberately for read-only design
+critique, implementation-risk review, rescue, async job controls, and documented
+safety limits. Hooks and write-capable rescue remain outside the default launch
+path.
 
 ## Phases
 
@@ -11,8 +16,8 @@ The MVP turns the existing local MCP bridge into a reliable manual team workflow
 - Decimal phases (2.1, 2.2): Urgent insertions after planning.
 
 - [x] **Phase 1: Manual Design/Risk Review Core** - Users can install, configure, and manually invoke slash-command-first read-only Claude reviews grounded in explicit repo context.
-- [ ] **Phase 2: Async Job Reliability And Testable Packaging** - Users can run long reviews predictably while maintainers can verify runner, job-store, and package behavior without live Claude.
-- [ ] **Phase 3: Opt-In Automation Boundaries And Release Revalidation** - Advanced hooks, write-capable rescue, and time-sensitive release claims stay explicitly guarded and outside default onboarding.
+- [x] **Phase 2: Async Job Reliability And Testable Packaging** - Users can run long reviews predictably while maintainers can verify runner, job-store, and package behavior without live Claude.
+- [x] **Phase 3: Opt-In Automation Boundaries And Release Revalidation** - Advanced hooks, write-capable rescue, and time-sensitive release claims stay explicitly guarded and outside default onboarding.
 
 ## Phase Details
 
@@ -40,7 +45,7 @@ The MVP turns the existing local MCP bridge into a reliable manual team workflow
   3. Maintainer can run deterministic fake-Claude tests for job-store behavior, runner JSON parsing, text fallback, error status, timeout or launch failures, session id persistence, and status/result/cancel flows.
   4. CI runs lint, tests, syntax checks, and npm package dry-run checks across the supported package contract.
   5. Maintainer can confirm npm package dry-run output includes every runtime file required by the package, and docs include examples for design review, adversarial review with focus, base-ref review, background review, status, result, and cancel.
-**Plans:** TBD
+**Plans:** `02-01-PLAN.md` complete, `02-02-PLAN.md` complete
 
 ### Phase 3: Opt-In Automation Boundaries And Release Revalidation
 **Goal:** Users can trust that advanced automation and write-capable rescue stay explicit, reversible, and outside the default v1 review path.
@@ -51,7 +56,7 @@ The MVP turns the existing local MCP bridge into a reliable manual team workflow
   1. User can complete default team onboarding without enabling Codex hook review, and hook documentation clearly explains opt-in setup, reversibility, loop risk, blocking risk, and usage-cost risk.
   2. User can identify write-capable rescue as outside the standard v1 review path, with clear warnings before any documentation or workflow crosses the read-only boundary.
   3. Release reviewer can find time-sensitive claims marked for release-date revalidation, including CLI flags, hook behavior, model aliases, billing, and package setup.
-**Plans:** TBD
+**Plans:** `03-01-PLAN.md` complete, `03-02-PLAN.md` complete
 
 ## Progress
 
@@ -61,5 +66,5 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Manual Design/Risk Review Core | 2/2 | Complete | 2026-06-08 |
-| 2. Async Job Reliability And Testable Packaging | 0/TBD | Not started | - |
-| 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | Not started | - |
+| 2. Async Job Reliability And Testable Packaging | 2/2 | Complete | 2026-06-09 |
+| 3. Opt-In Automation Boundaries And Release Revalidation | 2/2 | Complete | 2026-06-10 |

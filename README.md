@@ -1,23 +1,39 @@
 # claude-for-codex
 
-Unofficially call **Claude Code** from **OpenAI Codex CLI** for review and rescue workflows.
-This is a conceptual counterpart to [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc),
-which goes the other way (Claude Code → Codex). Built on a Node.js MCP server plus optional
-Codex hooks.
+Use **Claude Code** from inside **OpenAI Codex CLI** without changing your
+primary workspace.
+
+`claude-for-codex` is a Codex-first replacement workflow for teams that like the
+idea behind [`openai/codex-plugin-cc`](https://github.com/openai/codex-plugin-cc)
+but work primarily in Codex. `codex-plugin-cc` lets Claude Code call Codex; this
+plugin lets Codex call Claude Code for manual review, adversarial critique,
+rescue, background status, results, and cancellation.
+
+Built on a local Node.js MCP server plus optional Codex hooks.
 
 This project is independently maintained and is not affiliated with, endorsed by, or sponsored by
 OpenAI or Anthropic.
 
+## Product promise
+
+Keep Codex as the main working surface, and call Claude Code only when a second
+model perspective is worth the context switch.
+
+This is not a GSD/gstack replacement, a PR review bot, or an always-on automatic
+reviewer. It is a local model bridge: Codex stays in charge of the task, while
+Claude Code can be invoked deliberately for critique, risk review, or recovery.
+
 ## Team rollout: slash commands first
 
-The standard team path is manual and explicit:
+The standard team path is a manual slash-command workflow:
 
 1. Use Node.js >= 18.18.
 2. Run `npm install` in this repository.
 3. Register `server.mjs` in Codex MCP config with an absolute path.
 4. Run `claude_setup` from Codex to confirm the effective Claude binary, model, timeout, and auth guidance.
 5. Copy `prompts/*.md` into `~/.codex/prompts/` so teammates can use `/claude-review` and `/claude-adversarial`.
-6. Ask for a manual second opinion only when needed.
+6. Ask Claude Code for a manual second opinion only when needed, without leaving
+   Codex.
 
 First examples:
 
@@ -28,9 +44,29 @@ First examples:
 
 MCP tool names remain the reference interface underneath the slash prompts. The prompts call `claude_review` and `claude_adversarial_review`; the tools can still be invoked directly when you need exact arguments.
 
+Background lifecycle example:
+
+```text
+/claude-review base=origin/dev background: true
+claude_status "task-..."
+claude_result "task-..."
+claude_cancel "task-..."
+```
+
+Cancellation is best effort and process-lifetime only while the current MCP
+server owns the Claude child process. It is not a hosted durable queue.
+
 Claude does not receive the full Codex chat automatically. The explicit context is the prompt text, allowed read-only repo access, read-style git state, selected planning docs, resumed Claude Code session output when used, and user-provided `base` or `focus`.
 
-## Feature mapping vs codex-plugin-cc
+## Replacement boundary vs codex-plugin-cc
+
+Use `codex-plugin-cc` when Claude Code is your main workspace and Codex is the
+outside reviewer. Use `claude-for-codex` when Codex is your main workspace and
+Claude Code is the outside reviewer.
+
+The goal is not API-level symmetry for every Claude Code UI surface. The goal is
+to cover the workflow primitives a Codex-first team needs to stop switching
+between tools for second opinions.
 
 | codex-plugin-cc (CC → Codex) | This plugin (Codex → CC)        | How                                  |
 | ---------------------------- | ------------------------------- | ------------------------------------ |
@@ -45,8 +81,8 @@ Claude does not receive the full Codex chat automatically. The explicit context 
 | Review gate (`Stop` hook)    | `hooks/review-gate.mjs`         | **Codex Stop hook** (exit 2 = block) |
 | `/codex:*` slash commands    | `prompts/claude-*.md`           | Codex custom prompts (`/claude-review`, …) |
 
-Not 1:1: Claude-Code-only UI surfaces (e.g. the `/agents` subagent list). The behavior is
-covered by the tools above.
+Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The
+Codex-first workflow is covered by the tools above.
 
 ## Prerequisites
 
@@ -121,9 +157,11 @@ reason fed back so it can fix the issue. Hooks are experimental and disabled on 
 > **Warning:** the review gate can create a long Codex↔Claude loop, cause blocking at turn
 > completion, and create usage-cost risk. Enable it only when actively monitoring the session.
 
-To turn the gate off, remove this plugin's `hooks.Stop` block or disable the
-individual hook through `/hooks`. To turn all Codex hooks off for a local config,
-set `[features] hooks = false`.
+Disable checklist:
+
+1. Remove this plugin's `hooks.Stop` block from the active Codex config.
+2. Or disable the individual hook through `/hooks`.
+3. To turn all Codex hooks off for a local config, set `[features] hooks = false`.
 
 ## Tools
 
@@ -143,16 +181,33 @@ set `[features] hooks = false`.
 | `CLAUDE_BIN`        | `claude`                             | Claude Code binary path          |
 | `CLAUDE_MODEL`      | `sonnet`                             | Default model alias/id           |
 | `CLAUDE_TIMEOUT_MS` | `600000`                             | Per-call timeout (≤ `tool_timeout_sec*1000`) |
-| `CLAUDE_FOR_CODEX_STORE` | `~/.claude-for-codex/jobs`       | Job store directory              |
-| `CODEX_CC_STORE`    | –                                    | Legacy alias for the job store   |
+| `CLAUDE_FOR_CODEX_STATE` | `~/.claude-for-codex/state`      | Canonical repo-scoped state root |
+| `CLAUDE_FOR_CODEX_STORE` | `~/.claude-for-codex/jobs`       | Legacy job store read path       |
+| `CODEX_CC_STORE`    | –                                    | Legacy alias for old job reads   |
 
 ## Safety
 
 - Read-only by default: Claude may read files and run `git diff/log/status/show` only.
-- `allow_write: true` passes `--dangerously-skip-permissions` — use only in trusted repos.
-- Jobs are tracked while the MCP server process is alive; killing the server ends its jobs.
-- Billing: as of mid-2026, `claude -p` / Agent SDK usage on subscription plans draws from a
-  separate monthly Agent SDK credit. Check current Claude Code docs.
+- `allow_write: true` on `claude_rescue` is outside the standard v1 review path
+  and passes `--dangerously-skip-permissions`, which grants broad write
+  permissions. Use it only in trusted repos.
+- Jobs are tracked in repo-scoped state, but cancellation is best effort only
+  while the MCP server process owns the child process.
+
+## Release-date revalidation
+
+Before a team rollout, npm publish, or release tag, re-check time-sensitive
+claims against official docs for the release date. Do not treat the notes below
+as current external behavior until that release check is done.
+
+| Claim area | Revalidate against |
+| --- | --- |
+| Codex CLI/MCP config | Official Codex CLI MCP config docs and installed-version behavior |
+| hook behavior | Official Codex hook docs, event names, and local `/hooks` behavior |
+| Claude Code CLI behavior | Official Claude Code CLI install, auth, and `claude -p` behavior |
+| model aliases | Official Claude Code model alias docs or CLI help for the release date |
+| billing/Agent SDK usage | Official Claude Code billing and Agent SDK usage docs |
+| npm package setup | `npm ci`, `npm run ci`, and `npm pack --dry-run --cache ./.npm-cache` |
 
 ## Status
 
@@ -162,7 +217,7 @@ event names and MCP config format against the Codex docs for your installed vers
 ## Documentation
 
 - [docs/SETUP.md](docs/SETUP.md) — detailed install, config, tools, and env reference
-- [docs/DESIGN.md](docs/DESIGN.md) — feature mapping vs codex-plugin-cc and how it works
+- [docs/DESIGN.md](docs/DESIGN.md) — product boundary, codex-plugin-cc mapping, and mechanics
 - [docs/PUBLISHING.md](docs/PUBLISHING.md) — naming and how to push to your own GitHub repo
 - [docs/BRANCHING.md](docs/BRANCHING.md) — branch roles, merge flow, and release promotion policy
 

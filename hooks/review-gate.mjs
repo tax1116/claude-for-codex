@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /**
  * Codex Stop hook: run a quick Claude review before Codex finalizes a turn.
+ * This advanced opt-in hook is not part of the default install.
  * If Claude flags blocking issues, exit 2 (Codex blocks the stop and feeds the
- * reason back to the agent). Otherwise exit 0.
+ * reason back to the agent). Otherwise exit 0. That can cause blocking at turn
+ * completion, so use it only when intentionally monitoring automation.
  *
  * Wire it up in ~/.codex/config.toml (requires the hooks feature flag):
  *
@@ -16,7 +18,13 @@
  *   command = 'node "/ABS/PATH/claude-for-codex/hooks/review-gate.mjs"'
  *   timeout = 300
  *
- * WARNING: this can create a long Codex<->Claude loop and burn usage fast.
+ * Disable checklist:
+ *   1. Remove this plugin's hooks.Stop block from the active Codex config.
+ *   2. Or disable the individual hook through /hooks.
+ *   3. Set hooks = false when all hooks in that config layer should be off.
+ *
+ * WARNING: this can create a long Codex<->Claude loop, blocking at turn completion,
+ * and usage-cost risk.
  * Enable it only when you are actively monitoring the session.
  */
 import { spawnSync } from "node:child_process";

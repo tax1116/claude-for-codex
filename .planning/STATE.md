@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: shipping
-stopped_at: Phase 1 verified; PR #2 ready for final ship checks
-last_updated: "2026-06-08T23:25:51.000Z"
-last_activity: 2026-06-09 - Phase 1 verification recorded for PR #2.
+status: verified
+stopped_at: PR #11 merged to dev; PR #4 is ready for review-gated dev-to-master promotion
+last_updated: "2026-06-10T05:50:56Z"
+last_activity: 2026-06-10 - PR #11 merged the Phase 2 external review blocker fix into dev; PR #4 is mergeable with CI passing and review required.
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  completed_phases: 3
+  total_plans: 6
+  completed_plans: 6
   percent: 100
 ---
 
@@ -20,15 +20,15 @@ progress:
 
 See: .planning/PROJECT.md (updated 2026-06-08)
 
-**Core value:** Codex users can deliberately ask Claude Code for independent design critique and implementation-risk review before committing to a plan or change.
-**Current focus:** Phase 1 shipping
+**Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
+**Current focus:** PR #4 dev-to-master promotion and release-date revalidation
 
 ## Current Position
 
-Phase: 1 of 3 (Manual Design/Risk Review Core)
-Plan: All Phase 1 plans complete
-Status: Shipping through PR #2
-Last activity: 2026-06-09 - Phase 1 verification recorded for PR #2.
+Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
+Plan: 03-01 and 03-02 complete
+Status: Ready for review-gated master promotion
+Last activity: 2026-06-10 - PR #11 merged to `dev`; local `dev` was fast-forwarded to `origin/dev`; PR #4 is mergeable with all CI checks passing and branch protection still requiring review.
 
 Progress: [##########] 100%
 
@@ -37,29 +37,29 @@ Progress: [##########] 100%
 | Phase | Status | Requirements | Plans |
 |-------|--------|--------------|-------|
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
-| 2. Async Job Reliability And Testable Packaging | Not started | 12 | TBD |
-| 3. Opt-In Automation Boundaries And Release Revalidation | Not started | 4 | TBD |
+| 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
+| 3. Opt-In Automation Boundaries And Release Revalidation | Complete | 4 | 2/2 |
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: 4.5 min
-- Total execution time: 0.2 hours
+- Total plans completed: 6
+- Average duration: 8.0 min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Manual Design/Risk Review Core | 2/2 | 0.2h | 4.5 min |
-| 2. Async Job Reliability And Testable Packaging | 0/TBD | 0.0h | N/A |
-| 3. Opt-In Automation Boundaries And Release Revalidation | 0/TBD | 0.0h | N/A |
+| 2. Async Job Reliability And Testable Packaging | 2/2 | 0.4h | 11.5 min |
+| 3. Opt-In Automation Boundaries And Release Revalidation | 2/2 | 0.4h | 11.0 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01 Runtime Review Contract (5 min), 01-02 Slash-Command Team Rollout (4 min)
-- Trend: Phase 1 complete
+- Last 5 plans: 01-02 Slash-Command Team Rollout (4 min), 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min), 03-01 Hook And Rescue Safety Boundaries (12 min), 03-02 Release Revalidation Markers (10 min)
+- Trend: All planned v1 phases are implemented, the prior Phase 2 external-review blocker is cleared, and `dev` is ready for the protected PR-based promotion to `master`.
 
 ## Accumulated Context
 
@@ -71,16 +71,25 @@ Recent decisions affecting current work:
 - Phase 1 centers the MVP on manual slash-command-first design critique and implementation-risk review.
 - Hooks remain opt-in, reversible, and outside the default launch path.
 - Write-enabled rescue remains outside the v1 default review path.
-- Deterministic fake-Claude tests are required before trusting background job and runner behavior.
+- Deterministic fake-Claude tests now cover background job and runner behavior without live Claude usage.
+- Phase 3 preserves Codex-first positioning while keeping automation and write access explicitly guarded.
 
 ### Pending Todos
 
-- Finish `$gsd-ship 1` checks for PR #2.
+- Complete the required review on PR #4, then merge `dev` to `master` through the protected promotion PR.
+- Before release/team rollout, perform release-date revalidation against official Codex and Claude docs.
 
 ### Blockers/Concerns
 
-- None active.
-- Phase 3 must revalidate time-sensitive CLI, hook, model, billing, and package setup claims before release-facing documentation is treated as current.
+- Release owner must revalidate time-sensitive CLI, hook, model, billing, and package setup claims before release-facing documentation is treated as current.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260609-krv | Reposition product docs around Codex-first replacement workflow for codex-plugin-cc | 2026-06-09 | same commit | [260609-krv-reposition-product-docs-around-codex-fir](./quick/260609-krv-reposition-product-docs-around-codex-fir/) |
+| 260610-k82 | Resolve Phase 2 external Claude review blocker | 2026-06-10 | same commit | [260610-k82-resolve-phase-2-external-claude-review-b](./quick/260610-k82-resolve-phase-2-external-claude-review-b/) |
+| 260610-kmg | Update planning state after PR #11 merge and PR #4 promotion readiness | 2026-06-10 | same commit | [260610-kmg-update-planning-state-after-pr-11-merge-](./quick/260610-kmg-update-planning-state-after-pr-11-merge-/) |
 
 ## Deferred Items
 
@@ -95,10 +104,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T23:25:51.000Z
-Stopped at: Phase 1 verified; PR #2 ready for final ship checks
-Resume file: .planning/phases/01-manual-design-risk-review-core/01-VERIFICATION.md
+Last session: 2026-06-10T05:50:56Z
+Stopped at: PR #4 ready for required review and master promotion
+Resume file: .planning/STATE.md
 
 ## Next Action
 
-Finish `$gsd-ship 1` by confirming PR #2 checks and removing draft status.
+Approve and merge PR #4 to promote `dev` into `master`, then run release-date revalidation before release or team rollout.
