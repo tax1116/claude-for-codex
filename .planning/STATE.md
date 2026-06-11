@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Skill-Based Review UX And Consent
 status: planning
-stopped_at: Phase 4 planned with skill-surface and repo-read consent execution slices
-last_updated: "2026-06-11T02:55:32Z"
-last_activity: 2026-06-11 - Planned Phase 4 as two executable slices: Codex skill surface and repo-read consent gate.
+stopped_at: Phase 4 plan 04-01 complete; 04-02 ready for execution
+last_updated: "2026-06-11T03:45:00Z"
+last_activity: 2026-06-11 - Completed Phase 4 plan 04-01 skill surface and compatibility alias implementation.
 progress:
   total_phases: 4
   completed_phases: 3
   total_plans: 8
-  completed_plans: 6
-  percent: 75
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-06-08)
 ## Current Position
 
 Phase: 4 (Skill-Based Review UX And Claude Repo-Read Consent)
-Plan: 04-01 Codex Skill Surface And Compatibility Aliases ready for execution
-Status: Phase 4 planned; execution can start with 04-01
-Last activity: 2026-06-11 - Created Phase 4 CONTEXT/RESEARCH/PATTERNS/VALIDATION and plans 04-01, 04-02.
+Plan: 04-02 Repo-Read Consent Gate And Shared Policy ready for execution
+Status: Phase 4 in progress; 04-01 complete and 04-02 remaining
+Last activity: 2026-06-11 - Implemented package-owned Codex skills, compatibility prompts, setup diagnostics, and package coverage.
 
-Progress: [########--] 75%
+Progress: [#########-] 88%
 
 ## Phase Progress
 
@@ -39,13 +39,13 @@ Progress: [########--] 75%
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
 | 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | Complete | 4 | 2/2 |
-| 4. Skill-Based Review UX And Claude Repo-Read Consent | Planned | 8 | 0/2 |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | In Progress | 8 | 1/2 |
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 8.0 min
 - Total execution time: 0.5 hours
 
@@ -59,8 +59,8 @@ Progress: [########--] 75%
 
 **Recent Trend:**
 
-- Last 5 plans: 01-02 Slash-Command Team Rollout (4 min), 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min), 03-01 Hook And Rescue Safety Boundaries (12 min), 03-02 Release Revalidation Markers (10 min)
-- Trend: All planned v1 phases are implemented, the prior Phase 2 external-review blocker is cleared, `dev` has been promoted to `master`, and release-facing docs were revalidated for the 2026-06-10 release pass.
+- Last 5 plans: 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min), 03-01 Hook And Rescue Safety Boundaries (12 min), 03-02 Release Revalidation Markers (10 min), 04-01 Codex Skill Surface And Compatibility Aliases (35 min)
+- Trend: Phase 4 is in progress. The team-facing Claude review UX now uses Codex skills, and the remaining work is the repo-read consent gate.
 
 ## Accumulated Context
 
@@ -86,8 +86,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Execute Phase 4 plan 04-01: Codex Skill Surface And Compatibility Aliases.
-- Execute Phase 4 plan 04-02 after 04-01: Repo-Read Consent Gate And Shared Policy.
+- Execute Phase 4 plan 04-02: Repo-Read Consent Gate And Shared Policy.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -123,10 +122,10 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-11T00:54:27Z
-Stopped at: Phase 4 planned with two executable plans
+Stopped at: Phase 4 plan 04-01 complete; 04-02 ready
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Run `$gsd-execute-phase 4` to start with `04-01-PLAN.md`, or explicitly execute
-`04-01` if you want to keep the skill surface PR separate from consent gating.
+Continue `$gsd-execute-phase 4` with `04-02-PLAN.md` to add the shared
+repo-read consent gate and update the skill workflow copy.

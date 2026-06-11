@@ -71,7 +71,7 @@ path.
   4. User sees a clear repo-read permission choice before the first live Claude review: allow once, always allow for this repository, or cancel.
   5. User can inspect and revoke repository-level Claude repo-read consent without editing state files by hand.
   6. Release docs make clear that v1/v2 are product milestone labels, while npm package releases stay in `0.x.y` until the team workflow is stable enough for `1.0.0`.
-**Plans:** `04-01-PLAN.md` planned, `04-02-PLAN.md` planned
+**Plans:** `04-01-PLAN.md` complete, `04-02-PLAN.md` planned
 
 ## Progress
 
@@ -83,4 +83,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Manual Design/Risk Review Core | 2/2 | Complete | 2026-06-08 |
 | 2. Async Job Reliability And Testable Packaging | 2/2 | Complete | 2026-06-09 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 2/2 | Complete | 2026-06-10 |
-| 4. Skill-Based Review UX And Claude Repo-Read Consent | 0/2 | Planned | - |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | 1/2 | In Progress | - |
