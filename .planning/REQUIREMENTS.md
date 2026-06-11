@@ -1,77 +1,48 @@
 # Requirements: claude-for-codex
 
-**Defined:** 2026-06-08
+**Defined:** 2026-06-10
+**Milestone:** v2.0 Explicit Claude Follow-Up
 **Core Value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
 
-## v1 Requirements
+## v2.0 Requirements
 
-Requirements for the first team rollout. Each maps to roadmap phases.
-
-### Setup
-
-- [x] **SETUP-01**: User can install dependencies with npm on Node.js 18.18 or later.
-- [x] **SETUP-02**: User can register the MCP server in Codex using an absolute local path.
-- [x] **SETUP-03**: User can run a setup check that reports whether Claude Code is installed and reachable.
-- [x] **SETUP-04**: User can diagnose a missing Claude binary, unauthenticated Claude CLI, or timeout-prone MCP configuration from setup output and docs.
-
-### Review
-
-- [x] **REV-01**: User can ask Claude for a read-only review of current Codex work from inside Codex.
-- [x] **REV-02**: User can ask Claude for an adversarial design critique focused on architecture boundaries, complexity, assumptions, and simpler alternatives.
-- [x] **REV-03**: User can ask Claude for implementation-risk detection focused on missing tests, state edge cases, cancellation/resume behavior, context limits, and failure modes.
-- [x] **REV-04**: User can specify a git base ref so Claude reviews the intended comparison range.
-- [x] **REV-05**: User can specify a focus area so Claude narrows the review to the user's current concern.
-- [x] **REV-06**: User receives review output that clearly prioritizes concrete findings and does not claim to have edited files.
-
-### Context
-
-- [x] **CTX-01**: User can understand that Claude sees only explicit prompts, repo files it is allowed to read, read-style git state, selected planning artifacts, previous Claude session output when resumed, and user-provided focus.
-- [x] **CTX-02**: User-facing docs and prompts do not imply that Claude automatically receives the full Codex chat context.
-- [x] **CTX-03**: Review prompts instruct Claude to inspect untracked files from `git status` when relevant, not only tracked diffs.
-- [x] **CTX-04**: Planning and setup docs explain when to use design critique versus implementation-risk review.
-
-### Jobs
-
-- [x] **JOB-01**: User can start long Claude reviews in the background and receive a task id immediately.
-- [x] **JOB-02**: User can list running and recent Claude jobs for the current repository.
-- [x] **JOB-03**: User can fetch the final output of a completed Claude job.
-- [x] **JOB-04**: User can cancel a running Claude job while the MCP server process still owns the child process.
-- [x] **JOB-05**: User-facing output states the process-lifetime limit of cancellation and avoids promising durable queue semantics.
-
-### Safety
-
-- [x] **SAFE-01**: Claude review and adversarial review run read-only by default.
-- [x] **SAFE-02**: Default Claude tool restrictions allow file reads and read-style git commands while disallowing edit/write tools.
-- [x] **SAFE-03**: Write-capable rescue remains outside the standard v1 review path and is clearly warned when documented.
-- [x] **SAFE-04**: Codex hook review remains opt-in, reversible, and absent from the default team onboarding path.
-- [x] **SAFE-05**: Docs explain that automatic hook review can loop, block completion, and consume usage unexpectedly.
-
-### Quality
-
-- [x] **QUAL-01**: Job-store behavior is covered by deterministic tests that do not require a live Claude account.
-- [x] **QUAL-02**: Claude runner behavior is testable with a fake Claude executable or equivalent fixture.
-- [x] **QUAL-03**: Tests cover JSON result parsing, text fallback, error status, timeout/launch failure handling, and session id persistence.
-- [x] **QUAL-04**: Tests or checks cover background status/result/cancel behavior.
-- [x] **QUAL-05**: CI runs lint, tests, syntax checks, and npm package dry-run checks.
-- [x] **QUAL-06**: Package dry-run output includes every runtime file required by the npm package.
-
-### Docs
-
-- [x] **DOC-01**: README and setup docs present slash commands as the standard team rollout path.
-- [x] **DOC-02**: MCP tool names remain documented as the underlying capability and reference interface.
-- [x] **DOC-03**: Docs include examples for design review, adversarial review with focus, review against a base ref, background review, status, result, and cancel.
-- [x] **DOC-04**: Docs preserve unofficial/non-affiliation language for OpenAI and Anthropic.
-- [x] **DOC-05**: Docs identify time-sensitive claims, such as CLI flags, hook behavior, model aliases, billing, and package setup, for release-date revalidation.
-
-## v2 Requirements
-
-Deferred to future release. Tracked but not in current roadmap.
+Requirements for the explicit Claude follow-up workflow. v1.0 requirements are
+archived in `.planning/milestones/v1.0-REQUIREMENTS.md`.
 
 ### Follow-Up
 
-- **FOL-01**: User can ask a follow-up question about a previous Claude result through an explicit follow-up tool or documented pattern.
-- **FOL-02**: User can choose between continuing the latest Claude session, continuing a specific Claude session, and starting fresh.
-- **FOL-03**: Follow-up docs distinguish Claude session continuity from Codex chat-context transfer.
+- [ ] **FOL-01**: User can ask a follow-up question about a previous Claude review result through an explicit MCP tool or documented slash-command pattern.
+- [ ] **FOL-02**: User can choose to continue the latest Claude session when a latest session id exists for the current repo.
+- [ ] **FOL-03**: User can choose to continue a specific Claude session by supplying a session id.
+- [ ] **FOL-04**: User can choose to start fresh when session continuity would create the wrong context.
+- [ ] **FOL-05**: Follow-up output clearly states which session mode was used: latest, specific, or fresh.
+
+### Context
+
+- [ ] **CTX-05**: Follow-up prompts distinguish Claude session continuity from Codex chat-context transfer.
+- [ ] **CTX-06**: Follow-up prompts include the prior Claude result or job id context explicitly enough that Claude can answer without assuming invisible Codex context.
+- [ ] **CTX-07**: Follow-up docs explain when to use follow-up versus a fresh review.
+
+### Safety
+
+- [ ] **SAFE-06**: Follow-up review remains read-only by default with the same read-style tool restrictions as review/adversarial review.
+- [ ] **SAFE-07**: Follow-up cannot silently cross into write-capable rescue behavior.
+
+### Quality
+
+- [ ] **QUAL-07**: Tests cover follow-up prompt construction for latest, specific, and fresh session modes.
+- [ ] **QUAL-08**: Tests cover missing latest-session diagnostics and invalid explicit session input.
+- [ ] **QUAL-09**: Tests cover follow-up result persistence and status/result compatibility with existing job flows.
+
+### Docs
+
+- [ ] **DOC-06**: README and setup docs include examples for follow-up after a foreground review result.
+- [ ] **DOC-07**: README and setup docs include examples for follow-up after a background review result using task/result context.
+- [ ] **DOC-08**: Docs describe the session-mode tradeoff in operator language: continue latest, continue specific, or start fresh.
+
+## Future Requirements
+
+Deferred beyond the explicit follow-up milestone.
 
 ### Diagnostics
 
@@ -97,16 +68,13 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| Automatic Claude review by default | Surprise latency, usage cost, and Codex/Claude loops would undermine team trust. |
-| Hook-first onboarding | Hooks are advanced automation; manual slash commands are safer for the first rollout. |
-| Full Codex chat-context transfer | Claude only receives explicit artifacts and repo access; implying hidden context transfer creates false confidence. |
-| Hosted queue or cloud service | The v1 product is local-first and depends on local Claude Code authentication. |
-| Write-enabled rescue as a normal workflow | It crosses the read-only safety boundary and can edit files with broad permissions. |
-| Replacing GSD/gstack workflows | GSD owns planning, validation, review, and shipping process; this plugin owns the Codex-to-Claude bridge. |
-| Replacing Codex planning/review | Claude is a second-opinion reviewer, not the primary orchestrator. |
+| Automatic Claude follow-up after every review | Follow-up should be intentional so users control context, latency, and usage. |
+| Hidden Codex chat-context transfer | Claude only receives explicit artifacts and repo access; implying hidden context transfer creates false confidence. |
+| Write-enabled follow-up as a normal workflow | Follow-up is review-oriented and should inherit read-only defaults; rescue remains a separate explicit path. |
+| Hosted queue or cloud service | The product remains local-first and depends on local Claude Code authentication. |
+| Hook-first onboarding | Hooks are advanced automation; manual slash commands stay the team standard path. |
 | GitHub PR review bot | Hosted PR automation is a separate product shape with different auth, tenancy, and review-posting concerns. |
 | Public marketplace polish before team validation | Internal reliability and docs come before broad distribution. |
-| TypeScript migration in v1 | Current ESM/no-build packaging is simpler; TypeScript can follow after module boundaries and package strategy stabilize. |
 
 ## Traceability
 
@@ -114,47 +82,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SETUP-01 | Phase 1 | Complete (01-02) |
-| SETUP-02 | Phase 1 | Complete (01-02) |
-| SETUP-03 | Phase 1 | Complete (01-01, 01-02) |
-| SETUP-04 | Phase 1 | Complete (01-01, 01-02) |
-| REV-01 | Phase 1 | Complete (01-01, 01-02) |
-| REV-02 | Phase 1 | Complete (01-01, 01-02) |
-| REV-03 | Phase 1 | Complete (01-01, 01-02) |
-| REV-04 | Phase 1 | Complete (01-01, 01-02) |
-| REV-05 | Phase 1 | Complete (01-01, 01-02) |
-| REV-06 | Phase 1 | Complete (01-01, 01-02) |
-| CTX-01 | Phase 1 | Complete (01-01, 01-02) |
-| CTX-02 | Phase 1 | Complete (01-01, 01-02) |
-| CTX-03 | Phase 1 | Complete (01-01, 01-02) |
-| CTX-04 | Phase 1 | Complete (01-01, 01-02) |
-| JOB-01 | Phase 2 | Complete (02-01, 02-02) |
-| JOB-02 | Phase 2 | Complete (02-01, 02-02) |
-| JOB-03 | Phase 2 | Complete (02-01, 02-02) |
-| JOB-04 | Phase 2 | Complete (02-01, 02-02) |
-| JOB-05 | Phase 2 | Complete (02-01, 02-02) |
-| SAFE-01 | Phase 1 | Complete (01-01, 01-02) |
-| SAFE-02 | Phase 1 | Complete (01-01, 01-02) |
-| SAFE-03 | Phase 3 | Complete (03-01) |
-| SAFE-04 | Phase 3 | Complete (03-01) |
-| SAFE-05 | Phase 3 | Complete (03-01) |
-| QUAL-01 | Phase 2 | Complete (02-01) |
-| QUAL-02 | Phase 2 | Complete (02-01) |
-| QUAL-03 | Phase 2 | Complete (02-01) |
-| QUAL-04 | Phase 2 | Complete (02-01) |
-| QUAL-05 | Phase 2 | Complete (02-02) |
-| QUAL-06 | Phase 2 | Complete (02-02) |
-| DOC-01 | Phase 1 | Complete (01-02) |
-| DOC-02 | Phase 1 | Complete (01-02) |
-| DOC-03 | Phase 2 | Complete (02-02) |
-| DOC-04 | Phase 1 | Complete (01-02) |
-| DOC-05 | Phase 3 | Complete (03-02) |
+| FOL-01 | Phase 1 | Planned |
+| FOL-02 | Phase 1 | Planned |
+| FOL-03 | Phase 1 | Planned |
+| FOL-04 | Phase 1 | Planned |
+| FOL-05 | Phase 1 | Planned |
+| CTX-05 | Phase 1 | Planned |
+| CTX-06 | Phase 1 | Planned |
+| CTX-07 | Phase 1 | Planned |
+| SAFE-06 | Phase 1 | Planned |
+| SAFE-07 | Phase 1 | Planned |
+| QUAL-07 | Phase 1 | Planned |
+| QUAL-08 | Phase 1 | Planned |
+| QUAL-09 | Phase 1 | Planned |
+| DOC-06 | Phase 1 | Planned |
+| DOC-07 | Phase 1 | Planned |
+| DOC-08 | Phase 1 | Planned |
 
 **Coverage:**
-- v1 requirements: 35 total
-- Mapped to phases: 35
+- v2.0 requirements: 16 total
+- Mapped to phases: 16
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-06-08*
-*Last updated: 2026-06-10 after Phase 3 safety and release revalidation execution*
+*Requirements defined: 2026-06-10 for v2.0 explicit Claude follow-up*
