@@ -176,14 +176,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOC-03 | Phase 2 | Complete (02-02) |
 | DOC-04 | Phase 1 | Complete (01-02) |
 | DOC-05 | Phase 3 | Complete (03-02) |
-| SKILL-01 | Phase 4 | Planned |
-| SKILL-02 | Phase 4 | Planned |
-| SKILL-03 | Phase 4 | Planned |
-| SKILL-04 | Phase 4 | Planned |
-| CONSENT-01 | Phase 4 | Planned |
-| CONSENT-02 | Phase 4 | Planned |
-| CONSENT-03 | Phase 4 | Planned |
-| CONSENT-04 | Phase 4 | Planned |
+| SKILL-01 | Phase 4 | Complete (04-01) |
+| SKILL-02 | Phase 4 | Complete (04-01) |
+| SKILL-03 | Phase 4 | Complete (04-01) |
+| SKILL-04 | Phase 4 | Complete (04-01) |
+| CONSENT-01 | Phase 4 | Complete (04-02) |
+| CONSENT-02 | Phase 4 | Complete (04-02) |
+| CONSENT-03 | Phase 4 | Complete (04-02) |
+| CONSENT-04 | Phase 4 | Complete (04-02) |
 
 **Coverage:**
 - v1 requirements: 35 total

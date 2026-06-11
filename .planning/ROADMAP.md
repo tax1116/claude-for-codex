@@ -18,7 +18,7 @@ path.
 - [x] **Phase 1: Manual Design/Risk Review Core** - Users can install, configure, and manually invoke slash-command-first read-only Claude reviews grounded in explicit repo context.
 - [x] **Phase 2: Async Job Reliability And Testable Packaging** - Users can run long reviews predictably while maintainers can verify runner, job-store, and package behavior without live Claude.
 - [x] **Phase 3: Opt-In Automation Boundaries And Release Revalidation** - Advanced hooks, write-capable rescue, and time-sensitive release claims stay explicitly guarded and outside default onboarding.
-- [ ] **Phase 4: Skill-Based Review UX And Claude Repo-Read Consent** - Users invoke Claude review through Codex skills and explicitly control whether Claude Code may read repo diffs, related files, and selected planning docs.
+- [x] **Phase 4: Skill-Based Review UX And Claude Repo-Read Consent** - Users invoke Claude review through Codex skills and explicitly control whether Claude Code may read repo diffs, related files, and selected planning docs.
 
 ## Phase Details
 
