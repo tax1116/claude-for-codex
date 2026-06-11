@@ -20,9 +20,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { createClaudeRunner } from "./src/claude-runner.mjs";
 
 const claude = createClaudeRunner();
+const expectedCodexSkills = ["claude-review", "claude-adversarial", "claude-rescue", "claude-setup"];
 
 // ---------- prompts ----------
 
@@ -85,9 +89,21 @@ function setupReport(versionText) {
     `CLAUDE_MODEL: ${claude.defaultModel}\n` +
     `CLAUDE_TIMEOUT_MS: ${claude.defaultTimeoutMs}\n` +
     `MCP client: set tool_timeout_sec to at least ${Math.ceil(claude.defaultTimeoutMs / 1000)}.\n` +
+    skillInstallReport() +
     `Auth/reachability: run \`claude auth status\` if available, or run \`claude\` once interactively.\n` +
     `This setup check does not run a live review; live review reachability may still fail due to auth, timeout, malformed JSON, or context too large.`
   );
+}
+
+function skillInstallReport() {
+  const skillRoot = path.join(os.homedir(), ".codex", "skills");
+  const lines = ["Codex skills:"];
+  for (const skill of expectedCodexSkills) {
+    const target = path.join(skillRoot, skill, "SKILL.md");
+    lines.push(`- ${skill}: ${fs.existsSync(target) ? "installed" : `missing (${target})`}`);
+  }
+  lines.push("Install missing skills: cp -R skills/* ~/.codex/skills/");
+  return `${lines.join("\n")}\n`;
 }
 
 // ---------- server ----------

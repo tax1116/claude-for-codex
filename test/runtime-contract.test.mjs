@@ -68,6 +68,12 @@ test("setup diagnostics name Claude configuration and live-review gaps", () => {
     "CLAUDE_MODEL",
     "CLAUDE_TIMEOUT_MS",
     "tool_timeout_sec",
+    "Codex skills",
+    "claude-review",
+    "claude-adversarial",
+    "claude-rescue",
+    "claude-setup",
+    "cp -R skills/* ~/.codex/skills/",
     "claude auth status",
     "live review reachability may still fail",
   ]) {

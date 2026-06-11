@@ -91,6 +91,7 @@ bump.
 - [ ] Ownership metadata checked (`LICENSE`, `NOTICE`, `package.json`)
 - [ ] `node_modules` excluded (handled by `.gitignore`)
 - [ ] `package-lock.json` committed
+- [ ] `skills/` included in `package.json.files` and `npm pack --dry-run`
 - [ ] README states the project is unofficial
 - [ ] Authenticate the push with your own GitHub credentials / token
 

@@ -23,31 +23,41 @@ This is not a GSD/gstack replacement, a PR review bot, or an always-on automatic
 reviewer. It is a local model bridge: Codex stays in charge of the task, while
 Claude Code can be invoked deliberately for critique, risk review, or recovery.
 
-## Team rollout: slash commands first
+## Team rollout: Codex skills first
 
-The standard team path is a manual slash-command workflow:
+The standard team path is a manual Codex skill workflow:
 
 1. Use Node.js >= 18.18.
 2. Run `npm install` in this repository.
 3. Register `server.mjs` in Codex MCP config with an absolute path.
-4. Run `claude_setup` from Codex to confirm the effective Claude binary, model, timeout, and auth guidance.
-5. Copy `prompts/*.md` into `~/.codex/prompts/` so teammates can use `/claude-review` and `/claude-adversarial`.
+4. Run `$claude-setup` from Codex to confirm the effective Claude binary, model, timeout, skill paths, and auth guidance.
+5. Copy `skills/*` into `~/.codex/skills/` so teammates can use `$claude-review`, `$claude-adversarial`, `$claude-rescue`, and `$claude-setup`.
 6. Ask Claude Code for a manual second opinion only when needed, without leaving
    Codex.
 
 First examples:
 
-- `/claude-review` - implementation-risk review for missing tests, state edge cases, cancellation/resume behavior, context limits, and failure modes.
-- `/claude-review base=origin/dev focus="job cancellation"`
-- `/claude-adversarial` - design critique for architecture boundaries, complexity, assumptions, tradeoffs, and simpler alternatives.
-- `/claude-adversarial focus="simpler alternatives" background: true`
+- `$claude-setup` - setup check for Claude Code, MCP timeout guidance, and expected skill paths.
+- `$claude-review` - implementation-risk review for missing tests, state edge cases, cancellation/resume behavior, context limits, and failure modes.
+- `$claude-review base=origin/dev focus="job cancellation"`
+- `$claude-adversarial` - design critique for architecture boundaries, complexity, assumptions, tradeoffs, and simpler alternatives.
+- `$claude-adversarial focus="simpler alternatives" background: true`
 
-MCP tool names remain the reference interface underneath the slash prompts. The prompts call `claude_review` and `claude_adversarial_review`; the tools can still be invoked directly when you need exact arguments.
+Install skills:
+
+```bash
+cp -R skills/* ~/.codex/skills/
+```
+
+MCP tool names remain the reference interface underneath the skills. The skills call `claude_review`, `claude_adversarial_review`, `claude_rescue`, and `claude_setup`; the tools can still be invoked directly when you need exact arguments.
+
+Slash prompts in `prompts/*.md` are optional compatibility aliases for users who
+already rely on `/claude-review`, `/claude-adversarial`, or `/claude-rescue`.
 
 Background lifecycle example:
 
 ```text
-/claude-review base=origin/dev background: true
+$claude-review base=origin/dev background: true
 claude_status "task-..."
 claude_result "task-..."
 claude_cancel "task-..."
@@ -79,7 +89,7 @@ between tools for second opinions.
 | `/codex:setup`               | `claude_setup`                  | MCP tool                             |
 | `--background` / `--wait`    | `background: true`              | detached job + status/result         |
 | Review gate (`Stop` hook)    | `hooks/review-gate.mjs`         | **Codex Stop hook** (exit 2 = block) |
-| `/codex:*` slash commands    | `prompts/claude-*.md`           | Codex custom prompts (`/claude-review`, …) |
+| `/codex:*` slash commands    | `skills/claude-*/SKILL.md`      | Codex skills (`$claude-review`, …)         |
 
 Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The
 Codex-first workflow is covered by the tools above.
@@ -123,9 +133,16 @@ env = { CLAUDE_MODEL = "sonnet" }
 Tools then appear namespaced as `claude:claude_review`, `claude:claude_rescue`, etc. Codex can
 call them on its own, or you can ask: *"Use Claude to adversarially review my diff against main."*
 
-## 2) Standard slash-command UX
+## 2) Standard Codex skill UX
 
-Copy the prompt files so they show up as `/claude-review`, `/claude-adversarial`, `/claude-rescue`:
+Copy the skill files so they show up as `$claude-review`,
+`$claude-adversarial`, `$claude-rescue`, and `$claude-setup`:
+
+```bash
+cp -R skills/* ~/.codex/skills/
+```
+
+Optional compatibility aliases:
 
 ```bash
 cp prompts/*.md ~/.codex/prompts/
@@ -166,7 +183,7 @@ Disable checklist:
 
 ## Tools
 
-- `claude_setup` — verify Claude Code is installed/reachable.
+- `claude_setup` — verify Claude Code is installed/reachable and report expected Codex skill paths.
 - `claude_review {base?, focus?, background?, cwd?}` — read-only review of worktree or branch changes.
 - `claude_adversarial_review {base?, focus?, background?, cwd?}` — steerable challenge review.
 - `claude_rescue {task, model?, resume?, fresh?, allow_write?, background?, cwd?}` — delegate work;

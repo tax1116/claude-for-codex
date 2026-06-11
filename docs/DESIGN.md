@@ -23,7 +23,8 @@ just to get Claude Code's second opinion. It should not replace:
 - The user's responsibility to choose what context Claude sees.
 
 Hooks remain optional because automatic lifecycle review is a different product
-shape. The standard workflow is manual slash command or MCP tool invocation.
+shape. The standard workflow is manual Codex skill or MCP tool invocation.
+Slash prompts are compatibility aliases for users who already rely on them.
 
 ## How each codex-plugin-cc feature maps
 
@@ -38,7 +39,7 @@ shape. The standard workflow is manual slash command or MCP tool invocation.
 | `/codex:setup` | `claude_setup` | MCP tool |
 | `--background` / `--wait` | `background: true` | tracked job + status/result |
 | Review gate (`Stop` hook) | `hooks/review-gate.mjs` | Codex `Stop` hook (exit 2 = block) |
-| `/codex:*` slash commands | `prompts/claude-*.md` | Codex custom prompts |
+| `/codex:*` slash commands | `skills/claude-*/SKILL.md` | Codex skills |
 
 Not 1:1: Claude-Code-only UI surfaces such as the `/agents` subagent list. The
 Codex-first workflow behavior is covered by the tools above.
@@ -53,6 +54,10 @@ Codex-first workflow behavior is covered by the tools above.
 - **MCP transport.** The server speaks stdio JSON-RPC and is launched by Codex via
   `[mcp_servers.claude]` in `config.toml`. Each tool ultimately shells out to
   `claude -p ... --output-format json` and parses the structured result.
+- **Codex skills.** `skills/claude-*/SKILL.md` files are workflow launchers for
+  `$claude-review`, `$claude-adversarial`, `$claude-rescue`, and
+  `$claude-setup`. MCP tools remain the source of truth for review policy,
+  output format, safety, consent, failure guidance, and process execution.
 - **Job store.** Background jobs are persisted as JSON under the canonical
   `CLAUDE_FOR_CODEX_STATE` root, keyed by repo slug plus realpath hash so
   `status`/`result` are scoped per repo. `CLAUDE_FOR_CODEX_STORE`,
@@ -92,14 +97,17 @@ history, hidden state, or every `.planning/**` file is sent to Claude.
 
 ## Review mode boundaries
 
-The standard team path is manual slash commands first:
+The standard team path is manual Codex skills first:
 
-- `/claude-review` calls `claude_review` for implementation-risk review:
+- `$claude-review` calls `claude_review` for implementation-risk review:
   missing tests, state edge cases, cancellation/resume behavior, context limits,
   and failure modes.
-- `/claude-adversarial` calls `claude_adversarial_review` for adversarial design
+- `$claude-adversarial` calls `claude_adversarial_review` for adversarial design
   critique: architecture boundaries, complexity, assumptions, tradeoffs, and
   simpler alternatives.
+
+`/claude-review`, `/claude-adversarial`, and `/claude-rescue` remain usable as
+compatibility aliases, but they are not the standard team rollout surface.
 
 Both review modes are read-only. They should return concrete `High`, `Medium`,
 and `Low` findings, or `No high-confidence findings` when clean, and should

@@ -10,19 +10,56 @@ const docs = {
   publishing: read("docs/PUBLISHING.md"),
   reviewPrompt: read("prompts/claude-review.md"),
   adversarialPrompt: read("prompts/claude-adversarial.md"),
+  rescuePrompt: read("prompts/claude-rescue.md"),
 };
 const packageJson = JSON.parse(read("package.json"));
+const skillFiles = [
+  ["claude-review", "claude.claude_review"],
+  ["claude-adversarial", "claude.claude_adversarial_review"],
+  ["claude-rescue", "claude.claude_rescue"],
+  ["claude-setup", "claude.claude_setup"],
+];
+const bannedDesignReviewName = ["claude", "design-review"].join("-");
+const bannedDesignReviewSkill = `$${bannedDesignReviewName}`;
 
-test("slash prompts expose the standard team review contracts", () => {
+test("Codex skills are the standard team workflow surface", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
+
+  for (const [skillName, toolName] of skillFiles) {
+    const skillText = read(`skills/${skillName}/SKILL.md`);
+    assertIncludes(skillText, `name: "${skillName}"`, `${skillName}: frontmatter name`);
+    assertIncludes(skillText, toolName, `${skillName}: MCP tool`);
+    assert.doesNotMatch(skillText, new RegExp(`${bannedDesignReviewName}|\\${bannedDesignReviewSkill}`));
+  }
+
+  assertPackageIncludes("skills/");
+  assertIncludes(combinedDocs, "$claude-review", "docs: $claude-review");
+  assertIncludes(combinedDocs, "$claude-setup", "docs: $claude-setup");
+  assertIncludes(combinedDocs, "cp -R skills/* ~/.codex/skills/", "docs: skill install command");
+  assertBefore(combinedDocs, "$claude-review", "/claude-review");
+  assertIncludes(docs.design, "MCP tools remain the source of truth", "DESIGN: MCP source of truth");
+});
+
+test("slash prompts are compatibility aliases for the skill-first workflow", () => {
+  for (const [name, text] of [
+    ["review prompt", docs.reviewPrompt],
+    ["adversarial prompt", docs.adversarialPrompt],
+    ["rescue prompt", docs.rescuePrompt],
+  ]) {
+    assertIncludes(text, "compatibility alias", `${name}: compatibility alias`);
+    assert.doesNotMatch(text, /Standard team path/);
+  }
+
   assertIncludes(docs.reviewPrompt, "/claude-review", "review prompt command");
   assertIncludes(docs.adversarialPrompt, "/claude-adversarial", "adversarial prompt command");
+  assertIncludes(docs.rescuePrompt, "/claude-rescue", "rescue prompt command");
 
   for (const [name, text] of [
     ["review prompt", docs.reviewPrompt],
     ["adversarial prompt", docs.adversarialPrompt],
   ]) {
     for (const expected of [
-      "Standard team path",
+      "compatibility alias",
       "base",
       "focus",
       "background: true",
@@ -45,16 +82,18 @@ test("slash prompts expose the standard team review contracts", () => {
   }
 });
 
-test("README teaches slash-command rollout before MCP reference details", () => {
+test("README teaches skill rollout before MCP reference details", () => {
   for (const expected of [
     "Node.js >= 18.18",
     "npm install",
     "absolute path",
-    "claude_setup",
-    "/claude-review",
-    "/claude-adversarial",
+    "$claude-setup",
+    "$claude-review",
+    "$claude-adversarial",
+    "cp -R skills/* ~/.codex/skills/",
     "MCP tool names",
     "reference interface",
+    "compatibility aliases",
     "not affiliated with, endorsed by, or sponsored by",
     "advanced",
     "opt-in",
@@ -65,7 +104,7 @@ test("README teaches slash-command rollout before MCP reference details", () => 
     assertIncludes(docs.readme, expected, `README: ${expected}`);
   }
 
-  assertBefore(docs.readme, "/claude-review", "## Tools");
+  assertBefore(docs.readme, "$claude-review", "## Tools");
   assert.doesNotMatch(docs.readme, /planned direction is Node \+ TypeScript/i);
   assert.doesNotMatch(docs.readme, /intended team-ready shape is Node \+ TypeScript/i);
 });
@@ -81,7 +120,7 @@ test("README-linked docs are included in the npm package", () => {
 
 test("setup and design docs explain context, boundaries, and failures", () => {
   for (const expected of [
-    "Standard slash-command workflow",
+    "Standard Codex skill workflow",
     "missing binary",
     "auth/reachability",
     "timeout",
@@ -116,8 +155,8 @@ test("docs teach base, focus, background, and cancellation boundaries", () => {
   const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
 
   for (const expected of [
-    "/claude-review base=origin/dev",
-    "/claude-adversarial focus=",
+    "$claude-review base=origin/dev",
+    "$claude-adversarial focus=",
     "background: true",
     "claude_status",
     "claude_result",
@@ -134,7 +173,7 @@ test("docs keep hooks advanced, opt-in, reversible, and risky", () => {
   const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
 
   for (const expected of [
-    "manual slash-command workflow",
+    "manual Codex skill workflow",
     "not part of the default install",
     "advanced opt-in",
     "Hooks are enabled by default",
@@ -223,6 +262,8 @@ test("server runtime imports stay covered by npm package files", () => {
   for (const expected of ["server.mjs", "src/", "hooks/", "prompts/", "README.md", "LICENSE", "NOTICE"]) {
     assertPackageIncludes(expected);
   }
+
+  assertPackageIncludes("skills/");
 });
 
 function read(relativePath) {

@@ -51,22 +51,22 @@ Restart Codex. Tools appear namespaced as `claude:claude_review`,
 `claude:claude_rescue`, etc. Codex may call them on its own, or you can ask
 directly, e.g. *"Use Claude to adversarially review my diff against main."*
 
-## 3. Standard slash-command workflow
+## 3. Standard Codex skill workflow
 
-Copy the prompt files so they show as `/claude-review`, `/claude-adversarial`,
-`/claude-rescue`:
+Copy the skill files so they show as `$claude-review`, `$claude-adversarial`,
+`$claude-rescue`, and `$claude-setup`:
 
 ```bash
-cp prompts/*.md ~/.codex/prompts/
+cp -R skills/* ~/.codex/skills/
 ```
 
-The standard workflow is a manual slash-command workflow:
+The standard workflow is a manual Codex skill workflow:
 
-1. Run `claude_setup` once after MCP registration.
-2. Use `/claude-review` for implementation-risk review. It emphasizes missing
+1. Run `$claude-setup` once after MCP registration.
+2. Use `$claude-review` for implementation-risk review. It emphasizes missing
    tests, state edge cases, cancellation/resume behavior, context limits, and
    failure modes.
-3. Use `/claude-adversarial` for design critique. It emphasizes architecture
+3. Use `$claude-adversarial` for design critique. It emphasizes architecture
    boundaries, complexity, assumptions, tradeoffs, and simpler alternatives.
 4. Leave arguments empty for a normal current-work review, or provide optional
    `base` and `focus` text to narrow the scope.
@@ -79,14 +79,21 @@ Codex-first users, not to make Claude Code review every Codex turn.
 Concrete examples:
 
 ```text
-/claude-review
-/claude-review base=origin/dev
-/claude-review base=origin/dev focus="job cancellation"
-/claude-adversarial focus="simpler alternatives"
-/claude-review background: true
+$claude-review
+$claude-review base=origin/dev
+$claude-review base=origin/dev focus="job cancellation"
+$claude-adversarial focus="simpler alternatives"
+$claude-review background: true
 claude_status "task-..."
 claude_result "task-..."
 claude_cancel "task-..."
+```
+
+Optional slash prompts remain available as compatibility aliases for users who
+already use `/claude-review`, `/claude-adversarial`, or `/claude-rescue`:
+
+```bash
+cp prompts/*.md ~/.codex/prompts/
 ```
 
 `claude_cancel` is best effort and process-lifetime only. It can cancel a job
@@ -144,11 +151,11 @@ hooks = false
 
 ## Tools reference
 
-MCP tool names are the reference interface under the slash-command workflow.
+MCP tool names are the reference interface under the skill workflow.
 
 | Tool | Args | Purpose |
 | --- | --- | --- |
-| `claude_setup` | – | Verify Claude Code is installed/reachable |
+| `claude_setup` | – | Verify Claude Code is installed/reachable and report expected Codex skill paths |
 | `claude_review` | `base?, focus?, background?, cwd?` | Read-only review of worktree or branch changes |
 | `claude_adversarial_review` | `base?, focus?, background?, cwd?` | Steerable challenge review |
 | `claude_rescue` | `task, model?, resume?, fresh?, allow_write?, background?, cwd?` | Delegate work to Claude |
@@ -163,9 +170,9 @@ only; it does not transfer the full Codex chat.
 ## Setup diagnostics and failure categories
 
 `claude_setup` reports the configured `CLAUDE_BIN`, `CLAUDE_MODEL`,
-`CLAUDE_TIMEOUT_MS`, and `tool_timeout_sec` alignment guidance. It checks basic
-CLI availability, but it does not prove that a live review will fit the selected
-timeout or context.
+`CLAUDE_TIMEOUT_MS`, `tool_timeout_sec` alignment guidance, and expected
+`~/.codex/skills/*/SKILL.md` paths. It checks basic CLI availability, but it
+does not prove that a live review will fit the selected timeout or context.
 
 Common categories:
 

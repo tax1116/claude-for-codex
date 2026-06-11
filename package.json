@@ -10,6 +10,7 @@
     "server.mjs",
     "src/",
     "hooks/",
+    "skills/",
     "prompts/",
     "docs/SETUP.md",
     "docs/DESIGN.md",
