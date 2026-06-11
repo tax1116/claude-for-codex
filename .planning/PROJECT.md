@@ -3,16 +3,31 @@
 ## What This Is
 
 `claude-for-codex` is a local MCP plugin for Codex-first teams that want the
-`codex-plugin-cc` workflow in the opposite primary workspace. Instead of moving
-from Codex into Claude Code to get a second opinion, users keep Codex as the
-main working surface and call Claude Code deliberately for review, adversarial
-critique, rescue, background status, results, and cancellation.
+`codex-plugin-cc` workflow in the opposite primary workspace. Codex stays the
+main working surface, while Claude Code can be called deliberately for read-only
+review, adversarial critique, rescue, background job status/result/cancel, and
+repo-read-gated second opinions.
 
-The first team rollout is not automatic review. The v1 standard path was manual:
-use a slash command or MCP tool when Codex's current context may be too narrow
-and a separate design/risk review would help. The v2 direction is to make Codex
-skills the standard team-facing workflow surface, with slash prompts kept only
-as optional compatibility aliases if they remain useful.
+The v2.0 shipped surface makes Codex skills the standard team-facing workflow.
+MCP tools remain the underlying capability and reference interface. Slash prompt
+wrappers are compatibility aliases, not the primary rollout path. Hooks and
+write-capable rescue remain optional, explicit, and outside default onboarding.
+
+## Current State
+
+**Shipped milestone:** v2.0 Skill-Based Review UX And Consent on 2026-06-11.
+
+**Package state:** npm package version is `0.2.0`. Product milestone labels such
+as v1/v2 are separate from npm stable release numbering; package releases remain
+in `0.x.y` until the team workflow has survived real team use.
+
+**Runtime shape:**
+
+- Node.js ESM MCP server over stdio.
+- Local Claude Code CLI dependency.
+- File-backed repo-scoped state store.
+- Package-owned Codex skills under `skills/*/SKILL.md`.
+- Deterministic Node test suite with fake-Claude lifecycle coverage.
 
 ## Core Value
 
@@ -24,130 +39,88 @@ recovery.
 
 ### Validated
 
-<!-- Existing behavior inferred from the current codebase map. -->
-
-- [existing] Codex can launch a local Node.js MCP server over stdio.
-- [existing] The MCP server can invoke the local Claude Code CLI with
-  `claude -p --output-format json`.
-- [existing] Manual tools exist for setup, review, adversarial review, rescue,
-  status, result, and cancellation.
-- [existing] Claude runs are read-only by default with a restricted tool
-  allowlist for file reads and read-style git commands.
-- [existing] Background jobs are persisted in a file-backed repo-scoped job
-  store.
-- [existing] The latest Claude session id is remembered so later rescue work can
-  resume a repo session.
-- [existing] Slash-command prompt wrappers exist for review, adversarial review,
-  and rescue workflows.
-- [gap] Codex skill wrappers do not yet exist for the standard review workflows,
-  so slash prompt bodies are currently doing workflow-routing work.
-- [gap] Live Claude review does not yet have a product-level repo-read consent
-  flow for allow once, always allow for this repository, or cancel.
-- [existing] Package versioning uses Semantic Versioning in `package.json`, but
-  product milestone labels such as "v1" are separate from npm `1.0.0`.
-- [existing] A Codex `Stop` hook exists as an optional review gate, but is not
-  part of the default install path.
-- [existing] CI runs lint, syntax checks, and npm package dry-run checks across
-  Node 18, 20, and 22.
+- [x] Codex can launch a local Node.js MCP server over stdio - v2.0.
+- [x] The MCP server can invoke the local Claude Code CLI with
+  `claude -p --output-format json` - v2.0.
+- [x] Manual tools exist for setup, review, adversarial review, rescue, status,
+  result, and cancellation - v2.0.
+- [x] Claude review and adversarial review run read-only by default with a
+  restricted file-read and read-style git allowlist - v2.0.
+- [x] Background jobs are persisted in a repo-scoped file-backed store and can
+  be listed, read, and cancelled while the MCP server owns the process - v2.0.
+- [x] Setup, docs, and prompts explain that Claude receives explicit artifacts
+  and repo reads, not the full hidden Codex chat context - v2.0.
+- [x] Hook review stays advanced opt-in, reversible, and risk-labeled - v2.0.
+- [x] `allow_write` rescue stays outside the standard review path and warns
+  about broad write permissions - v2.0.
+- [x] Codex skills are the standard team-facing review workflow surface -
+  v2.0.
+- [x] Repo-read consent supports allow once, always allow for this repository,
+  cancel, inspect, and revoke - v2.0.
+- [x] Package dry-run includes runtime, docs, prompts, hooks, and skills -
+  v2.0.
+- [x] Release-facing docs identify drift-prone external claims for release-date
+  revalidation - v2.0.
 
 ### Active
 
-<!-- Current scope. Building toward these. -->
+No active requirements are defined after v2.0 close. Run `$gsd-new-milestone` to
+define fresh requirements.
 
-- [ ] Make "Codex-first replacement workflow for codex-plugin-cc" the primary
-  v1 team positioning.
-- [ ] Keep the product usable through both MCP tools and slash commands, while
-  documenting slash commands as the standard team rollout path.
-- [ ] Shape the v1 review prompt around two lenses: design critique and
-  implementation-risk detection.
-- [ ] Ensure review input is grounded in repo state, diff, planning docs, and an
-  optional user focus instead of pretending Claude sees the full Codex chat
-  context.
-- [ ] Extract the job/state core from the monolithic `server.mjs` so status,
-  result, cancel, and resume semantics are testable.
-- [ ] Add deterministic tests for job-store behavior without requiring a live
-  Claude account.
-- [ ] Clarify follow-up/session behavior so users know when they are continuing
-  a Claude session versus starting a fresh review.
-- [ ] Improve failure handling for token/context exhaustion, stale running jobs,
-  and Claude CLI launch/auth failures.
-- [ ] Keep hooks opt-in and clearly reversible.
-- [ ] Keep `allow_write` explicitly guarded and outside the default review path.
-- [ ] Move the team-facing Claude review UX from slash prompt wrappers to Codex
-  skills that call the MCP tools directly.
-- [ ] Add explicit Claude repo-read consent so users control whether Claude
-  Code may read repo diffs, related files, and selected planning docs.
+Candidate next areas:
+
+- Explicit Claude follow-up/session choice workflow.
+- Structured diagnosis for Claude launch failure, auth failure, malformed JSON,
+  timeout, context exhaustion, and stale jobs.
+- Optional hook setup tooling and hook behavior tests.
+- Release smoke testing from a packed npm tarball.
+- Public distribution support boundaries after internal team validation.
 
 ### Out of Scope
 
-<!-- Explicit boundaries. Includes reasoning to prevent re-adding. -->
-
 - Automatic Claude review by default - team rollout should avoid surprise usage
   cost and Codex/Claude stop loops.
-- Hook-first onboarding - hooks are useful later, but manual skill or MCP
-  invocation is the safer first learning path.
+- Hook-first onboarding - hooks are useful later, but skill or MCP invocation is
+  the safer learning path.
 - Cloud service or hosted queue - the project is local-first and depends on the
   user's local Claude Code authentication.
-- Replacing GSD/gstack planning, validation, review, or shipping workflows - this
-  project is a model bridge, not a process framework.
+- Replacing GSD/gstack planning, validation, review, or shipping workflows -
+  this project is a model bridge, not a process framework.
 - Replacing Codex's own planning or review - Claude is a second opinion, not the
   primary orchestrator.
 - Building a GitHub PR review bot - that is a different hosted/automation
   product shape.
-- Claiming full Codex chat-context transfer - v1 should pass explicit artifacts
-  and focus, not imply invisible context sharing.
-- Broad public plugin-marketplace polish - team usability comes before a wider
-  Codex-user growth goal.
+- Claiming full Codex chat-context transfer - the bridge passes explicit
+  artifacts and focus, not invisible conversation state.
 - Write-enabled rescue as a normal workflow - write access remains exceptional
   because it bypasses the default read-only safety boundary.
 
 ## Context
 
-This project started from the idea of replacing the need for `codex-plugin-cc`
-in a Codex-first workflow. The useful mirror is not just "call another CLI"; it
-is letting Codex users keep one primary workspace while asking Claude Code for
-the kind of perspective the current Codex context may miss.
+The project began as a Codex-first mirror of `codex-plugin-cc`: not just "call
+another CLI," but keep one primary workspace while asking Claude Code for a
+different model perspective when Codex context may be too narrow.
 
-The team's first need is not an always-on auto-reviewer. Team members use Codex
-in different ways, and not everyone will have the same comfort level with hooks
-or multi-agent review loops. The rollout should therefore make the manual path
-feel obvious: ask for a design review when the plan feels consequential, risky,
-or too self-confirming. After testing slash prompts in Codex App, the better
-v2 surface is Codex skills: they keep workflow instructions out of the visible
-chat transcript and match how GSD/gstack commands are already used.
+The team does not want always-on auto-review as the default. Manual,
+skill-first invocation is the standard path; hooks stay optional for users who
+intentionally accept loop, blocking, and usage-cost risks.
 
-The product promise for v1 centers on two review lenses:
-
-- Design critique: challenge architecture boundaries, complexity, assumptions,
-  and simpler alternatives.
-- Implementation-risk detection: surface missing tests, state-management risks,
-  cancellation/resume edge cases, context-limit issues, and failure modes before
-  implementation or merge.
-
-The current implementation already proves the rough MCP shape. It still needs a
-cleaner core boundary, stronger tests, clearer session/follow-up semantics, and
-failure handling before it becomes a reliable team plugin.
+The next product risk is not whether the bridge can call Claude. That is now
+validated. The next risk is whether follow-up, diagnosis, release, and optional
+automation workflows stay understandable as real teammates use the package.
 
 ## Constraints
 
-- **Runtime**: Node.js MCP server - chosen to match the Codex/Claude plugin
-  ecosystem and keep team installation simple.
-- **Current implementation**: ESM JavaScript `.mjs` files - no TypeScript build
-  exists on the current branch.
+- **Runtime**: Node.js MCP server, ESM `.mjs`, no TypeScript build.
 - **Local dependency**: Claude Code must be installed and authenticated on the
   user's machine.
-- **Safety**: Read-only review is the default; write-capable rescue must remain
+- **Safety**: Read-only review is default; write-capable rescue remains
   explicit and warned.
-- **Workflow**: Manual MCP invocation and Codex skills are the standard rollout
-  path; slash prompts are compatibility wrappers only if retained, and hooks
-  remain optional.
-- **Distribution**: npm package contents are controlled by the `files` array, so
-  new runtime files must be added there before publishing.
-- **Versioning**: Product milestones can use labels such as v1/v2, but npm
-  package releases stay in `0.x.y` until the team workflow is stable enough for
-  a first stable `1.0.0`.
-- **Verification**: CI currently proves lint, syntax, and pack contents; future
-  behavior changes need focused tests.
+- **Workflow**: Codex skills and MCP tools are the supported team path; hooks
+  are optional.
+- **Distribution**: npm package contents are controlled by `package.json.files`.
+- **Versioning**: Product milestones use v1/v2 labels; npm remains `0.x.y`
+  before stable `1.0.0`.
 - **Repository flow**: Development proceeds from `dev` feature branches, with
   protected `master` for stable history.
 - **Legal**: The project is unofficial and must avoid implying affiliation with
@@ -155,39 +128,27 @@ failure handling before it becomes a reliable team plugin.
 
 ## Key Decisions
 
-<!-- Decisions that constrain future work. Add throughout project lifecycle. -->
-
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use Node.js for the MCP server | MCP SDK wiring and npm install are the simplest team path. | - Pending |
-| Support MCP tools plus Codex skills as the standard surface | MCP gives capability; skills give workflow and learnable team UX without exposing long prompt bodies. | - Pending |
-| Treat slash prompts as optional compatibility aliases | Slash prompts helped v1 discovery but are awkward when their bodies appear in chat. | - Pending |
-| Position as a Codex-first replacement workflow for codex-plugin-cc | Otherwise the project reads like a duplicate review skill instead of a clear workspace choice. | - Pending |
-| Keep GSD/gstack as an adjacent workflow layer | GSD owns process state; this plugin owns the Codex-to-Claude bridge. | - Pending |
-| Keep hooks opt-in | Automatic review can loop and consume usage unexpectedly. | - Pending |
-| Center v1 on design critique and implementation-risk detection | This is the distinct "other model perspective" value the team asked for. | - Pending |
-| Pass explicit artifacts rather than pretending to share full Codex context | Claude Code sees what we provide through repo state, diff, docs, and prompt focus. | - Pending |
-| Extract core state before broad feature growth | The current monolithic server makes status/result/cancel behavior hard to test. | - Pending |
-| Track stable GSD planning docs but ignore runtime state | Codebase maps should be reviewable; logs, locks, and active runtime markers should stay local. | - Pending |
-| Add explicit repo-read consent before live Claude review | Users should control when Claude Code may read repo diffs, related files, and selected planning docs. | - Pending |
-| Keep npm releases in 0.x.y until stable team use | "v1" describes the first team-rollout milestone, not package version 1.0.0. | - Pending |
+| Use Node.js for the MCP server | MCP SDK wiring and npm install are the simplest team path. | Good - shipped in v2.0 |
+| Support MCP tools plus Codex skills as the standard surface | MCP gives capability; skills give workflow and learnable team UX without exposing long prompt bodies. | Good - shipped in v2.0 |
+| Treat slash prompts as optional compatibility aliases | Slash prompts helped v1 discovery but are awkward when their bodies appear in chat. | Good - shipped in v2.0 |
+| Position as a Codex-first replacement workflow for codex-plugin-cc | Otherwise the project reads like a duplicate review skill instead of a clear workspace choice. | Good - validated in docs |
+| Keep GSD/gstack as an adjacent workflow layer | GSD owns process state; this plugin owns the Codex-to-Claude bridge. | Good - preserved |
+| Keep hooks opt-in | Automatic review can loop and consume usage unexpectedly. | Good - guarded in docs/source |
+| Center review value on design critique and implementation-risk detection | This is the distinct "other model perspective" value the team asked for. | Good - shipped |
+| Pass explicit artifacts rather than pretending to share full Codex context | Claude Code sees what we provide through repo state, diff, docs, and prompt focus. | Good - documented and tested |
+| Extract core state before broad feature growth | The monolithic server made status/result/cancel behavior hard to test. | Good - runner and state modules shipped |
+| Track stable GSD planning docs but ignore runtime state | Codebase maps should be reviewable; logs, locks, and active runtime markers stay local. | Good - kept |
+| Add explicit repo-read consent before live Claude review | Users should control when Claude Code may read repo diffs, related files, and selected planning docs. | Good - shipped in v2.0 |
+| Keep npm releases in 0.x.y until stable team use | "v1/v2" describe product milestones, not package version 1.0.0. | Good - documented |
 
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
 
-**After each phase transition** (via `$gsd-transition`):
-1. Requirements invalidated? Move to Out of Scope with reason.
-2. Requirements validated? Move to Validated with phase reference.
-3. New requirements emerged? Add to Active.
-4. Decisions to log? Add to Key Decisions.
-5. "What This Is" still accurate? Update if drifted.
-
-**After each milestone** (via `$gsd-complete-milestone`):
-1. Full review of all sections.
-2. Core Value check - still the right priority?
-3. Audit Out of Scope - reasons still valid?
-4. Update Context with current state.
+After v2.0, the next milestone should start from fresh requirements rather than
+editing the archived v2.0 scope in place.
 
 ---
-*Last updated: 2026-06-09 after Codex-first positioning clarification*
+*Last updated: 2026-06-11 after v2.0 milestone completion*
