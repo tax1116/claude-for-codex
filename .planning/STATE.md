@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Skill-Based Review UX And Consent
-status: planning
-stopped_at: Phase 4 plan 04-01 complete; 04-02 ready for execution
-last_updated: "2026-06-11T03:45:00Z"
-last_activity: 2026-06-11 - Completed Phase 4 plan 04-01 skill surface and compatibility alias implementation.
+status: implementation-complete
+stopped_at: Phase 4 implementation complete; validation ready
+last_updated: "2026-06-11T04:35:00Z"
+last_activity: 2026-06-11 - Completed Phase 4 plan 04-02 repo-read consent gate and shared policy implementation.
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 8
-  completed_plans: 7
-  percent: 88
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Plan v2 skill-based review UX and Claude repo-read consent
+**Current focus:** Validate v2 skill-based review UX and Claude repo-read consent
 
 ## Current Position
 
 Phase: 4 (Skill-Based Review UX And Claude Repo-Read Consent)
-Plan: 04-02 Repo-Read Consent Gate And Shared Policy ready for execution
-Status: Phase 4 in progress; 04-01 complete and 04-02 remaining
-Last activity: 2026-06-11 - Implemented package-owned Codex skills, compatibility prompts, setup diagnostics, and package coverage.
+Plan: Phase 4 execution complete
+Status: Phase 4 implementation complete; validation/review/ship remain
+Last activity: 2026-06-11 - Implemented shared repo-read consent gate, consent status/revoke tools, skill consent copy, and tests.
 
-Progress: [#########-] 88%
+Progress: [##########] 100%
 
 ## Phase Progress
 
@@ -39,15 +39,15 @@ Progress: [#########-] 88%
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
 | 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | Complete | 4 | 2/2 |
-| 4. Skill-Based Review UX And Claude Repo-Read Consent | In Progress | 8 | 1/2 |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | Complete | 8 | 2/2 |
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 7
-- Average duration: 8.0 min
-- Total execution time: 0.5 hours
+- Total plans completed: 8
+- Average duration: 17.0 min
+- Total execution time: 2.3 hours
 
 **By Phase:**
 
@@ -56,11 +56,12 @@ Progress: [#########-] 88%
 | 1. Manual Design/Risk Review Core | 2/2 | 0.2h | 4.5 min |
 | 2. Async Job Reliability And Testable Packaging | 2/2 | 0.4h | 11.5 min |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 2/2 | 0.4h | 11.0 min |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | 2/2 | 1.3h | 40.0 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 02-01 Fake-Claude Job Lifecycle Contracts (15 min), 02-02 Package And Background Workflow Documentation (8 min), 03-01 Hook And Rescue Safety Boundaries (12 min), 03-02 Release Revalidation Markers (10 min), 04-01 Codex Skill Surface And Compatibility Aliases (35 min)
-- Trend: Phase 4 is in progress. The team-facing Claude review UX now uses Codex skills, and the remaining work is the repo-read consent gate.
+- Last 5 plans: 02-02 Package And Background Workflow Documentation (8 min), 03-01 Hook And Rescue Safety Boundaries (12 min), 03-02 Release Revalidation Markers (10 min), 04-01 Codex Skill Surface And Compatibility Aliases (35 min), 04-02 Repo-Read Consent Gate And Shared Policy (45 min)
+- Trend: Phase 4 implementation is complete. The next step is validation and review before shipping the v2 skill/consent scope.
 
 ## Accumulated Context
 
@@ -86,7 +87,9 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- Execute Phase 4 plan 04-02: Repo-Read Consent Gate And Shared Policy.
+- Validate Phase 4 with `$gsd-validate-phase 4`.
+- Run review for the Phase 4 implementation.
+- Ship or open/update the PR after validation and review pass.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -122,10 +125,10 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-11T00:54:27Z
-Stopped at: Phase 4 plan 04-01 complete; 04-02 ready
+Stopped at: Phase 4 implementation complete; validation ready
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Continue `$gsd-execute-phase 4` with `04-02-PLAN.md` to add the shared
-repo-read consent gate and update the skill workflow copy.
+Run `$gsd-validate-phase 4` to audit the completed skill surface and repo-read
+consent gate before review and ship.
