@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Skill-Based Review UX And Consent
 status: planning
-stopped_at: v2 scope decision captured for skill-based Claude review UX and repo-read consent
-last_updated: "2026-06-11T01:51:03Z"
-last_activity: 2026-06-11 - Documented SemVer policy that product milestone labels such as v1/v2 are separate from npm package versions, which stay in 0.x.y until stable team use.
+stopped_at: Phase 4 planned with skill-surface and repo-read consent execution slices
+last_updated: "2026-06-11T02:55:32Z"
+last_activity: 2026-06-11 - Planned Phase 4 as two executable slices: Codex skill surface and repo-read consent gate.
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 6
+  total_plans: 8
   completed_plans: 6
   percent: 75
 ---
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-08)
 
 ## Current Position
 
-Phase: 4 candidate (Skill-Based Review UX And Claude Repo-Read Consent)
-Plan: Not planned yet
-Status: v1 work complete; v2 scope decision captured
-Last activity: 2026-06-11 - Documented that v1/v2 are product milestone labels, not npm 1.0.0/2.0.0 promises.
+Phase: 4 (Skill-Based Review UX And Claude Repo-Read Consent)
+Plan: 04-01 Codex Skill Surface And Compatibility Aliases ready for execution
+Status: Phase 4 planned; execution can start with 04-01
+Last activity: 2026-06-11 - Created Phase 4 CONTEXT/RESEARCH/PATTERNS/VALIDATION and plans 04-01, 04-02.
 
 Progress: [########--] 75%
 
@@ -39,7 +39,7 @@ Progress: [########--] 75%
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
 | 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | Complete | 4 | 2/2 |
-| 4. Skill-Based Review UX And Claude Repo-Read Consent | Candidate | 8 | 0/0 |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | Planned | 8 | 0/2 |
 
 ## Performance Metrics
 
@@ -81,11 +81,13 @@ Recent decisions affecting current work:
 - Package releases should follow Semantic Versioning, but stay in `0.x.y` until
   install, skill review, repo-read consent, cancellation, docs, CI, and package
   contents have survived real team use.
+- Phase 4 should execute as two slices: first the Codex skill surface and
+  compatibility aliases, then the shared repo-read consent gate.
 
 ### Pending Todos
 
-- Plan Phase 4 for skill-based review UX and Claude repo-read consent.
-- Include the versioning-policy success criterion when Phase 4 is planned.
+- Execute Phase 4 plan 04-01: Codex Skill Surface And Compatibility Aliases.
+- Execute Phase 4 plan 04-02 after 04-01: Repo-Read Consent Gate And Shared Policy.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -121,10 +123,10 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-11T00:54:27Z
-Stopped at: v2 scope decision captured for skill-based review UX and consent
+Stopped at: Phase 4 planned with two executable plans
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Run `$gsd-plan-phase` for Phase 4 so skill wrappers, consent state, setup
-diagnostics, docs, and tests are planned before implementation.
+Run `$gsd-execute-phase 4` to start with `04-01-PLAN.md`, or explicitly execute
+`04-01` if you want to keep the skill surface PR separate from consent gating.
