@@ -23,7 +23,64 @@ test("claude_review exposes optional focus without enabling writes", () => {
   );
 
   assert.match(reviewTool, /focus:\s*z\.string\(\)\.optional\(\)/);
+  assert.match(reviewTool, /repo_read_consent:\s*repoReadConsentSchema/);
+  assertToolGatesConsentBeforeLaunch(reviewTool);
   assert.match(reviewTool, /allowWrite:\s*false/);
+});
+
+test("Claude-launching tools share repo-read consent before spawning", () => {
+  const adversarialTool = sectionBetween(
+    'server.registerTool(\n  "claude_adversarial_review"',
+    'server.registerTool(\n  "claude_rescue"',
+  );
+  const rescueTool = sectionBetween(
+    'server.registerTool(\n  "claude_rescue"',
+    'server.registerTool(\n  "claude_status"',
+  );
+
+  for (const [name, text] of [
+    ["adversarial", adversarialTool],
+    ["rescue", rescueTool],
+  ]) {
+    assert.match(text, /repo_read_consent:\s*repoReadConsentSchema/, `${name}: schema`);
+    assertToolGatesConsentBeforeLaunch(text);
+  }
+
+  for (const expected of [
+    "repo_read_consent",
+    "allow_once",
+    "allow_repo",
+    "cancel",
+    "allow once",
+    "always allow for this repository",
+    "Claude Code may read this repo's diff, related files, and selected planning docs",
+    "No Claude process was started",
+  ]) {
+    assert.match(serverSource, new RegExp(escapeRegExp(expected)), expected);
+  }
+});
+
+test("consent inspection and revoke tools are registered", () => {
+  for (const expected of [
+    '"claude_consent_status"',
+    '"claude_consent_revoke"',
+    "clearRepoReadConsent",
+    "repoReadConsent",
+  ]) {
+    assert.match(serverSource, new RegExp(escapeRegExp(expected)), expected);
+  }
+});
+
+test("explicit cancel wins over persisted repo consent", () => {
+  const consentGate = sectionBetween(
+    "function requireRepoReadConsent",
+    "server.registerTool(\n  \"claude_setup\"",
+  );
+
+  assert.ok(
+    consentGate.indexOf('repo_read_consent === "cancel"') < consentGate.indexOf("claude.repoReadConsent"),
+    "cancel should be checked before persisted repo consent",
+  );
 });
 
 test("review prompts include explicit Codex context and output contract", () => {
@@ -90,6 +147,7 @@ test("write-capable rescue remains an explicit escape hatch", () => {
   for (const expected of [
     "outside the standard v1 review path",
     "allow_write=true",
+    "repo-read consent is separate from allow_write",
     "--dangerously-skip-permissions",
     "broad write permissions",
     "trusted repos",
@@ -116,4 +174,15 @@ test("hook source says the Stop gate is advanced, opt-in, reversible, and blocki
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function assertToolGatesConsentBeforeLaunch(toolSource) {
+  const consentIndex = toolSource.indexOf("requireRepoReadConsent");
+  const foregroundIndex = toolSource.indexOf("runForeground");
+  const backgroundIndex = toolSource.indexOf("startBackground");
+  assert.notEqual(consentIndex, -1, "tool should call requireRepoReadConsent");
+  assert.notEqual(foregroundIndex, -1, "tool should call runForeground");
+  assert.notEqual(backgroundIndex, -1, "tool should call startBackground");
+  assert.ok(consentIndex < foregroundIndex, "consent gate should happen before foreground launch");
+  assert.ok(consentIndex < backgroundIndex, "consent gate should happen before background launch");
 }

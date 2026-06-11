@@ -232,6 +232,33 @@ test("cancels only process-lifetime jobs owned by this MCP server", async () => 
   assert.equal(run.runner.readJob(run.cwd, started.job.id).status, "cancelled");
 });
 
+test("exposes repo-read consent state without launching Claude", () => {
+  let spawnCount = 0;
+  const cwd = makeTempRepo();
+  const stateRoot = fs.mkdtempSync(path.join(os.tmpdir(), "claude-for-codex-state-root-"));
+  const runner = createClaudeRunner({
+    env: {
+      ...process.env,
+      CLAUDE_BIN: makeFakeClaude(),
+      CLAUDE_FOR_CODEX_STATE: stateRoot,
+    },
+    spawnFn(...args) {
+      spawnCount += 1;
+      return createClaudeRunner().startJob(...args);
+    },
+  });
+
+  assert.equal(runner.repoReadConsent(cwd), null);
+  runner.setRepoReadConsent(cwd, { updatedAt: "2026-06-11T00:00:00.000Z" });
+  assert.deepEqual(runner.repoReadConsent(cwd), {
+    allowed: true,
+    updatedAt: "2026-06-11T00:00:00.000Z",
+  });
+  runner.clearRepoReadConsent(cwd);
+  assert.equal(runner.repoReadConsent(cwd), null);
+  assert.equal(spawnCount, 0);
+});
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

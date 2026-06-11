@@ -53,6 +53,18 @@ export function createClaudeRunner({
     return storeFor(cwd).lastSession();
   }
 
+  function repoReadConsent(cwd) {
+    return storeFor(cwd).repoReadConsent();
+  }
+
+  function setRepoReadConsent(cwd, options) {
+    return storeFor(cwd).setRepoReadConsent(options);
+  }
+
+  function clearRepoReadConsent(cwd) {
+    storeFor(cwd).clearRepoReadConsent();
+  }
+
   function maybeFailureGuidance({ code, stderr, stdout, timedOut }) {
     const output = `${stdout}\n${stderr}`.toLowerCase();
     if (timedOut) return failureGuidance("timeout", `Claude was killed after ${defaultTimeoutMs}ms.`);
@@ -232,6 +244,9 @@ export function createClaudeRunner({
     readJob,
     listJobs,
     lastSession,
+    repoReadConsent,
+    setRepoReadConsent,
+    clearRepoReadConsent,
   };
 }
 

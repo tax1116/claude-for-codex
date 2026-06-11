@@ -58,6 +58,9 @@ Codex-first workflow behavior is covered by the tools above.
   `$claude-review`, `$claude-adversarial`, `$claude-rescue`, and
   `$claude-setup`. MCP tools remain the source of truth for review policy,
   output format, safety, consent, failure guidance, and process execution.
+- **Repo-read consent.** Live Claude-launching MCP handlers gate review, adversarial review, and rescue before process spawn. The user must choose
+  `allow once`, `always allow for this repository`, or `cancel` unless
+  repo-level consent is already persisted.
 - **Job store.** Background jobs are persisted as JSON under the canonical
   `CLAUDE_FOR_CODEX_STATE` root, keyed by repo slug plus realpath hash so
   `status`/`result` are scoped per repo. `CLAUDE_FOR_CODEX_STORE`,
@@ -94,6 +97,27 @@ contract for `/claude-review`, `/claude-adversarial`, `claude_review`, and
 
 `resume` means Claude Code session continuity only. It does not mean Codex chat
 history, hidden state, or every `.planning/**` file is sent to Claude.
+
+## Repo-read consent boundary
+
+Before live review, adversarial review, or rescue, the shared MCP gate tells the
+user: Claude Code may read this repo's diff, related files, and selected planning docs.
+
+The choices are:
+
+- `allow once` - launch this request without persisting repo consent.
+- `always allow for this repository` - persist repo-level consent in the
+  canonical repo state file.
+- `cancel` - return without launching Claude.
+
+Users can inspect persisted consent with `claude_consent_status` and revoke it
+with `claude_consent_revoke`.
+
+This consent gate is intentionally below the skill layer. Skills can ask the
+question and pass `repo_read_consent`, but direct MCP calls are still protected.
+repo-read consent is not write permission. `allow_write: true` remains a
+separate `claude_rescue` boundary and still grants broad write permissions via
+`--dangerously-skip-permissions`.
 
 ## Review mode boundaries
 

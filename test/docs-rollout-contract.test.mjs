@@ -32,6 +32,19 @@ test("Codex skills are the standard team workflow surface", () => {
     assert.doesNotMatch(skillText, new RegExp(`${bannedDesignReviewName}|\\${bannedDesignReviewSkill}`));
   }
 
+  for (const skillName of ["claude-review", "claude-adversarial", "claude-rescue"]) {
+    const skillText = read(`skills/${skillName}/SKILL.md`);
+    for (const expected of [
+      "allow once",
+      "always allow for this repository",
+      "cancel",
+      "repo_read_consent",
+      "repo-read consent is not write permission",
+    ]) {
+      assertIncludes(skillText, expected, `${skillName}: ${expected}`);
+    }
+  }
+
   assertPackageIncludes("skills/");
   assertIncludes(combinedDocs, "$claude-review", "docs: $claude-review");
   assertIncludes(combinedDocs, "$claude-setup", "docs: $claude-setup");
@@ -203,6 +216,26 @@ test("docs keep write-capable rescue outside standard v1 review", () => {
   ]) {
     assertIncludes(combinedDocs, expected, `rescue docs: ${expected}`);
   }
+});
+
+test("docs teach repo-read consent choices and revocation", () => {
+  const combinedDocs = `${docs.readme}\n${docs.setup}\n${docs.design}`;
+
+  for (const expected of [
+    "Claude Code may read this repo's diff, related files, and selected planning docs",
+    "allow once",
+    "always allow for this repository",
+    "cancel",
+    "claude_consent_status",
+    "claude_consent_revoke",
+    "repo-read consent is not write permission",
+  ]) {
+    assertIncludes(combinedDocs, expected, `repo-read consent docs: ${expected}`);
+  }
+
+  assertIncludes(docs.design, "review, adversarial review, and rescue", "DESIGN: shared consent scope");
+  assertIncludes(docs.design, "does not receive the full Codex chat automatically", "DESIGN: Codex chat boundary");
+  assert.doesNotMatch(combinedDocs, /Claude receives the full Codex chat/i);
 });
 
 test("release-facing docs mark time-sensitive claims for release-date revalidation", () => {

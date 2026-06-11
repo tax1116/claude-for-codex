@@ -68,6 +68,23 @@ server owns the Claude child process. It is not a hosted durable queue.
 
 Claude does not receive the full Codex chat automatically. The explicit context is the prompt text, allowed read-only repo access, read-style git state, selected planning docs, resumed Claude Code session output when used, and user-provided `base` or `focus`.
 
+## Repo-read consent
+
+Before the first live Claude review, adversarial review, or rescue request in a
+repository, the MCP tool explains: Claude Code may read this repo's diff, related files, and selected planning docs.
+
+Choose one:
+
+- `allow once` - pass `repo_read_consent: "allow_once"` for the current request only.
+- `always allow for this repository` - pass `repo_read_consent: "allow_repo"` to persist repo-level consent.
+- `cancel` - pass `repo_read_consent: "cancel"` to stop without launching Claude.
+
+Inspect persisted repo consent with `claude_consent_status`. Revoke it with
+`claude_consent_revoke`.
+
+repo-read consent is not write permission. `allow_write: true` on
+`claude_rescue` remains a separate rescue-only boundary.
+
 ## Replacement boundary vs codex-plugin-cc
 
 Use `codex-plugin-cc` when Claude Code is your main workspace and Codex is the
@@ -184,10 +201,12 @@ Disable checklist:
 ## Tools
 
 - `claude_setup` — verify Claude Code is installed/reachable and report expected Codex skill paths.
-- `claude_review {base?, focus?, background?, cwd?}` — read-only review of worktree or branch changes.
-- `claude_adversarial_review {base?, focus?, background?, cwd?}` — steerable challenge review.
-- `claude_rescue {task, model?, resume?, fresh?, allow_write?, background?, cwd?}` — delegate work;
+- `claude_review {base?, focus?, repo_read_consent?, background?, cwd?}` — read-only review of worktree or branch changes.
+- `claude_adversarial_review {base?, focus?, repo_read_consent?, background?, cwd?}` — steerable challenge review.
+- `claude_rescue {task, model?, resume?, fresh?, repo_read_consent?, allow_write?, background?, cwd?}` — delegate work;
   `resume:true` continues the latest repo session, or pass a specific session id.
+- `claude_consent_status {cwd?}` — inspect persisted repo-read consent.
+- `claude_consent_revoke {cwd?}` — revoke persisted repo-read consent.
 - `claude_status {task_id?, cwd?}` — running + recent jobs for this repo.
 - `claude_result {task_id?, cwd?}` — final output (+ `claude --resume <id>` hint).
 - `claude_cancel {task_id?, cwd?}` — cancel a background job.

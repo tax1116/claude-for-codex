@@ -128,3 +128,25 @@ test("reads legacy job files while writing new jobs to the canonical state root"
   assert.ok(fs.existsSync(path.join(store.repoStateDir, "jobs", "task-new.json")));
   assert.equal(fs.existsSync(path.join(legacyDir, "task-new.json")), false);
 });
+
+test("persists and revokes repo-read consent in repo state", () => {
+  const cwd = makeTempRepo();
+  const { stateRoot, store } = makeStore(cwd);
+
+  assert.equal(store.repoReadConsent(), null);
+
+  const consent = store.setRepoReadConsent({ updatedAt: "2026-06-11T00:00:00.000Z" });
+  assert.deepEqual(consent, {
+    allowed: true,
+    updatedAt: "2026-06-11T00:00:00.000Z",
+  });
+
+  const freshStore = new StateStore({ cwd, stateRoot });
+  assert.deepEqual(freshStore.repoReadConsent(), consent);
+
+  const state = JSON.parse(fs.readFileSync(path.join(store.repoStateDir, "state.json"), "utf8"));
+  assert.deepEqual(state.config.repoReadConsent, consent);
+
+  freshStore.clearRepoReadConsent();
+  assert.equal(freshStore.repoReadConsent(), null);
+});

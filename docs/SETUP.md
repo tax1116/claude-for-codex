@@ -109,7 +109,25 @@ is the prompt text, allowed read-only repo access, read-style git state,
 selected planning docs, resumed Claude Code session output when used, and
 user-provided `base` or `focus`.
 
-## 4. Advanced opt-in review gate - auto-review before Codex finishes a turn
+## 4. Repo-read consent
+
+Before the first live Claude review, adversarial review, or rescue request in a
+repository, the MCP tool explains: Claude Code may read this repo's diff, related files, and selected planning docs.
+
+Choose one:
+
+- `allow once` - pass `repo_read_consent: "allow_once"` for the current request only.
+- `always allow for this repository` - pass `repo_read_consent: "allow_repo"` to persist repo-level consent.
+- `cancel` - pass `repo_read_consent: "cancel"` to stop without launching Claude.
+
+Check persisted consent with `claude_consent_status`. Revoke it with
+`claude_consent_revoke`.
+
+repo-read consent is not write permission. It only permits Claude Code to read
+repo context for review/rescue. `allow_write: true` remains a separate,
+rescue-only trust boundary.
+
+## 5. Advanced opt-in review gate - auto-review before Codex finishes a turn
 
 This is not part of the default install. Use it only when you explicitly want a
 Claude review to run during the Codex `Stop` lifecycle event. This is an
@@ -156,9 +174,11 @@ MCP tool names are the reference interface under the skill workflow.
 | Tool | Args | Purpose |
 | --- | --- | --- |
 | `claude_setup` | – | Verify Claude Code is installed/reachable and report expected Codex skill paths |
-| `claude_review` | `base?, focus?, background?, cwd?` | Read-only review of worktree or branch changes |
-| `claude_adversarial_review` | `base?, focus?, background?, cwd?` | Steerable challenge review |
-| `claude_rescue` | `task, model?, resume?, fresh?, allow_write?, background?, cwd?` | Delegate work to Claude |
+| `claude_review` | `base?, focus?, repo_read_consent?, background?, cwd?` | Read-only review of worktree or branch changes |
+| `claude_adversarial_review` | `base?, focus?, repo_read_consent?, background?, cwd?` | Steerable challenge review |
+| `claude_rescue` | `task, model?, resume?, fresh?, repo_read_consent?, allow_write?, background?, cwd?` | Delegate work to Claude |
+| `claude_consent_status` | `cwd?` | Inspect persisted repo-read consent |
+| `claude_consent_revoke` | `cwd?` | Revoke persisted repo-read consent |
 | `claude_status` | `task_id?, cwd?` | Running + recent jobs for this repo |
 | `claude_result` | `task_id?, cwd?` | Final output (+ `claude --resume <id>` hint) |
 | `claude_cancel` | `task_id?, cwd?` | Cancel a background job |

@@ -9,6 +9,8 @@
  *   claude_review             - read-only review of current/branch changes
  *   claude_adversarial_review - steerable challenge review (takes focus text)
  *   claude_rescue             - delegate a task to Claude (resume/fresh/model/write)
+ *   claude_consent_status     - inspect repo-read consent for this repo
+ *   claude_consent_revoke     - revoke repo-read consent for this repo
  *   claude_status             - list running/recent jobs for this repo
  *   claude_result             - final output of a finished job (+ Claude session id)
  *   claude_cancel             - cancel an active background job
@@ -27,6 +29,12 @@ import { createClaudeRunner } from "./src/claude-runner.mjs";
 
 const claude = createClaudeRunner();
 const expectedCodexSkills = ["claude-review", "claude-adversarial", "claude-rescue", "claude-setup"];
+const repoReadConsentSchema = z
+  .enum(["allow_once", "allow_repo", "cancel"])
+  .optional()
+  .describe("Repo-read consent choice: allow_once, allow_repo, or cancel.");
+const repoReadConsentNotice =
+  "Claude Code may read this repo's diff, related files, and selected planning docs.";
 
 // ---------- prompts ----------
 
@@ -106,6 +114,36 @@ function skillInstallReport() {
   return `${lines.join("\n")}\n`;
 }
 
+function repoReadConsentRequestText() {
+  return (
+    `${repoReadConsentNotice}\n` +
+    "Choose one before launching Claude:\n" +
+    '- allow once: pass `repo_read_consent: "allow_once"` for this request only.\n' +
+    '- always allow for this repository: pass `repo_read_consent: "allow_repo"` to persist repo-level consent.\n' +
+    '- cancel: pass `repo_read_consent: "cancel"` to stop without launching Claude.\n' +
+    "No Claude process was started."
+  );
+}
+
+function requireRepoReadConsent({ cwd, repo_read_consent }) {
+  if (repo_read_consent === "cancel") {
+    return {
+      ok: false,
+      text: `${repoReadConsentNotice}\nCancelled by user choice. No Claude process was started.`,
+    };
+  }
+  if (claude.repoReadConsent(cwd)) return { ok: true };
+  if (repo_read_consent === "allow_once") return { ok: true };
+  if (repo_read_consent === "allow_repo") {
+    claude.setRepoReadConsent(cwd);
+    return { ok: true };
+  }
+  return {
+    ok: false,
+    text: repoReadConsentRequestText(),
+  };
+}
+
 // ---------- server ----------
 
 const server = new McpServer({ name: "claude-for-codex", version: "0.2.0" });
@@ -154,11 +192,14 @@ server.registerTool(
     inputSchema: {
       base: z.string().optional().describe("git ref to diff against. If omitted, Claude reviews current worktree changes and tries the branch upstream/base when the worktree is clean."),
       focus: z.string().optional().describe("Optional risk area to emphasize during review."),
+      repo_read_consent: repoReadConsentSchema,
       background: z.boolean().optional(),
       cwd: z.string().optional(),
     },
   },
-  async ({ base, focus, background, cwd }) => {
+  async ({ base, focus, repo_read_consent, background, cwd }) => {
+    const consent = requireRepoReadConsent({ cwd, repo_read_consent });
+    if (!consent.ok) return { content: [{ type: "text", text: consent.text }], isError: false };
     const opts = {
       kind: "review",
       prompt: reviewPrompt(base, focus),
@@ -181,11 +222,14 @@ server.registerTool(
     inputSchema: {
       base: z.string().optional(),
       focus: z.string().optional().describe('e.g. "auth, data loss, race conditions".'),
+      repo_read_consent: repoReadConsentSchema,
       background: z.boolean().optional(),
       cwd: z.string().optional(),
     },
   },
-  async ({ base, focus, background, cwd }) => {
+  async ({ base, focus, repo_read_consent, background, cwd }) => {
+    const consent = requireRepoReadConsent({ cwd, repo_read_consent });
+    if (!consent.ok) return { content: [{ type: "text", text: consent.text }], isError: false };
     const opts = {
       kind: "adversarial-review",
       prompt: adversarialPrompt(base, focus),
@@ -207,6 +251,7 @@ server.registerTool(
     description:
       "Hand a task to Claude Code: investigate, fix, or continue work. " +
       "resume=true continues the latest Claude session in this repo; pass a session id to target one. " +
+      "repo-read consent is separate from allow_write and only permits Claude to read repo context. " +
       "allow_write=true is outside the standard v1 review path and lets Claude edit files. " +
       "It uses --dangerously-skip-permissions, grants broad write permissions, and should be used only in trusted repos.",
     inputSchema: {
@@ -217,12 +262,15 @@ server.registerTool(
         .optional()
         .describe('true = continue latest repo session; or a specific session id.'),
       fresh: z.boolean().optional().describe("Force a brand-new session (ignore resume)."),
+      repo_read_consent: repoReadConsentSchema,
       allow_write: z.boolean().optional(),
       background: z.boolean().optional(),
       cwd: z.string().optional(),
     },
   },
-  async ({ task, model, resume, fresh, allow_write, background, cwd }) => {
+  async ({ task, model, resume, fresh, repo_read_consent, allow_write, background, cwd }) => {
+    const consent = requireRepoReadConsent({ cwd, repo_read_consent });
+    if (!consent.ok) return { content: [{ type: "text", text: consent.text }], isError: false };
     let resumeId = null;
     if (!fresh && resume) resumeId = resume === true ? claude.lastSession(cwd) : resume;
     const opts = {
@@ -237,6 +285,49 @@ server.registerTool(
     };
     const r = background ? claude.startBackground(opts) : await claude.runForeground(opts);
     return { content: [{ type: "text", text: r.text }], isError: !r.ok };
+  }
+);
+
+server.registerTool(
+  "claude_consent_status",
+  {
+    title: "Claude repo-read consent status",
+    description: "Inspect repo-level Claude Code repo-read consent for this repository.",
+    inputSchema: {
+      cwd: z.string().optional(),
+    },
+  },
+  async ({ cwd }) => {
+    const consent = claude.repoReadConsent(cwd);
+    const text = consent
+      ? `Repo-read consent is allowed for this repository since ${consent.updatedAt}.\n${repoReadConsentNotice}`
+      : `Repo-read consent is not set for this repository.\n${repoReadConsentNotice}`;
+    return { content: [{ type: "text", text }], isError: false };
+  }
+);
+
+server.registerTool(
+  "claude_consent_revoke",
+  {
+    title: "Revoke Claude repo-read consent",
+    description: "Revoke persisted repo-level Claude Code repo-read consent for this repository.",
+    inputSchema: {
+      cwd: z.string().optional(),
+    },
+  },
+  async ({ cwd }) => {
+    claude.clearRepoReadConsent(cwd);
+    return {
+      content: [
+        {
+          type: "text",
+          text:
+            "Revoked repo-read consent for this repository.\n" +
+            "The next Claude review, adversarial review, or rescue request must choose allow once, always allow for this repository, or cancel.",
+        },
+      ],
+      isError: false,
+    };
   }
 );
 

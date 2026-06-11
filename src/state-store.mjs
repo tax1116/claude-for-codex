@@ -117,6 +117,31 @@ export class StateStore {
     return this.listJobs().find((job) => isCompletedReviewJob(job)) || null;
   }
 
+  repoReadConsent() {
+    this.#ensureState();
+    const consent = this.#readState().config?.repoReadConsent;
+    return consent?.allowed === true ? { allowed: true, updatedAt: consent.updatedAt || null } : null;
+  }
+
+  setRepoReadConsent({ updatedAt = new Date().toISOString() } = {}) {
+    this.#ensureState();
+    const state = this.#readState();
+    state.config = state.config || {};
+    state.config.repoReadConsent = {
+      allowed: true,
+      updatedAt,
+    };
+    this.#writeState(state);
+    return state.config.repoReadConsent;
+  }
+
+  clearRepoReadConsent() {
+    this.#ensureState();
+    const state = this.#readState();
+    if (state.config) delete state.config.repoReadConsent;
+    this.#writeState(state);
+  }
+
   rememberSession(sessionId) {
     if (!sessionId) return;
     this.#ensureState();
@@ -155,6 +180,14 @@ export class StateStore {
     }
   }
 
+  #readState() {
+    return parseJsonFile(this.statePath) || { version: 1, config: {}, jobs: [] };
+  }
+
+  #writeState(state) {
+    fs.writeFileSync(this.statePath, JSON.stringify(state, null, 2));
+  }
+
   #normalizeJob(job) {
     return {
       ...job,
@@ -166,7 +199,7 @@ export class StateStore {
   }
 
   #upsertJobSummary(job) {
-    const state = parseJsonFile(this.statePath) || { version: 1, config: {}, jobs: [] };
+    const state = this.#readState();
     const summary = {
       id: job.id,
       jobClass: job.jobClass,
@@ -178,7 +211,7 @@ export class StateStore {
     state.jobs = [summary, ...(state.jobs || []).filter((existing) => existing.id !== job.id)]
       .sort((a, b) => (b.startedAt || 0) - (a.startedAt || 0))
       .slice(0, 100);
-    fs.writeFileSync(this.statePath, JSON.stringify(state, null, 2));
+    this.#writeState(state);
   }
 
   #legacyJobDirs() {
