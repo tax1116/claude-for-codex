@@ -65,7 +65,34 @@ Requirements for the first team rollout. Each maps to roadmap phases.
 
 ## v2 Requirements
 
-Deferred to future release. Tracked but not in current roadmap.
+Tracked for the next release after the v1 team rollout.
+
+### Skill Surface
+
+- **SKILL-01**: User can invoke the standard team workflows as Codex skills,
+  such as `$claude-review`, `$claude-adversarial`, `$claude-rescue`, and
+  `$claude-setup`, rather than relying on long slash prompt bodies.
+- **SKILL-02**: Skill instructions call MCP tools directly and keep review
+  policy, output format, and safety rules inside the MCP server contract.
+- **SKILL-03**: Slash prompt wrappers, if kept, are documented as optional
+  compatibility aliases and stay thin enough that they do not expose internal
+  operating instructions as user-facing chat text.
+- **SKILL-04**: Setup diagnostics can report whether the Codex skill files are
+  installed or missing, with a clear install path for team members.
+
+### Consent
+
+- **CONSENT-01**: Before a live Claude review runs without prior approval, the
+  user is told in plain language that Claude Code may read this repo's diff,
+  related files, and selected planning docs for the review.
+- **CONSENT-02**: User can choose between allowing Claude repo reads once,
+  always allowing them for this repository, or cancelling without sending any
+  review request.
+- **CONSENT-03**: User can inspect and revoke repository-level Claude repo-read
+  consent.
+- **CONSENT-04**: Review, adversarial review, follow-up, and rescue paths share
+  the same repo-read consent policy; write-capable rescue remains separately
+  guarded by its explicit write boundary.
 
 ### Follow-Up
 
@@ -149,6 +176,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DOC-03 | Phase 2 | Complete (02-02) |
 | DOC-04 | Phase 1 | Complete (01-02) |
 | DOC-05 | Phase 3 | Complete (03-02) |
+| SKILL-01 | Phase 4 | Planned |
+| SKILL-02 | Phase 4 | Planned |
+| SKILL-03 | Phase 4 | Planned |
+| SKILL-04 | Phase 4 | Planned |
+| CONSENT-01 | Phase 4 | Planned |
+| CONSENT-02 | Phase 4 | Planned |
+| CONSENT-03 | Phase 4 | Planned |
+| CONSENT-04 | Phase 4 | Planned |
 
 **Coverage:**
 - v1 requirements: 35 total
@@ -157,4 +192,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-08*
-*Last updated: 2026-06-10 after Phase 3 safety and release revalidation execution*
+*Last updated: 2026-06-11 after v2 skill-surface and consent scope decision*

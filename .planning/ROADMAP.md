@@ -18,6 +18,7 @@ path.
 - [x] **Phase 1: Manual Design/Risk Review Core** - Users can install, configure, and manually invoke slash-command-first read-only Claude reviews grounded in explicit repo context.
 - [x] **Phase 2: Async Job Reliability And Testable Packaging** - Users can run long reviews predictably while maintainers can verify runner, job-store, and package behavior without live Claude.
 - [x] **Phase 3: Opt-In Automation Boundaries And Release Revalidation** - Advanced hooks, write-capable rescue, and time-sensitive release claims stay explicitly guarded and outside default onboarding.
+- [ ] **Phase 4: Skill-Based Review UX And Claude Repo-Read Consent** - Users invoke Claude review through Codex skills and explicitly control whether Claude Code may read repo diffs, related files, and selected planning docs.
 
 ## Phase Details
 
@@ -58,13 +59,27 @@ path.
   3. Release reviewer can find time-sensitive claims marked for release-date revalidation, including CLI flags, hook behavior, model aliases, billing, and package setup.
 **Plans:** `03-01-PLAN.md` complete, `03-02-PLAN.md` complete
 
+### Phase 4: Skill-Based Review UX And Claude Repo-Read Consent
+**Goal:** Users can run the standard Claude review workflows through Codex skills while keeping external repo-read approval explicit, reversible, and understandable.
+**Mode:** v2
+**Depends on:** Phase 3
+**Requirements:** SKILL-01, SKILL-02, SKILL-03, SKILL-04, CONSENT-01, CONSENT-02, CONSENT-03, CONSENT-04
+**Success Criteria** (what must be TRUE):
+  1. User can invoke the standard team workflows through Codex skills such as `$claude-review`, `$claude-adversarial`, `$claude-rescue`, and `$claude-setup`.
+  2. Skill instructions act as thin workflow launchers; review policy, severity/output rules, read-only boundaries, and failure guidance remain in the MCP server contract.
+  3. Slash prompt wrappers are either removed from the standard path or kept only as thin compatibility aliases that do not expose long internal instructions in chat.
+  4. User sees a clear repo-read permission choice before the first live Claude review: allow once, always allow for this repository, or cancel.
+  5. User can inspect and revoke repository-level Claude repo-read consent without editing state files by hand.
+**Plans:** Not planned yet
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Manual Design/Risk Review Core | 2/2 | Complete | 2026-06-08 |
 | 2. Async Job Reliability And Testable Packaging | 2/2 | Complete | 2026-06-09 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | 2/2 | Complete | 2026-06-10 |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | 0/0 | Planned | - |

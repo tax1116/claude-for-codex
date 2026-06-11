@@ -8,9 +8,11 @@ from Codex into Claude Code to get a second opinion, users keep Codex as the
 main working surface and call Claude Code deliberately for review, adversarial
 critique, rescue, background status, results, and cancellation.
 
-The first team rollout is not automatic review. The standard path is manual:
+The first team rollout is not automatic review. The v1 standard path was manual:
 use a slash command or MCP tool when Codex's current context may be too narrow
-and a separate design/risk review would help.
+and a separate design/risk review would help. The v2 direction is to make Codex
+skills the standard team-facing workflow surface, with slash prompts kept only
+as optional compatibility aliases if they remain useful.
 
 ## Core Value
 
@@ -37,6 +39,10 @@ recovery.
   resume a repo session.
 - [existing] Slash-command prompt wrappers exist for review, adversarial review,
   and rescue workflows.
+- [gap] Codex skill wrappers do not yet exist for the standard review workflows,
+  so slash prompt bodies are currently doing workflow-routing work.
+- [gap] Live Claude review does not yet have a product-level repo-read consent
+  flow for allow once, always allow for this repository, or cancel.
 - [existing] A Codex `Stop` hook exists as an optional review gate, but is not
   part of the default install path.
 - [existing] CI runs lint, syntax checks, and npm package dry-run checks across
@@ -65,6 +71,10 @@ recovery.
   and Claude CLI launch/auth failures.
 - [ ] Keep hooks opt-in and clearly reversible.
 - [ ] Keep `allow_write` explicitly guarded and outside the default review path.
+- [ ] Move the team-facing Claude review UX from slash prompt wrappers to Codex
+  skills that call the MCP tools directly.
+- [ ] Add explicit Claude repo-read consent so users control whether Claude
+  Code may read repo diffs, related files, and selected planning docs.
 
 ### Out of Scope
 
@@ -72,8 +82,8 @@ recovery.
 
 - Automatic Claude review by default - team rollout should avoid surprise usage
   cost and Codex/Claude stop loops.
-- Hook-first onboarding - hooks are useful later, but manual invocation is the
-  safer first learning path.
+- Hook-first onboarding - hooks are useful later, but manual skill or MCP
+  invocation is the safer first learning path.
 - Cloud service or hosted queue - the project is local-first and depends on the
   user's local Claude Code authentication.
 - Replacing GSD/gstack planning, validation, review, or shipping workflows - this
@@ -100,7 +110,9 @@ The team's first need is not an always-on auto-reviewer. Team members use Codex
 in different ways, and not everyone will have the same comfort level with hooks
 or multi-agent review loops. The rollout should therefore make the manual path
 feel obvious: ask for a design review when the plan feels consequential, risky,
-or too self-confirming.
+or too self-confirming. After testing slash prompts in Codex App, the better
+v2 surface is Codex skills: they keep workflow instructions out of the visible
+chat transcript and match how GSD/gstack commands are already used.
 
 The product promise for v1 centers on two review lenses:
 
@@ -124,7 +136,8 @@ failure handling before it becomes a reliable team plugin.
   user's machine.
 - **Safety**: Read-only review is the default; write-capable rescue must remain
   explicit and warned.
-- **Workflow**: Manual MCP/slash invocation is the standard rollout path; hooks
+- **Workflow**: Manual MCP invocation and Codex skills are the standard rollout
+  path; slash prompts are compatibility wrappers only if retained, and hooks
   remain optional.
 - **Distribution**: npm package contents are controlled by the `files` array, so
   new runtime files must be added there before publishing.
@@ -142,8 +155,8 @@ failure handling before it becomes a reliable team plugin.
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Use Node.js for the MCP server | MCP SDK wiring and npm install are the simplest team path. | - Pending |
-| Support both MCP tools and slash commands | MCP gives capability; slash commands give learnable team UX. | - Pending |
-| Document slash commands as the team standard path | Team rollout should start from an easy manual command, not hidden tool invocation. | - Pending |
+| Support MCP tools plus Codex skills as the standard surface | MCP gives capability; skills give workflow and learnable team UX without exposing long prompt bodies. | - Pending |
+| Treat slash prompts as optional compatibility aliases | Slash prompts helped v1 discovery but are awkward when their bodies appear in chat. | - Pending |
 | Position as a Codex-first replacement workflow for codex-plugin-cc | Otherwise the project reads like a duplicate review skill instead of a clear workspace choice. | - Pending |
 | Keep GSD/gstack as an adjacent workflow layer | GSD owns process state; this plugin owns the Codex-to-Claude bridge. | - Pending |
 | Keep hooks opt-in | Automatic review can loop and consume usage unexpectedly. | - Pending |
@@ -151,6 +164,7 @@ failure handling before it becomes a reliable team plugin.
 | Pass explicit artifacts rather than pretending to share full Codex context | Claude Code sees what we provide through repo state, diff, docs, and prompt focus. | - Pending |
 | Extract core state before broad feature growth | The current monolithic server makes status/result/cancel behavior hard to test. | - Pending |
 | Track stable GSD planning docs but ignore runtime state | Codebase maps should be reviewable; logs, locks, and active runtime markers should stay local. | - Pending |
+| Add explicit repo-read consent before live Claude review | Users should control when Claude Code may read repo diffs, related files, and selected planning docs. | - Pending |
 
 ## Evolution
 

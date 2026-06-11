@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: verified
-stopped_at: PR #15 merged release docs to master; master squash history is being synchronized back to dev
-last_updated: "2026-06-10T13:19:30Z"
-last_activity: 2026-06-10 - PR #15 merged the release documentation refresh into `master`; because it was squash-merged, `master` must be synchronized back into `dev` with a merge commit before the next promotion cycle.
+milestone: v2.0
+milestone_name: Skill-Based Review UX And Consent
+status: planning
+stopped_at: v2 scope decision captured for skill-based Claude review UX and repo-read consent
+last_updated: "2026-06-11T00:54:27Z"
+last_activity: 2026-06-11 - v2 scope now includes moving team-facing Claude review from slash prompt wrappers to Codex skills, plus explicit allow-once / repo-allow / cancel consent before live Claude repo reads.
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 3
   total_plans: 6
   completed_plans: 6
-  percent: 100
+  percent: 75
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Codex-first users can keep Codex as the task owner while calling Claude Code as a local second-opinion bridge for design critique, implementation-risk review, and recovery.
-**Current focus:** Synchronize `master` promotion history back into `dev`
+**Current focus:** Plan v2 skill-based review UX and Claude repo-read consent
 
 ## Current Position
 
-Phase: 3 of 3 (Opt-In Automation Boundaries And Release Revalidation)
-Plan: 03-01 and 03-02 complete
-Status: Planned v1 work complete; release docs are on `master`
-Last activity: 2026-06-10 - PR #15 merged the release documentation refresh into `master`; follow-up work is synchronizing that squash promotion history back into `dev` and documenting the merge-commit promotion rule.
+Phase: 4 candidate (Skill-Based Review UX And Claude Repo-Read Consent)
+Plan: Not planned yet
+Status: v1 work complete; v2 scope decision captured
+Last activity: 2026-06-11 - Decided that Codex skills should become the standard team-facing surface, while slash prompts are kept only as thin compatibility aliases if retained.
 
-Progress: [##########] 100%
+Progress: [########--] 75%
 
 ## Phase Progress
 
@@ -39,6 +39,7 @@ Progress: [##########] 100%
 | 1. Manual Design/Risk Review Core | Complete | 19 | 2/2 |
 | 2. Async Job Reliability And Testable Packaging | Complete | 12 | 2/2 |
 | 3. Opt-In Automation Boundaries And Release Revalidation | Complete | 4 | 2/2 |
+| 4. Skill-Based Review UX And Claude Repo-Read Consent | Candidate | 8 | 0/0 |
 
 ## Performance Metrics
 
@@ -73,10 +74,14 @@ Recent decisions affecting current work:
 - Write-enabled rescue remains outside the v1 default review path.
 - Deterministic fake-Claude tests now cover background job and runner behavior without live Claude usage.
 - Phase 3 preserves Codex-first positioning while keeping automation and write access explicitly guarded.
+- v2 should move the team-facing review UX from slash prompt wrappers to Codex
+  skills.
+- v2 should add explicit Claude repo-read consent with allow once, always allow
+  for this repository, and cancel choices.
 
 ### Pending Todos
 
-- Merge the `master` history sync branch into `dev` with a merge commit.
+- Plan Phase 4 for skill-based review UX and Claude repo-read consent.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -93,6 +98,7 @@ Recent decisions affecting current work:
 | 260610-ukb | Refresh release-facing setup and hook documentation after master promotion | 2026-06-10 | same commit | [260610-ukb-refresh-release-facing-setup-and-hook-do](./quick/260610-ukb-refresh-release-facing-setup-and-hook-do/) |
 | 260610-ur4 | Update planning state after PR #13 merge | 2026-06-10 | same commit | [260610-ur4-update-planning-state-after-pr-13-merge](./quick/260610-ur4-update-planning-state-after-pr-13-merge/) |
 | 260610-uzt | Sync master squash promotion back into dev and document merge method | 2026-06-10 | same commit | [260610-uzt-sync-master-squash-promotion-back-into-d](./quick/260610-uzt-sync-master-squash-promotion-back-into-d/) |
+| 260611-drd | Record v2 scope decision to move Claude review UX to Codex skills and add repo-read consent | 2026-06-11 | same commit | [260611-drd-record-v2-scope-decision-to-move-team-fa](./quick/260611-drd-record-v2-scope-decision-to-move-team-fa/) |
 
 ## Deferred Items
 
@@ -104,13 +110,16 @@ Items acknowledged and carried forward from previous milestone close:
 | v2 Diagnostics | Structured diagnosis beyond MVP setup output and docs remains outside MVP roadmap. | Deferred | Initial roadmap |
 | v2 Hooks | Hook setup tooling and hook-specific automated gates remain outside default MVP path. | Deferred | Initial roadmap |
 | v2 Release | Public distribution polish beyond MVP package checks and revalidation markers remains outside MVP roadmap. | Deferred | Initial roadmap |
+| v2 Skill Surface | Codex skills should become the standard team-facing review workflow, replacing long slash prompt bodies. | Promoted to Phase 4 candidate | 2026-06-11 |
+| v2 Consent | Claude repo-read consent should gate live review with allow once, repo allow, and cancel choices. | Promoted to Phase 4 candidate | 2026-06-11 |
 
 ## Session Continuity
 
-Last session: 2026-06-10T13:19:30Z
-Stopped at: PR #15 merged to `master`; sync `master` back into `dev`
+Last session: 2026-06-11T00:54:27Z
+Stopped at: v2 scope decision captured for skill-based review UX and consent
 Resume file: .planning/STATE.md
 
 ## Next Action
 
-Open and merge a `master` to `dev` sync PR with a merge commit, then use merge commits for future `dev` to `master` promotion PRs.
+Run `$gsd-plan-phase` for Phase 4 so skill wrappers, consent state, setup
+diagnostics, docs, and tests are planned before implementation.
