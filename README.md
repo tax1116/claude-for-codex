@@ -219,11 +219,16 @@ This is a starting point, not an official OpenAI/Anthropic plugin. Re-check
 current Codex hook event names and MCP config format against the Codex docs for
 your installed version before each release.
 
+Package releases use Semantic Versioning, but product milestone labels are
+separate from npm versions. The "v1" team rollout is a milestone label, not a
+promise that the npm package is ready for `1.0.0`; keep package releases in
+`0.x.y` until the team workflow is stable enough for a first stable release.
+
 ## Documentation
 
 - [docs/SETUP.md](docs/SETUP.md) — detailed install, config, tools, and env reference
 - [docs/DESIGN.md](docs/DESIGN.md) — product boundary, codex-plugin-cc mapping, and mechanics
-- [docs/PUBLISHING.md](docs/PUBLISHING.md) — naming and how to push to your own GitHub repo
+- [docs/PUBLISHING.md](docs/PUBLISHING.md) — naming, release promotion, and versioning policy
 - [docs/BRANCHING.md](docs/BRANCHING.md) — branch roles, merge flow, and release promotion policy
 
 ## License

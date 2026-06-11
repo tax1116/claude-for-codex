@@ -60,6 +60,27 @@ Branch protection should keep both long-lived branches safe: `master` should
 require PRs and CI before release promotion, and `dev` should require CI for
 feature/topic integration.
 
+## Versioning policy
+
+Use Semantic Versioning for package releases. Keep product milestone labels
+separate from npm versions: "v1" means the first team-rollout milestone, not
+package version `1.0.0`.
+In short, v1 is not package version `1.0.0`.
+
+Until the team workflow is proven stable, release under `0.x.y`:
+
+| Version range | Meaning |
+| --- | --- |
+| `0.1.0` | First internally usable MVP. |
+| `0.2.0`, `0.3.0` | Meaningful feature additions while the MCP, skill, consent, and setup contracts may still change. |
+| `0.2.1`, `0.3.1` | Bug fixes, docs fixes, packaging omissions, and small compatibility corrections. |
+| `1.0.0` | First stable release after install, skill review, repo-read consent, cancellation, docs, CI, and package contents have survived real team use. |
+
+Before `1.0.0`, breaking changes to MCP tools, skill names, state files, or
+setup behavior can still ship as a minor `0.x.0` release, but release notes
+must call them out. After `1.0.0`, breaking changes require a major version
+bump.
+
 ## Recommended GitHub settings
 
 - **Description:** Unofficial MCP server that lets OpenAI Codex CLI call Claude Code

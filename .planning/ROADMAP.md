@@ -70,6 +70,7 @@ path.
   3. Slash prompt wrappers are either removed from the standard path or kept only as thin compatibility aliases that do not expose long internal instructions in chat.
   4. User sees a clear repo-read permission choice before the first live Claude review: allow once, always allow for this repository, or cancel.
   5. User can inspect and revoke repository-level Claude repo-read consent without editing state files by hand.
+  6. Release docs make clear that v1/v2 are product milestone labels, while npm package releases stay in `0.x.y` until the team workflow is stable enough for `1.0.0`.
 **Plans:** Not planned yet
 
 ## Progress

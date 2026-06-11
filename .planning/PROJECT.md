@@ -43,6 +43,8 @@ recovery.
   so slash prompt bodies are currently doing workflow-routing work.
 - [gap] Live Claude review does not yet have a product-level repo-read consent
   flow for allow once, always allow for this repository, or cancel.
+- [existing] Package versioning uses Semantic Versioning in `package.json`, but
+  product milestone labels such as "v1" are separate from npm `1.0.0`.
 - [existing] A Codex `Stop` hook exists as an optional review gate, but is not
   part of the default install path.
 - [existing] CI runs lint, syntax checks, and npm package dry-run checks across
@@ -141,6 +143,9 @@ failure handling before it becomes a reliable team plugin.
   remain optional.
 - **Distribution**: npm package contents are controlled by the `files` array, so
   new runtime files must be added there before publishing.
+- **Versioning**: Product milestones can use labels such as v1/v2, but npm
+  package releases stay in `0.x.y` until the team workflow is stable enough for
+  a first stable `1.0.0`.
 - **Verification**: CI currently proves lint, syntax, and pack contents; future
   behavior changes need focused tests.
 - **Repository flow**: Development proceeds from `dev` feature branches, with
@@ -165,6 +170,7 @@ failure handling before it becomes a reliable team plugin.
 | Extract core state before broad feature growth | The current monolithic server makes status/result/cancel behavior hard to test. | - Pending |
 | Track stable GSD planning docs but ignore runtime state | Codebase maps should be reviewable; logs, locks, and active runtime markers should stay local. | - Pending |
 | Add explicit repo-read consent before live Claude review | Users should control when Claude Code may read repo diffs, related files, and selected planning docs. | - Pending |
+| Keep npm releases in 0.x.y until stable team use | "v1" describes the first team-rollout milestone, not package version 1.0.0. | - Pending |
 
 ## Evolution
 

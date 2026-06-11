@@ -196,6 +196,21 @@ test("publishing docs use dev to master PR promotion policy", () => {
   }
 });
 
+test("publishing docs separate product milestones from package semver", () => {
+  const combinedDocs = `${docs.readme}\n${docs.publishing}`;
+
+  for (const expected of [
+    "Semantic Versioning",
+    "product milestone labels",
+    "not package version `1.0.0`",
+    "`0.x.y`",
+    "`1.0.0`",
+    "team workflow is stable",
+  ]) {
+    assertIncludes(combinedDocs, expected, `versioning: ${expected}`);
+  }
+});
+
 test("server runtime imports stay covered by npm package files", () => {
   const serverSource = read("server.mjs");
   const runtimeImports = [...serverSource.matchAll(/from "\.\/(src\/[^"]+)"/g)].map((match) => match[1]);

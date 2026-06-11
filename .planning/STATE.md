@@ -4,8 +4,8 @@ milestone: v2.0
 milestone_name: Skill-Based Review UX And Consent
 status: planning
 stopped_at: v2 scope decision captured for skill-based Claude review UX and repo-read consent
-last_updated: "2026-06-11T00:54:27Z"
-last_activity: 2026-06-11 - v2 scope now includes moving team-facing Claude review from slash prompt wrappers to Codex skills, plus explicit allow-once / repo-allow / cancel consent before live Claude repo reads.
+last_updated: "2026-06-11T01:51:03Z"
+last_activity: 2026-06-11 - Documented SemVer policy that product milestone labels such as v1/v2 are separate from npm package versions, which stay in 0.x.y until stable team use.
 progress:
   total_phases: 4
   completed_phases: 3
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-08)
 Phase: 4 candidate (Skill-Based Review UX And Claude Repo-Read Consent)
 Plan: Not planned yet
 Status: v1 work complete; v2 scope decision captured
-Last activity: 2026-06-11 - Decided that Codex skills should become the standard team-facing surface, while slash prompts are kept only as thin compatibility aliases if retained.
+Last activity: 2026-06-11 - Documented that v1/v2 are product milestone labels, not npm 1.0.0/2.0.0 promises.
 
 Progress: [########--] 75%
 
@@ -78,10 +78,14 @@ Recent decisions affecting current work:
   skills.
 - v2 should add explicit Claude repo-read consent with allow once, always allow
   for this repository, and cancel choices.
+- Package releases should follow Semantic Versioning, but stay in `0.x.y` until
+  install, skill review, repo-read consent, cancellation, docs, CI, and package
+  contents have survived real team use.
 
 ### Pending Todos
 
 - Plan Phase 4 for skill-based review UX and Claude repo-read consent.
+- Include the versioning-policy success criterion when Phase 4 is planned.
 - Repeat release-date revalidation before any later npm publish, release tag, or team rollout.
 
 ### Blockers/Concerns
@@ -99,6 +103,7 @@ Recent decisions affecting current work:
 | 260610-ur4 | Update planning state after PR #13 merge | 2026-06-10 | same commit | [260610-ur4-update-planning-state-after-pr-13-merge](./quick/260610-ur4-update-planning-state-after-pr-13-merge/) |
 | 260610-uzt | Sync master squash promotion back into dev and document merge method | 2026-06-10 | same commit | [260610-uzt-sync-master-squash-promotion-back-into-d](./quick/260610-uzt-sync-master-squash-promotion-back-into-d/) |
 | 260611-drd | Record v2 scope decision to move Claude review UX to Codex skills and add repo-read consent | 2026-06-11 | same commit | [260611-drd-record-v2-scope-decision-to-move-team-fa](./quick/260611-drd-record-v2-scope-decision-to-move-team-fa/) |
+| 260611-vrs | Document SemVer policy for pre-1.0 team rollout releases | 2026-06-11 | same commit | [260611-vrs-document-semver-policy-for-pre-1-0-team](./quick/260611-vrs-document-semver-policy-for-pre-1-0-team/) |
 
 ## Deferred Items
 
